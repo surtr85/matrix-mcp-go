@@ -21,13 +21,14 @@ type Config struct {
 
 // MatrixConfig holds Matrix homeserver, authentication, and database settings.
 type MatrixConfig struct {
-	HomeserverURL string `koanf:"homeserver_url"`
-	UserID        string `koanf:"user_id"`
-	AccessToken   string `koanf:"access_token"`
-	Password      string `koanf:"password"`
-	DeviceID      string `koanf:"device_id"`
-	DBPath        string `koanf:"db_path"`
-	PickleKey     string `koanf:"pickle_key"`
+	HomeserverURL string   `koanf:"homeserver_url"`
+	UserID        string   `koanf:"user_id"`
+	AccessToken   string   `koanf:"access_token"`
+	Password      string   `koanf:"password"`
+	DeviceID      string   `koanf:"device_id"`
+	DBPath        string   `koanf:"db_path"`
+	PickleKey     string   `koanf:"pickle_key"`
+	AllowedUsers  []string `koanf:"allowed_users"`
 }
 
 // MCPConfig holds MCP transport and server settings.

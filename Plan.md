@@ -37,10 +37,10 @@ It is structured as an iterative, phase-by-phase checklist for AI agents to foll
 - [x] **CHECKPOINT:** Use an MCP inspector or dummy client to connect via stdio and call `matrix_list_rooms` and `matrix_send_message`.
 
 ## Phase 5: Event Routing & Human-in-the-Loop Workflow
-- [ ] Implement Thread management logic: Automatically reply to the correct thread if a tool call is related to a specific Matrix thread.
-- [ ] Implement `matrix_ask_human` tool logic: Pause tool execution, listen to the Matrix sync loop for the user's reply in the same thread, and return the reply to the MCP client (with timeout support).
-- [ ] Implement RBAC (Role-Based Access Control) & Allowlisting to ignore unauthorized Matrix users securely.
-- [ ] **CHECKPOINT:** E2E integration test: AI agent asks a question via MCP -> message appears in Matrix -> human replies -> AI agent receives the reply.
+- [x] Implement Thread management logic: Automatically reply to the correct thread if a tool call is related to a specific Matrix thread.
+- [x] Implement `matrix_ask_human` tool logic: Pause tool execution, listen to the Matrix sync loop for the user's reply in the same thread, and return the reply to the MCP client (with timeout support).
+- [x] Implement RBAC (Role-Based Access Control) & Allowlisting to ignore unauthorized Matrix users securely.
+- [x] **CHECKPOINT:** E2E integration test: AI agent asks a question via MCP -> message appears in Matrix -> human replies -> AI agent receives the reply.
 
 ## Phase 6: Reliability, Dual-Transport & Observability
 - [ ] Add SSE/HTTP transport support (allowing remote agents to connect to the daemon over network).

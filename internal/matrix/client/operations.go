@@ -28,7 +28,6 @@ func (c *Client) SendMessage(ctx context.Context, roomID id.RoomID, plainText, f
 		content.RelatesTo = &event.RelatesTo{
 			Type:    event.RelThread,
 			EventID: threadID,
-			// In Matrix MSC3440 / Matrix v1.4, fallback to thread root or latest event
 			InReplyTo: &event.InReplyTo{
 				EventID: threadID,
 			},

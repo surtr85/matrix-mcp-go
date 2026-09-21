@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/amadeus/matrix-mcp-go/internal/config"
 	"github.com/amadeus/matrix-mcp-go/internal/logger"
@@ -22,6 +23,8 @@ type mockMatrixOps struct {
 	sentReaction  func(roomID id.RoomID, eventID id.EventID, emoji string) (*mautrix.RespSendEvent, error)
 	uploadedMedia func(content io.Reader, filename, contentType string) (*mautrix.RespMediaUpload, error)
 	listedRooms   func() ([]mcpinternal.RoomSummary, error)
+	setTyping     func(ctx context.Context, roomID id.RoomID, typing bool, timeout time.Duration) error
+	waitReply     func(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcpinternal.HumanReply, error)
 }
 
 func (m *mockMatrixOps) SendMessage(ctx context.Context, roomID id.RoomID, plainText, formattedHTML string, threadID id.EventID) (*mautrix.RespSendEvent, error) {
@@ -51,6 +54,23 @@ func (m *mockMatrixOps) ListJoinedRooms(ctx context.Context) ([]mcpinternal.Room
 	}
 	return []mcpinternal.RoomSummary{
 		{RoomID: "!room1:example.com", Name: "Room 1", MemberCount: 5},
+	}, nil
+}
+
+func (m *mockMatrixOps) SetTyping(ctx context.Context, roomID id.RoomID, typing bool, timeout time.Duration) error {
+	if m.setTyping != nil {
+		return m.setTyping(ctx, roomID, typing, timeout)
+	}
+	return nil
+}
+
+func (m *mockMatrixOps) WaitForHumanReply(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcpinternal.HumanReply, error) {
+	if m.waitReply != nil {
+		return m.waitReply(ctx, roomID, threadID, timeout)
+	}
+	return &mcpinternal.HumanReply{
+		EventID: "$default_reply",
+		Body:    "default reply",
 	}, nil
 }
 

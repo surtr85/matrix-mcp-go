@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/amadeus/matrix-mcp-go/internal/config"
+	"github.com/amadeus/matrix-mcp-go/internal/matrix/rbac"
 	"github.com/amadeus/matrix-mcp-go/internal/matrix/store"
+	"github.com/amadeus/matrix-mcp-go/internal/mcp"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"maunium.net/go/mautrix/event"
@@ -21,16 +23,18 @@ type MessageHandler func(ctx context.Context, evt *event.Event)
 
 // Client wraps the mautrix.Client with resilient syncing, crypto support, and message dispatching.
 type Client struct {
-	cfg          config.MatrixConfig
-	matrixCli    *mautrix.Client
-	store        *store.Store
-	cryptoHelper *cryptohelper.CryptoHelper
-	syncer       *mautrix.DefaultSyncer
-	msgHandlers  []MessageHandler
-	log          *slog.Logger
+	cfg           config.MatrixConfig
+	matrixCli     *mautrix.Client
+	store         *store.Store
+	cryptoHelper  *cryptohelper.CryptoHelper
+	syncer        *mautrix.DefaultSyncer
+	msgHandlers   []MessageHandler
+	replyRegistry *ReplyRegistry
+	authorizer    *rbac.Authorizer
+	log           *slog.Logger
 }
 
-// New creates and initializes a Client with SQLite persistence and optional E2EE crypto support.
+// New creates and initializes a Client with SQLite persistence, RBAC, and human-in-the-loop reply routing.
 func New(cfg config.MatrixConfig, log *slog.Logger) (*Client, error) {
 	if log == nil {
 		log = slog.Default()
@@ -55,20 +59,91 @@ func New(cfg config.MatrixConfig, log *slog.Logger) (*Client, error) {
 	cli.Syncer = syncer
 
 	c := &Client{
-		cfg:         cfg,
-		matrixCli:   cli,
-		store:       st,
-		syncer:      syncer,
-		msgHandlers: make([]MessageHandler, 0),
-		log:         log.With("component", "matrix_client"),
+		cfg:           cfg,
+		matrixCli:     cli,
+		store:         st,
+		syncer:        syncer,
+		msgHandlers:   make([]MessageHandler, 0),
+		replyRegistry: NewReplyRegistry(),
+		authorizer:    rbac.New(cfg.AllowedUsers),
+		log:           log.With("component", "matrix_client"),
 	}
 
 	// Register internal message dispatcher on syncer
 	syncer.OnEventType(event.EventMessage, func(ctx context.Context, evt *event.Event) {
-		c.dispatchMessage(ctx, evt)
+		c.dispatchIncomingEvent(ctx, evt)
 	})
 
 	return c, nil
+}
+
+func (c *Client) dispatchIncomingEvent(ctx context.Context, evt *event.Event) {
+	// Ignore events from the bot itself
+	if evt.Sender == c.matrixCli.UserID {
+		return
+	}
+
+	// Security & RBAC: verify sender
+	if !c.authorizer.IsAllowed(evt.Sender) {
+		c.log.Debug("discarding event from unauthorized sender",
+			"sender", evt.Sender,
+			"room_id", evt.RoomID,
+			"event_id", evt.ID,
+		)
+		return
+	}
+
+	// Check if this event satisfies a pending human-in-the-loop reply
+	var threadID id.EventID
+	var body string
+
+	// Parse raw content into typed structure if not parsed yet
+	if evt.Content.Parsed == nil && evt.Content.Raw != nil {
+		_ = evt.Content.ParseRaw(evt.Type)
+	}
+
+	// Extract relates_to thread info if present
+	if relatesTo := evt.Content.AsMessage().RelatesTo; relatesTo != nil {
+		if relatesTo.Type == event.RelThread {
+			threadID = relatesTo.EventID
+		} else if relatesTo.InReplyTo != nil {
+			threadID = relatesTo.InReplyTo.EventID
+		}
+	} else if relRaw, ok := evt.Content.Raw["m.relates_to"].(map[string]interface{}); ok {
+		if evID, ok := relRaw["event_id"].(string); ok {
+			threadID = id.EventID(evID)
+		}
+	}
+
+	if msg := evt.Content.AsMessage(); msg != nil {
+		body = msg.Body
+	}
+	if body == "" {
+		if rawBody, ok := evt.Content.Raw["body"].(string); ok {
+			body = rawBody
+		}
+	}
+
+	reply := &mcp.HumanReply{
+		EventID:   string(evt.ID),
+		Sender:    string(evt.Sender),
+		RoomID:    string(evt.RoomID),
+		ThreadID:  string(threadID),
+		Body:      body,
+		Timestamp: evt.Timestamp,
+	}
+
+	// If a waiter claims this reply, dispatch it
+	if c.replyRegistry.Dispatch(evt.RoomID, threadID, reply) {
+		c.log.Info("routed human reply to active HITL waiter",
+			"room_id", evt.RoomID,
+			"thread_id", threadID,
+			"sender", evt.Sender,
+		)
+	}
+
+	// Also invoke generic message listeners
+	c.dispatchMessage(ctx, evt)
 }
 
 // InitCrypto initializes the Olm/Megolm E2EE CryptoHelper if a pickle key or DB path is configured.
@@ -100,7 +175,6 @@ func (c *Client) InitCrypto(ctx context.Context) error {
 }
 
 // Login authenticates with the Matrix homeserver using access_token or password.
-// It restores previously saved device ID and token if available to avoid ghost sessions.
 func (c *Client) Login(ctx context.Context) error {
 	userID := c.matrixCli.UserID
 
@@ -180,8 +254,50 @@ func (c *Client) dispatchMessage(ctx context.Context, evt *event.Event) {
 	}
 }
 
+// SetTyping sets the user typing status in the specified room.
+func (c *Client) SetTyping(ctx context.Context, roomID id.RoomID, typing bool, timeout time.Duration) error {
+	_, err := c.matrixCli.UserTyping(ctx, roomID, typing, timeout)
+	return err
+}
+
+// WaitForHumanReply registers a reply waiter and blocks until a response is received, timeout occurs, or ctx is cancelled.
+func (c *Client) WaitForHumanReply(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcp.HumanReply, error) {
+	replyCh, cleanup := c.replyRegistry.Register(roomID, threadID)
+	defer cleanup()
+
+	// Maintain typing indicator while waiting in background
+	typingTicker := time.NewTicker(4 * time.Second)
+	defer typingTicker.Stop()
+
+	// Initial typing notification
+	_ = c.SetTyping(ctx, roomID, true, 5*time.Second)
+
+	timeoutTimer := time.NewTimer(timeout)
+	defer timeoutTimer.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			_ = c.SetTyping(context.Background(), roomID, false, 0)
+			return nil, ctx.Err()
+
+		case <-timeoutTimer.C:
+			_ = c.SetTyping(context.Background(), roomID, false, 0)
+			return nil, errors.New("timeout waiting for human reply")
+
+		case <-typingTicker.C:
+			// Refresh typing indicator so Matrix clients show the bot is active
+			_ = c.SetTyping(ctx, roomID, true, 5*time.Second)
+
+		case reply := <-replyCh:
+			// Stop typing indicator on reply receipt
+			_ = c.SetTyping(context.Background(), roomID, false, 0)
+			return reply, nil
+		}
+	}
+}
+
 // SyncLoop runs the Matrix sync loop with exponential backoff and 429 rate limit handling.
-// It terminates cleanly when ctx is cancelled.
 func (c *Client) SyncLoop(ctx context.Context) error {
 	c.log.Info("starting Matrix sync loop", "user_id", c.matrixCli.UserID)
 
@@ -196,10 +312,8 @@ func (c *Client) SyncLoop(ctx context.Context) error {
 		default:
 		}
 
-		// Perform sync request
 		err := c.matrixCli.SyncWithContext(ctx)
 		if err == nil {
-			// Successful sync iteration, reset backoff
 			backoff = 1 * time.Second
 			continue
 		}
@@ -209,7 +323,7 @@ func (c *Client) SyncLoop(ctx context.Context) error {
 			return err
 		}
 
-		// Check for Matrix API rate limiting (M_LIMIT_EXCEEDED or HTTP 429)
+		// Check for Matrix API rate limiting
 		var httpErr mautrix.HTTPError
 		if errors.As(err, &httpErr) {
 			if httpErr.RespError != nil && httpErr.RespError.ErrCode == "M_LIMIT_EXCEEDED" {
@@ -242,7 +356,6 @@ func (c *Client) SyncLoop(ctx context.Context) error {
 			}
 		}
 
-		// Network or server error backoff
 		c.log.Error("sync failed, backing off", "err", err, "backoff", backoff)
 		select {
 		case <-ctx.Done():
@@ -253,7 +366,7 @@ func (c *Client) SyncLoop(ctx context.Context) error {
 	}
 }
 
-// Stop closes all stores and crypto helpers gracefully.
+// Close closes all stores and crypto helpers gracefully.
 func (c *Client) Close() error {
 	var errs []error
 	c.matrixCli.StopSync()
@@ -276,4 +389,14 @@ func (c *Client) Close() error {
 // UnderlyingClient returns the raw mautrix.Client for advanced or test usage.
 func (c *Client) UnderlyingClient() *mautrix.Client {
 	return c.matrixCli
+}
+
+// ReplyRegistry returns the Client's internal reply registry for tests.
+func (c *Client) ReplyRegistry() *ReplyRegistry {
+	return c.replyRegistry
+}
+
+// Syncer returns the underlying *mautrix.DefaultSyncer.
+func (c *Client) Syncer() *mautrix.DefaultSyncer {
+	return c.syncer
 }

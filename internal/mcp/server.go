@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/amadeus/matrix-mcp-go/internal/config"
 	"github.com/amadeus/matrix-mcp-go/internal/format"
@@ -62,7 +63,6 @@ func (s *Server) MCPServer() *server.MCPServer {
 }
 
 // ServeStdio starts serving MCP requests over standard I/O.
-// NOTE: When this runs, nothing else must write to os.Stdout to preserve JSON-RPC protocol framing.
 func (s *Server) ServeStdio() error {
 	s.log.Info("serving MCP over stdio transport")
 	return server.ServeStdio(s.mcpServer)
@@ -111,6 +111,19 @@ func (s *Server) registerTools() {
 		),
 		s.handleListRooms,
 	)
+
+	// Tool 5: matrix_ask_human (Human-in-the-Loop)
+	s.mcpServer.AddTool(
+		mcp.NewTool(
+			"matrix_ask_human",
+			mcp.WithDescription("Ask a human a question in Matrix, pause execution, and wait for their reply in the thread."),
+			mcp.WithString("room_id", mcp.Required(), mcp.Description("Target Matrix room ID")),
+			mcp.WithString("question", mcp.Required(), mcp.Description("The question or decision prompt in Markdown")),
+			mcp.WithString("thread_id", mcp.Description("Optional existing thread ID; if empty, the question creates a new thread root")),
+			mcp.WithNumber("timeout_seconds", mcp.Description("Maximum wait time in seconds (default: 300)")),
+		),
+		s.handleAskHuman,
+	)
 }
 
 func (s *Server) registerResources() {
@@ -157,7 +170,6 @@ func (s *Server) handleSendMessage(ctx context.Context, req mcp.CallToolRequest)
 
 	threadIDStr := req.GetString("thread_id", "")
 
-	// Format Markdown and BiDi HTML
 	plainText, formattedHTML, err := format.FormatMessage(msgStr)
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("failed to format markdown message: %v", err)), nil
@@ -219,11 +231,10 @@ func (s *Server) handleUploadMedia(ctx context.Context, req mcp.CallToolRequest)
 	}
 	defer func() { _ = f.Close() }()
 
-	// Sniff content type from first 512 bytes
 	header := make([]byte, 512)
 	n, _ := f.Read(header)
 	contentType := http.DetectContentType(header[:n])
-	_, _ = f.Seek(0, 0) // rewind
+	_, _ = f.Seek(0, 0)
 
 	filename := filepath.Base(filePath)
 	resp, err := s.matrixOps.UploadMedia(ctx, f, filename, contentType)
@@ -251,5 +262,67 @@ func (s *Server) handleListRooms(ctx context.Context, req mcp.CallToolRequest) (
 		"rooms": rooms,
 		"total": len(rooms),
 	})
+	return mcp.NewToolResultText(string(resJSON)), nil
+}
+
+func (s *Server) handleAskHuman(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	roomIDStr, err := req.RequireString("room_id")
+	if err != nil {
+		return mcp.NewToolResultError("room_id is required"), nil
+	}
+
+	question, err := req.RequireString("question")
+	if err != nil {
+		return mcp.NewToolResultError("question is required"), nil
+	}
+
+	threadIDStr := req.GetString("thread_id", "")
+	timeoutSeconds := req.GetInt("timeout_seconds", 300)
+	if timeoutSeconds <= 0 {
+		timeoutSeconds = 300
+	}
+	timeoutDur := time.Duration(timeoutSeconds) * time.Second
+
+	// Format question
+	plainText, formattedHTML, err := format.FormatMessage(question)
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("failed to format question: %v", err)), nil
+	}
+
+	// Send question message to Matrix
+	resp, err := s.matrixOps.SendMessage(ctx, id.RoomID(roomIDStr), plainText, formattedHTML, id.EventID(threadIDStr))
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("failed to send question to matrix: %v", err)), nil
+	}
+
+	// If no thread_id was provided, the question's event becomes the thread root
+	activeThreadID := id.EventID(threadIDStr)
+	if activeThreadID == "" {
+		activeThreadID = resp.EventID
+	}
+
+	s.log.Info("waiting for human reply via Matrix",
+		"room_id", roomIDStr,
+		"thread_id", activeThreadID,
+		"timeout_seconds", timeoutSeconds,
+	)
+
+	// Wait for human response
+	reply, err := s.matrixOps.WaitForHumanReply(ctx, id.RoomID(roomIDStr), activeThreadID, timeoutDur)
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("human did not reply within timeout (%v): %v", timeoutDur, err)), nil
+	}
+
+	result := map[string]interface{}{
+		"success":   true,
+		"answer":    reply.Body,
+		"sender":    reply.Sender,
+		"room_id":   reply.RoomID,
+		"thread_id": reply.ThreadID,
+		"event_id":  reply.EventID,
+		"timestamp": reply.Timestamp,
+	}
+
+	resJSON, _ := json.Marshal(result)
 	return mcp.NewToolResultText(string(resJSON)), nil
 }
