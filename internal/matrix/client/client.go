@@ -108,19 +108,27 @@ func (c *Client) dispatchIncomingEvent(ctx context.Context, evt *event.Event) {
 		_ = evt.Content.ParseRaw(evt.Type)
 	}
 
-	// Extract relates_to thread info and body safely if message content is parsed
+	// Extract relates_to thread info and body safely
 	if msg := evt.Content.AsMessage(); msg != nil {
 		body = msg.Body
 		if relatesTo := msg.RelatesTo; relatesTo != nil {
-			if relatesTo.Type == event.RelThread {
+			if relatesTo.EventID != "" {
 				threadID = relatesTo.EventID
-			} else if relatesTo.InReplyTo != nil {
+			} else if relatesTo.InReplyTo != nil && relatesTo.InReplyTo.EventID != "" {
 				threadID = relatesTo.InReplyTo.EventID
 			}
 		}
-	} else if relRaw, ok := evt.Content.Raw["m.relates_to"].(map[string]interface{}); ok {
-		if evID, ok := relRaw["event_id"].(string); ok {
-			threadID = id.EventID(evID)
+	}
+
+	if threadID == "" {
+		if relRaw, ok := evt.Content.Raw["m.relates_to"].(map[string]interface{}); ok {
+			if evID, ok := relRaw["event_id"].(string); ok && evID != "" {
+				threadID = id.EventID(evID)
+			} else if inReplyRaw, ok := relRaw["m.in_reply_to"].(map[string]interface{}); ok {
+				if evID, ok := inReplyRaw["event_id"].(string); ok {
+					threadID = id.EventID(evID)
+				}
+			}
 		}
 	}
 

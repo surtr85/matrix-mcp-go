@@ -26,8 +26,6 @@ func (c *Client) SendMessage(ctx context.Context, roomID id.RoomID, plainText, f
 
 	if threadID != "" {
 		content.RelatesTo = &event.RelatesTo{
-			Type:    event.RelThread,
-			EventID: threadID,
 			InReplyTo: &event.InReplyTo{
 				EventID: threadID,
 			},
