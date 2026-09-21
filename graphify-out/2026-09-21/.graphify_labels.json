@@ -5,13 +5,12 @@
   "3": "FormatMessage",
   "4": "Store",
   "5": "Client",
-  "6": "README.md",
+  "6": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
   "7": "matrixHTMLRenderer",
   "8": "Config",
   "9": "Matrix MCP Universal Gateway - Project Plan",
   "10": "flake.nix",
   "11": "operations.go",
   "12": "presence.go",
-  "13": "github.com/amadeus/matrix-mcp-go",
-  "14": "matrix_agent_listener.py"
+  "13": "github.com/amadeus/matrix-mcp-go"
 }

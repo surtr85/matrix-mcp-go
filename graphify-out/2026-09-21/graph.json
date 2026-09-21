@@ -4,90 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "id": "scripts_matrix_agent_listener_ask_pi",
-      "label": "ask_pi()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "ask_pi()",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L83"
-    },
-    {
-      "id": "scripts_matrix_agent_listener_load_config",
-      "label": "load_config()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "load_config()",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L12"
-    },
-    {
-      "id": "scripts_matrix_agent_listener_main",
-      "label": "main()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "main()",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L101"
-    },
-    {
-      "id": "scripts_matrix_agent_listener_matrix_request",
-      "label": "matrix_request()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "matrix_request()",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L34"
-    },
-    {
-      "id": "scripts_matrix_agent_listener_send_message",
-      "label": "send_message()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "send_message()",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L65"
-    },
-    {
-      "id": "scripts_matrix_agent_listener_send_reaction",
-      "label": "send_reaction()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "send_reaction()",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L53"
-    },
-    {
-      "id": "scripts_matrix_agent_listener_set_typing",
-      "label": "set_typing()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "set_typing()",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L49"
-    },
-    {
       "id": "client_client_listjoinedrooms",
       "label": ".ListJoinedRooms()",
       "_origin": "ast",
@@ -140,7 +56,7 @@
       "file_type": "code",
       "norm_label": ".settyping()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285"
+      "source_location": "L262"
     },
     {
       "id": "client_client_uploadmedia",
@@ -162,29 +78,7 @@
       "file_type": "code",
       "norm_label": ".waitforhumanreply()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291"
-    },
-    {
-      "id": "client_client_waitforincomingmessage",
-      "label": ".WaitForIncomingMessage()",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "context.Context",
-      "file_type": "code",
-      "norm_label": ".waitforincomingmessage()",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329"
-    },
-    {
-      "id": "client_incomingqueue_register",
-      "label": ".Register()",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "context.Context",
-      "file_type": "code",
-      "norm_label": ".register()",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L41"
+      "source_location": "L268"
     },
     {
       "id": "client_replyregistry_dispatch",
@@ -352,17 +246,6 @@
       "source_location": "L13"
     },
     {
-      "id": "internal_mcp_interface_go_mcp_incomingmessage",
-      "label": "IncomingMessage",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "context.Context",
-      "file_type": "code",
-      "norm_label": "incomingmessage",
-      "source_file": "internal/mcp/interface.go",
-      "source_location": "L23"
-    },
-    {
       "id": "internal_mcp_interface_go_mcp_roomsummary",
       "label": "RoomSummary",
       "_origin": "ast",
@@ -371,7 +254,7 @@
       "file_type": "code",
       "norm_label": "roomsummary",
       "source_file": "internal/mcp/interface.go",
-      "source_location": "L33"
+      "source_location": "L23"
     },
     {
       "id": "mcp_hitlmockoperations",
@@ -451,17 +334,6 @@
       "source_location": "L62"
     },
     {
-      "id": "mcp_hitlmockoperations_waitforincomingmessage",
-      "label": ".WaitForIncomingMessage()",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "context.Context",
-      "file_type": "code",
-      "norm_label": ".waitforincomingmessage()",
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L82"
-    },
-    {
       "id": "mcp_mockmatrixops",
       "label": "mockMatrixOps",
       "_origin": "ast",
@@ -481,7 +353,7 @@
       "file_type": "code",
       "norm_label": ".listjoinedrooms()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L52"
+      "source_location": "L51"
     },
     {
       "id": "mcp_mockmatrixops_sendmessage",
@@ -492,7 +364,7 @@
       "file_type": "code",
       "norm_label": ".sendmessage()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L31"
+      "source_location": "L30"
     },
     {
       "id": "mcp_mockmatrixops_sendreaction",
@@ -503,7 +375,7 @@
       "file_type": "code",
       "norm_label": ".sendreaction()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L38"
+      "source_location": "L37"
     },
     {
       "id": "mcp_mockmatrixops_settyping",
@@ -514,7 +386,7 @@
       "file_type": "code",
       "norm_label": ".settyping()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L61"
+      "source_location": "L60"
     },
     {
       "id": "mcp_mockmatrixops_uploadmedia",
@@ -525,7 +397,7 @@
       "file_type": "code",
       "norm_label": ".uploadmedia()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L45"
+      "source_location": "L44"
     },
     {
       "id": "mcp_mockmatrixops_waitforhumanreply",
@@ -536,29 +408,7 @@
       "file_type": "code",
       "norm_label": ".waitforhumanreply()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L68"
-    },
-    {
-      "id": "mcp_mockmatrixops_waitforincomingmessage",
-      "label": ".WaitForIncomingMessage()",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "context.Context",
-      "file_type": "code",
-      "norm_label": ".waitforincomingmessage()",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L78"
-    },
-    {
-      "id": "client_client_close",
-      "label": ".Close()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": ".close()",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L438"
+      "source_location": "L67"
     },
     {
       "id": "cmd_matrix_mcp_go_main",
@@ -590,6 +440,17 @@
       "community_name": "testing.T",
       "file_type": "code",
       "norm_label": "io.writer",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "go_type_log_slog_logger",
+      "label": "log/slog.Logger",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "testing.T",
+      "file_type": "code",
+      "norm_label": "log/slog.logger",
       "source_file": "",
       "source_location": ""
     },
@@ -668,7 +529,7 @@
       "file_type": "code",
       "norm_label": "new()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L40"
+      "source_location": "L39"
     },
     {
       "id": "internal_matrix_client_client_test",
@@ -737,50 +598,6 @@
       "source_location": "L15"
     },
     {
-      "id": "internal_matrix_client_incoming_test",
-      "label": "incoming_test.go",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "incoming_test.go",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L1"
-    },
-    {
-      "id": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_rbacanddeduplication",
-      "label": "TestClient_WaitForIncomingMessage_RBACAndDeduplication()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "testclient_waitforincomingmessage_rbacanddeduplication()",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L183"
-    },
-    {
-      "id": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_successandautoack",
-      "label": "TestClient_WaitForIncomingMessage_SuccessAndAutoAck()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "testclient_waitforincomingmessage_successandautoack()",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L21"
-    },
-    {
-      "id": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_timeout",
-      "label": "TestClient_WaitForIncomingMessage_Timeout()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "testclient_waitforincomingmessage_timeout()",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L154"
-    },
-    {
       "id": "internal_matrix_client_ratelimit_test",
       "label": "ratelimit_test.go",
       "_origin": "ast",
@@ -844,7 +661,7 @@
       "file_type": "code",
       "norm_label": "testtool_askhuman_success()",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L105"
+      "source_location": "L82"
     },
     {
       "id": "internal_mcp_hitl_test_testtool_askhuman_timeout",
@@ -855,18 +672,7 @@
       "file_type": "code",
       "norm_label": "testtool_askhuman_timeout()",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L162"
-    },
-    {
-      "id": "internal_mcp_server_newserver",
-      "label": "NewServer()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "newserver()",
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L34"
+      "source_location": "L139"
     },
     {
       "id": "internal_mcp_server_test",
@@ -888,7 +694,7 @@
       "file_type": "code",
       "norm_label": "extractresulttext()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L103"
+      "source_location": "L88"
     },
     {
       "id": "internal_mcp_server_test_setuptestserver",
@@ -899,7 +705,7 @@
       "file_type": "code",
       "norm_label": "setuptestserver()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L92"
+      "source_location": "L77"
     },
     {
       "id": "internal_mcp_server_test_testjsonrpc_protocolinitialization",
@@ -910,7 +716,7 @@
       "file_type": "code",
       "norm_label": "testjsonrpc_protocolinitialization()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L336"
+      "source_location": "L321"
     },
     {
       "id": "internal_mcp_server_test_testtool_listroomsandresource",
@@ -921,7 +727,7 @@
       "file_type": "code",
       "norm_label": "testtool_listroomsandresource()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L264"
+      "source_location": "L249"
     },
     {
       "id": "internal_mcp_server_test_testtool_sendmessage",
@@ -932,7 +738,7 @@
       "file_type": "code",
       "norm_label": "testtool_sendmessage()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L115"
+      "source_location": "L100"
     },
     {
       "id": "internal_mcp_server_test_testtool_sendreaction",
@@ -943,7 +749,7 @@
       "file_type": "code",
       "norm_label": "testtool_sendreaction()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L177"
+      "source_location": "L162"
     },
     {
       "id": "internal_mcp_server_test_testtool_uploadmedia",
@@ -954,7 +760,7 @@
       "file_type": "code",
       "norm_label": "testtool_uploadmedia()",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L213"
+      "source_location": "L198"
     },
     {
       "id": "internal_mcp_sse_test",
@@ -988,39 +794,6 @@
       "norm_label": "testsseandobservabilityendpoints()",
       "source_file": "internal/mcp/sse_test.go",
       "source_location": "L20"
-    },
-    {
-      "id": "internal_mcp_wait_message_test",
-      "label": "wait_message_test.go",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "wait_message_test.go",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L1"
-    },
-    {
-      "id": "internal_mcp_wait_message_test_testtool_waitmessage_success",
-      "label": "TestTool_WaitMessage_Success()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "testtool_waitmessage_success()",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L17"
-    },
-    {
-      "id": "internal_mcp_wait_message_test_testtool_waitmessage_timeout",
-      "label": "TestTool_WaitMessage_Timeout()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": "testtool_waitmessage_timeout()",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L95"
     },
     {
       "id": "flake",
@@ -1100,17 +873,6 @@
       "source_file": "go.mod",
       "source_location": "L1",
       "type": "package"
-    },
-    {
-      "id": "scripts_matrix_agent_listener",
-      "label": "matrix_agent_listener.py",
-      "_origin": "ast",
-      "community": 14,
-      "community_name": "matrix_agent_listener.py",
-      "file_type": "code",
-      "norm_label": "matrix_agent_listener.py",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L1"
     },
     {
       "id": "go_type_github_com_mark3labs_mcp_go_mcp_calltoolrequest",
@@ -1201,6 +963,17 @@
       "source_location": "L1"
     },
     {
+      "id": "internal_mcp_server_newserver",
+      "label": "NewServer()",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "Server",
+      "file_type": "code",
+      "norm_label": "newserver()",
+      "source_file": "internal/mcp/server.go",
+      "source_location": "L34"
+    },
+    {
       "id": "internal_metrics_metrics",
       "label": "metrics.go",
       "_origin": "ast",
@@ -1253,7 +1026,7 @@
       "file_type": "code",
       "norm_label": "matrixoperations",
       "source_file": "internal/mcp/interface.go",
-      "source_location": "L41"
+      "source_location": "L31"
     },
     {
       "id": "mcp_server",
@@ -1275,7 +1048,7 @@
       "file_type": "code",
       "norm_label": ".handleaskhuman()",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L382"
+      "source_location": "L370"
     },
     {
       "id": "mcp_server_handlelistrooms",
@@ -1286,7 +1059,7 @@
       "file_type": "code",
       "norm_label": ".handlelistrooms()",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L369"
+      "source_location": "L357"
     },
     {
       "id": "mcp_server_handlesendmessage",
@@ -1297,7 +1070,7 @@
       "file_type": "code",
       "norm_label": ".handlesendmessage()",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L272"
+      "source_location": "L260"
     },
     {
       "id": "mcp_server_handlesendreaction",
@@ -1308,7 +1081,7 @@
       "file_type": "code",
       "norm_label": ".handlesendreaction()",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L306"
+      "source_location": "L294"
     },
     {
       "id": "mcp_server_handleuploadmedia",
@@ -1319,18 +1092,7 @@
       "file_type": "code",
       "norm_label": ".handleuploadmedia()",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L336"
-    },
-    {
-      "id": "mcp_server_handlewaitmessage",
-      "label": ".handleWaitMessage()",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "Server",
-      "file_type": "code",
-      "norm_label": ".handlewaitmessage()",
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L442"
+      "source_location": "L324"
     },
     {
       "id": "mcp_server_httpserverhandler",
@@ -1352,7 +1114,7 @@
       "file_type": "code",
       "norm_label": ".instrumenttool()",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L228"
+      "source_location": "L216"
     },
     {
       "id": "mcp_server_mcpserver",
@@ -1374,7 +1136,7 @@
       "file_type": "code",
       "norm_label": ".registerresources()",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L241"
+      "source_location": "L229"
     },
     {
       "id": "mcp_server_registertools",
@@ -1971,6 +1733,17 @@
       "source_location": "L105"
     },
     {
+      "id": "client_client_close",
+      "label": ".Close()",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Client",
+      "file_type": "code",
+      "norm_label": ".close()",
+      "source_file": "internal/matrix/client/client.go",
+      "source_location": "L374"
+    },
+    {
       "id": "client_client_dispatchincomingevent",
       "label": ".dispatchIncomingEvent()",
       "_origin": "ast",
@@ -1979,7 +1752,7 @@
       "file_type": "code",
       "norm_label": ".dispatchincomingevent()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L83"
+      "source_location": "L81"
     },
     {
       "id": "client_client_dispatchmessage",
@@ -1990,18 +1763,7 @@
       "file_type": "code",
       "norm_label": ".dispatchmessage()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278"
-    },
-    {
-      "id": "client_client_incomingqueue",
-      "label": ".IncomingQueue()",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": ".incomingqueue()",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L468"
+      "source_location": "L255"
     },
     {
       "id": "client_client_initcrypto",
@@ -2012,7 +1774,7 @@
       "file_type": "code",
       "norm_label": ".initcrypto()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L177"
+      "source_location": "L154"
     },
     {
       "id": "client_client_login",
@@ -2023,7 +1785,7 @@
       "file_type": "code",
       "norm_label": ".login()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L205"
+      "source_location": "L182"
     },
     {
       "id": "client_client_onmessage",
@@ -2034,7 +1796,7 @@
       "file_type": "code",
       "norm_label": ".onmessage()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L272"
+      "source_location": "L249"
     },
     {
       "id": "client_client_replyregistry",
@@ -2045,7 +1807,7 @@
       "file_type": "code",
       "norm_label": ".replyregistry()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L463"
+      "source_location": "L399"
     },
     {
       "id": "client_client_syncer",
@@ -2056,7 +1818,7 @@
       "file_type": "code",
       "norm_label": ".syncer()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L473"
+      "source_location": "L404"
     },
     {
       "id": "client_client_syncloop",
@@ -2067,7 +1829,7 @@
       "file_type": "code",
       "norm_label": ".syncloop()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L369"
+      "source_location": "L305"
     },
     {
       "id": "client_client_underlyingclient",
@@ -2078,40 +1840,7 @@
       "file_type": "code",
       "norm_label": ".underlyingclient()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L458"
-    },
-    {
-      "id": "client_incomingqueue",
-      "label": "IncomingQueue",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": "incomingqueue",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L18"
-    },
-    {
-      "id": "client_incomingqueue_dispatch",
-      "label": ".Dispatch()",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": ".dispatch()",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L65"
-    },
-    {
-      "id": "client_incomingwaiter",
-      "label": "incomingWaiter",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": "incomingwaiter",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L11"
+      "source_location": "L394"
     },
     {
       "id": "client_messagehandler",
@@ -2145,17 +1874,6 @@
       "norm_label": "replywaiter",
       "source_file": "internal/matrix/client/reply_registry.go",
       "source_location": "L11"
-    },
-    {
-      "id": "go_type_log_slog_logger",
-      "label": "log/slog.Logger",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": "log/slog.logger",
-      "source_file": "",
-      "source_location": ""
     },
     {
       "id": "go_type_maunium_net_go_mautrix_client",
@@ -2235,28 +1953,6 @@
       "source_location": "L26"
     },
     {
-      "id": "internal_matrix_client_incoming_queue",
-      "label": "incoming_queue.go",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": "incoming_queue.go",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L1"
-    },
-    {
-      "id": "internal_matrix_client_incoming_queue_newincomingqueue",
-      "label": "NewIncomingQueue()",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": "newincomingqueue()",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L27"
-    },
-    {
       "id": "internal_matrix_client_reply_registry",
       "label": "reply_registry.go",
       "_origin": "ast",
@@ -2283,7 +1979,7 @@
       "label": "README.md",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "page",
       "norm_label": "readme.md",
@@ -2291,74 +1987,110 @@
       "source_location": "L1"
     },
     {
+      "id": "readme_1_matrix_send_message",
+      "label": "1. `matrix_send_message`",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1. `matrix_send_message`",
+      "source_file": "README.md",
+      "source_location": "L226"
+    },
+    {
+      "id": "readme_2_matrix_ask_human_human_in_the_loop",
+      "label": "2. `matrix_ask_human` (Human-in-the-Loop)",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2. `matrix_ask_human` (human-in-the-loop)",
+      "source_file": "README.md",
+      "source_location": "L234"
+    },
+    {
+      "id": "readme_3_matrix_send_reaction",
+      "label": "3. `matrix_send_reaction`",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "3. `matrix_send_reaction`",
+      "source_file": "README.md",
+      "source_location": "L256"
+    },
+    {
+      "id": "readme_4_matrix_upload_media",
+      "label": "4. `matrix_upload_media`",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "4. `matrix_upload_media`",
+      "source_file": "README.md",
+      "source_location": "L264"
+    },
+    {
+      "id": "readme_5_matrix_list_rooms",
+      "label": "5. `matrix_list_rooms`",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "5. `matrix_list_rooms`",
+      "source_file": "README.md",
+      "source_location": "L270"
+    },
+    {
       "id": "readme_ai_agent_integration",
       "label": "\ud83e\udd16 AI Agent Integration",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "\ud83e\udd16 ai agent integration",
       "source_file": "README.md",
-      "source_location": "L179"
+      "source_location": "L180"
     },
     {
-      "id": "readme_architecture",
-      "label": "\ud83c\udfdb Architecture",
+      "id": "readme_architecture_overview",
+      "label": "\ud83c\udfdb Architecture Overview",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "\ud83c\udfdb architecture",
+      "norm_label": "\ud83c\udfdb architecture overview",
       "source_file": "README.md",
-      "source_location": "L34"
-    },
-    {
-      "id": "readme_available_mcp_resources",
-      "label": "Available MCP Resources",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "README.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "available mcp resources",
-      "source_file": "README.md",
-      "source_location": "L281"
-    },
-    {
-      "id": "readme_available_mcp_tools",
-      "label": "\ud83d\udee0 Available MCP Tools",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "README.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "\ud83d\udee0 available mcp tools",
-      "source_file": "README.md",
-      "source_location": "L226"
+      "source_location": "L12"
     },
     {
       "id": "readme_claude_desktop_claude_desktop_config_json",
       "label": "Claude Desktop (`claude_desktop_config.json`)",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "claude desktop (`claude_desktop_config.json`)",
       "source_file": "README.md",
-      "source_location": "L181"
+      "source_location": "L182"
     },
     {
-      "id": "readme_config_yaml",
-      "label": "`config.yaml`",
+      "id": "readme_configuration_fields_config_yaml",
+      "label": "Configuration Fields (`config.yaml`)",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "`config.yaml`",
+      "norm_label": "configuration fields (`config.yaml`)",
       "source_file": "README.md",
       "source_location": "L120"
     },
@@ -2367,144 +2099,144 @@
       "label": "\u2699\ufe0f Configuration Reference",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "\u2699\ufe0f configuration reference",
       "source_file": "README.md",
-      "source_location": "L112"
+      "source_location": "L111"
     },
     {
       "id": "readme_cursor_antigravity_pi_agent",
       "label": "Cursor / Antigravity / Pi Agent",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "cursor / antigravity / pi agent",
       "source_file": "README.md",
-      "source_location": "L197"
+      "source_location": "L200"
     },
     {
       "id": "readme_environment_variable_overrides",
       "label": "Environment Variable Overrides",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "environment variable overrides",
       "source_file": "README.md",
-      "source_location": "L165"
+      "source_location": "L166"
     },
     {
-      "id": "readme_highlights",
-      "label": "\u26a1 Highlights",
+      "id": "readme_key_capabilities",
+      "label": "\ud83d\ude80 Key Capabilities",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "\u26a1 highlights",
+      "norm_label": "\ud83d\ude80 key capabilities",
       "source_file": "README.md",
-      "source_location": "L21"
+      "source_location": "L59"
     },
     {
       "id": "readme_license",
       "label": "\ud83d\udcc4 License",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "\ud83d\udcc4 license",
       "source_file": "README.md",
-      "source_location": "L301"
+      "source_location": "L311"
     },
     {
-      "id": "readme_option_1_nix_flake_recommended",
-      "label": "Option 1: Nix Flake (Recommended)",
+      "id": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "label": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "option 1: nix flake (recommended)",
+      "norm_label": "matrix mcp universal gateway (`matrix-mcp-go`)",
       "source_file": "README.md",
-      "source_location": "L83"
+      "source_location": "L1"
+    },
+    {
+      "id": "readme_mcp_tools_reference",
+      "label": "\ud83d\udee0 MCP Tools Reference",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udee0 mcp tools reference",
+      "source_file": "README.md",
+      "source_location": "L224"
+    },
+    {
+      "id": "readme_observability_metrics",
+      "label": "\ud83d\udcca Observability & Metrics",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcca observability & metrics",
+      "source_file": "README.md",
+      "source_location": "L275"
+    },
+    {
+      "id": "readme_option_1_using_nix_flake_recommended",
+      "label": "Option 1: Using Nix Flake (Recommended)",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "option 1: using nix flake (recommended)",
+      "source_file": "README.md",
+      "source_location": "L82"
     },
     {
       "id": "readme_option_2_go_toolchain",
       "label": "Option 2: Go Toolchain",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "option 2: go toolchain",
       "source_file": "README.md",
-      "source_location": "L102"
+      "source_location": "L101"
     },
     {
-      "id": "readme_quickstart",
-      "label": "\ud83d\ude80 Quickstart",
+      "id": "readme_quickstart_installation",
+      "label": "\ud83d\udce6 Quickstart & Installation",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "\ud83d\ude80 quickstart",
+      "norm_label": "\ud83d\udce6 quickstart & installation",
       "source_file": "README.md",
-      "source_location": "L81"
-    },
-    {
-      "id": "readme_remote_network_deployment_sse_mode",
-      "label": "Remote Network Deployment (SSE Mode)",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "README.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "remote network deployment (sse mode)",
-      "source_file": "README.md",
-      "source_location": "L208"
-    },
-    {
-      "id": "readme_response_format",
-      "label": "Response Format",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "README.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "response format",
-      "source_file": "README.md",
-      "source_location": "L258"
+      "source_location": "L80"
     },
     {
       "id": "readme_testing_verification",
       "label": "\ud83e\uddea Testing & Verification",
       "_origin": "ast",
       "community": 6,
-      "community_name": "README.md",
+      "community_name": "Matrix MCP Universal Gateway (`matrix-mcp-go`)",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "\ud83e\uddea testing & verification",
       "source_file": "README.md",
-      "source_location": "L286"
-    },
-    {
-      "id": "readme_universal_autonomous_agent_loop_pattern_matrix_wait_message",
-      "label": "Universal Autonomous Agent Loop Pattern (`matrix_wait_message`)",
-      "_origin": "ast",
-      "community": 6,
-      "community_name": "README.md",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "universal autonomous agent loop pattern (`matrix_wait_message`)",
-      "source_file": "README.md",
-      "source_location": "L237"
+      "source_location": "L292"
     },
     {
       "id": "format_matrixhtmlrenderer",
@@ -2920,18 +2652,6 @@
       "norm_label": "phase 6: reliability, dual-transport & observability",
       "source_file": "Plan.md",
       "source_location": "L45"
-    },
-    {
-      "id": "plan_phase_7_universal_agent_inbound_polling_matrix_wait_message",
-      "label": "Phase 7: Universal Agent Inbound Polling (`matrix_wait_message`)",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "Matrix MCP Universal Gateway - Project Plan",
-      "file_type": "document",
-      "node_kind": "heading",
-      "norm_label": "phase 7: universal agent inbound polling (`matrix_wait_message`)",
-      "source_file": "Plan.md",
-      "source_location": "L52"
     }
   ],
   "links": [
@@ -2944,7 +2664,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L173",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -2956,7 +2676,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L90",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -2968,19 +2688,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L300",
-      "weight": 1.0
-    },
-    {
-      "source": "client_client_waitforincomingmessage",
-      "target": "client_client_settyping",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L357",
+      "source_location": "L277",
       "weight": 1.0
     },
     {
@@ -3316,7 +3024,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -3328,7 +3036,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0
     },
     {
@@ -3340,7 +3048,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L71",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -3352,7 +3060,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L77",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -3449,78 +3157,6 @@
       "context": "call",
       "source_file": "internal/matrix/client/crypto_test.go",
       "source_location": "L35",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_rbacanddeduplication",
-      "target": "internal_logger_logger_setup",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L195",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_rbacanddeduplication",
-      "target": "internal_matrix_client_client_new",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L196",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_successandautoack",
-      "target": "internal_logger_logger_setup",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L73",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_successandautoack",
-      "target": "internal_matrix_client_client_new",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L74",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_timeout",
-      "target": "internal_logger_logger_setup",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L165",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_timeout",
-      "target": "internal_matrix_client_client_new",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -3640,7 +3276,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L124",
+      "source_location": "L101",
       "weight": 1.0
     },
     {
@@ -3652,7 +3288,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L125",
+      "source_location": "L102",
       "weight": 1.0
     },
     {
@@ -3664,7 +3300,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L172",
+      "source_location": "L149",
       "weight": 1.0
     },
     {
@@ -3676,7 +3312,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L173",
+      "source_location": "L150",
       "weight": 1.0
     },
     {
@@ -3705,18 +3341,6 @@
     },
     {
       "source": "internal_mcp_server_test_setuptestserver",
-      "target": "internal_mcp_server_newserver",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L100",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_server_test_setuptestserver",
       "target": "internal_logger_logger_setup",
       "relation": "calls",
       "_origin": "ast",
@@ -3724,7 +3348,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L99",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "internal_mcp_server_test_setuptestserver",
+      "target": "internal_mcp_server_newserver",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "internal/mcp/server_test.go",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -3736,7 +3372,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L338",
+      "source_location": "L323",
       "weight": 1.0
     },
     {
@@ -3748,7 +3384,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L274",
+      "source_location": "L259",
       "weight": 1.0
     },
     {
@@ -3760,7 +3396,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L294",
+      "source_location": "L279",
       "weight": 1.0
     },
     {
@@ -3772,7 +3408,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L130",
+      "source_location": "L115",
       "weight": 1.0
     },
     {
@@ -3784,7 +3420,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L153",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -3796,7 +3432,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L186",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -3808,7 +3444,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L229",
+      "source_location": "L214",
       "weight": 1.0
     },
     {
@@ -3820,7 +3456,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L256",
+      "source_location": "L241",
       "weight": 1.0
     },
     {
@@ -3872,54 +3508,6 @@
       "weight": 1.0
     },
     {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_success",
-      "target": "internal_logger_logger_setup",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L42",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_success",
-      "target": "internal_mcp_server_newserver",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L43",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_timeout",
-      "target": "internal_logger_logger_setup",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L107",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_timeout",
-      "target": "internal_mcp_server_newserver",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L108",
-      "weight": 1.0
-    },
-    {
       "source": "mcp_server_handleaskhuman",
       "target": "internal_format_format_formatmessage",
       "relation": "calls",
@@ -3928,7 +3516,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L400",
+      "source_location": "L388",
       "weight": 1.0
     },
     {
@@ -3940,7 +3528,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L407",
+      "source_location": "L395",
       "weight": 1.0
     },
     {
@@ -3952,7 +3540,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L285",
+      "source_location": "L273",
       "weight": 1.0
     },
     {
@@ -3964,7 +3552,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L292",
+      "source_location": "L280",
       "weight": 1.0
     },
     {
@@ -3976,7 +3564,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L235",
+      "source_location": "L223",
       "weight": 1.0
     },
     {
@@ -4013,186 +3601,6 @@
       "context": "call",
       "source_file": "internal/mcp/server.go",
       "source_location": "L140",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_main",
-      "target": "scripts_matrix_agent_listener_load_config",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L102",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_main",
-      "target": "scripts_matrix_agent_listener_matrix_request",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L113",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_main",
-      "target": "scripts_matrix_agent_listener_send_reaction",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L159",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_main",
-      "target": "scripts_matrix_agent_listener_set_typing",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L162",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_main",
-      "target": "scripts_matrix_agent_listener_ask_pi",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L166",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_main",
-      "target": "scripts_matrix_agent_listener_send_message",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L170",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_send_message",
-      "target": "scripts_matrix_agent_listener_matrix_request",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L81",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_send_reaction",
-      "target": "scripts_matrix_agent_listener_matrix_request",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L63",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener_set_typing",
-      "target": "scripts_matrix_agent_listener_matrix_request",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L51",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue",
-      "target": "go_type_sync_rwmutex",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L19",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue",
-      "target": "client_incomingwaiter",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue",
-      "target": "go_type_maunium_net_go_mautrix_id_eventid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L22",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingwaiter",
-      "target": "go_type_maunium_net_go_mautrix_id_roomid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingwaiter",
-      "target": "go_type_maunium_net_go_mautrix_id_eventid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L13",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingwaiter",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -4401,7 +3809,7 @@
     },
     {
       "source": "internal_matrix_client_client_go_client_client",
-      "target": "client_incomingqueue",
+      "target": "internal_matrix_rbac_rbac_go_rbac_authorizer",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -4413,18 +3821,6 @@
     },
     {
       "source": "internal_matrix_client_client_go_client_client",
-      "target": "internal_matrix_rbac_rbac_go_rbac_authorizer",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L35",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_client_go_client_client",
       "target": "go_type_log_slog_logger",
       "relation": "references",
       "_origin": "ast",
@@ -4432,7 +3828,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L36",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -4557,7 +3953,7 @@
     },
     {
       "source": "mcp_mockmatrixops",
-      "target": "internal_mcp_interface_go_mcp_humanreply",
+      "target": "go_type_context_context",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -4569,18 +3965,6 @@
     },
     {
       "source": "mcp_mockmatrixops",
-      "target": "go_type_context_context",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "field",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L28",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_mockmatrixops",
       "target": "go_type_maunium_net_go_mautrix_id_eventid",
       "relation": "references",
       "_origin": "ast",
@@ -4588,7 +3972,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -4600,7 +3984,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -4612,19 +3996,19 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
       "source": "mcp_mockmatrixops",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
+      "target": "internal_mcp_interface_go_mcp_humanreply",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -4708,7 +4092,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L83",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -4720,7 +4104,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L83",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -4732,7 +4116,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -4744,7 +4128,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -4756,7 +4140,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L177",
+      "source_location": "L154",
       "weight": 1.0
     },
     {
@@ -4780,7 +4164,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L205",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -4792,7 +4176,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L272",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -4888,7 +4272,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -4900,7 +4284,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -4912,7 +4296,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -4924,7 +4308,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L369",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -4960,7 +4344,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -4972,7 +4356,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -4984,7 +4368,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -4996,91 +4380,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
-      "weight": 1.0
-    },
-    {
-      "source": "client_client_waitforincomingmessage",
-      "target": "go_type_context_context",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
-      "weight": 1.0
-    },
-    {
-      "source": "client_client_waitforincomingmessage",
-      "target": "go_type_maunium_net_go_mautrix_id_eventid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
-      "weight": 1.0
-    },
-    {
-      "source": "client_client_waitforincomingmessage",
-      "target": "go_type_maunium_net_go_mautrix_id_roomid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
-      "weight": 1.0
-    },
-    {
-      "source": "client_client_waitforincomingmessage",
-      "target": "go_type_time_duration",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue_dispatch",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L65",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue_register",
-      "target": "go_type_maunium_net_go_mautrix_id_eventid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L41",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue_register",
-      "target": "go_type_maunium_net_go_mautrix_id_roomid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L41",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -5536,7 +4836,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -5548,7 +4848,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -5597,42 +4897,6 @@
       "context": "parameter_type",
       "source_file": "internal/matrix/client/crypto_test.go",
       "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_rbacanddeduplication",
-      "target": "go_type_testing_t",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L183",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_successandautoack",
-      "target": "go_type_testing_t",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L21",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_timeout",
-      "target": "go_type_testing_t",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L154",
       "weight": 1.0
     },
     {
@@ -5728,7 +4992,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L105",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -5740,7 +5004,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L162",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -5788,7 +5052,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L103",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -5800,7 +5064,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L103",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -5812,7 +5076,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L92",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -5824,7 +5088,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L92",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -5836,7 +5100,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L336",
+      "source_location": "L321",
       "weight": 1.0
     },
     {
@@ -5848,7 +5112,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L264",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -5860,7 +5124,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L115",
+      "source_location": "L100",
       "weight": 1.0
     },
     {
@@ -5872,7 +5136,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L177",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -5884,7 +5148,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L213",
+      "source_location": "L198",
       "weight": 1.0
     },
     {
@@ -5909,30 +5173,6 @@
       "context": "parameter_type",
       "source_file": "internal/mcp/sse_test.go",
       "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_success",
-      "target": "go_type_testing_t",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_timeout",
-      "target": "go_type_testing_t",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -6128,54 +5368,6 @@
       "weight": 1.0
     },
     {
-      "source": "mcp_hitlmockoperations_waitforincomingmessage",
-      "target": "go_type_context_context",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L82",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_hitlmockoperations_waitforincomingmessage",
-      "target": "go_type_maunium_net_go_mautrix_id_eventid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L82",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_hitlmockoperations_waitforincomingmessage",
-      "target": "go_type_maunium_net_go_mautrix_id_roomid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L82",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_hitlmockoperations_waitforincomingmessage",
-      "target": "go_type_time_duration",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L82",
-      "weight": 1.0
-    },
-    {
       "source": "mcp_mockmatrixops_listjoinedrooms",
       "target": "go_type_context_context",
       "relation": "references",
@@ -6184,7 +5376,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -6196,7 +5388,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -6208,7 +5400,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -6220,7 +5412,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -6232,7 +5424,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -6244,7 +5436,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -6256,7 +5448,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -6268,7 +5460,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L61",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -6280,7 +5472,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L61",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -6292,7 +5484,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L61",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -6304,7 +5496,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -6316,7 +5508,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -6328,7 +5520,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L68",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -6340,7 +5532,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L68",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -6352,7 +5544,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L68",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -6364,55 +5556,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L68",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_mockmatrixops_waitforincomingmessage",
-      "target": "go_type_context_context",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L78",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_mockmatrixops_waitforincomingmessage",
-      "target": "go_type_maunium_net_go_mautrix_id_eventid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L78",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_mockmatrixops_waitforincomingmessage",
-      "target": "go_type_maunium_net_go_mautrix_id_roomid",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L78",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_mockmatrixops_waitforincomingmessage",
-      "target": "go_type_time_duration",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L78",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -6424,7 +5568,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L382",
+      "source_location": "L370",
       "weight": 1.0
     },
     {
@@ -6436,7 +5580,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L382",
+      "source_location": "L370",
       "weight": 1.0
     },
     {
@@ -6448,7 +5592,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L369",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -6460,7 +5604,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L369",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -6472,7 +5616,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L272",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -6484,7 +5628,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L272",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -6496,7 +5640,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L306",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -6508,7 +5652,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L306",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -6520,7 +5664,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L336",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -6532,31 +5676,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L336",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_server_handlewaitmessage",
-      "target": "go_type_context_context",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L442",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_server_handlewaitmessage",
-      "target": "go_type_github_com_mark3labs_mcp_go_mcp_calltoolrequest",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "parameter_type",
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L442",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -6752,18 +5872,6 @@
       "weight": 1.0
     },
     {
-      "source": "client_client_incomingqueue",
-      "target": "client_incomingqueue",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "return_type",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L468",
-      "weight": 1.0
-    },
-    {
       "source": "client_client_listjoinedrooms",
       "target": "internal_mcp_interface_go_mcp_roomsummary",
       "relation": "references",
@@ -6784,7 +5892,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L463",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -6820,7 +5928,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L473",
+      "source_location": "L404",
       "weight": 1.0
     },
     {
@@ -6832,7 +5940,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L458",
+      "source_location": "L394",
       "weight": 1.0
     },
     {
@@ -6856,31 +5964,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
-      "weight": 1.0
-    },
-    {
-      "source": "client_client_waitforincomingmessage",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "return_type",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue_register",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "return_type",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L41",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -7048,19 +6132,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L40",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_queue_newincomingqueue",
-      "target": "client_incomingqueue",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "return_type",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L27",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -7120,7 +6192,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L92",
+      "source_location": "L77",
       "weight": 1.0
     },
     {
@@ -7184,18 +6256,6 @@
       "weight": 1.0
     },
     {
-      "source": "mcp_hitlmockoperations_waitforincomingmessage",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "return_type",
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L82",
-      "weight": 1.0
-    },
-    {
       "source": "mcp_mockmatrixops_listjoinedrooms",
       "target": "internal_mcp_interface_go_mcp_roomsummary",
       "relation": "references",
@@ -7204,7 +6264,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -7216,7 +6276,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -7228,7 +6288,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -7240,7 +6300,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -7252,19 +6312,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L68",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_mockmatrixops_waitforincomingmessage",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "return_type",
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L78",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -7276,7 +6324,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L382",
+      "source_location": "L370",
       "weight": 1.0
     },
     {
@@ -7288,7 +6336,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L369",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -7300,7 +6348,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L272",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -7312,7 +6360,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L306",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -7324,19 +6372,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L336",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_server_handlewaitmessage",
-      "target": "go_type_github_com_mark3labs_mcp_go_mcp_calltoolresult",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "return_type",
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L442",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -7360,7 +6396,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/mcp/server.go",
-      "source_location": "L228",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -7735,7 +6771,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -7780,72 +6816,6 @@
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/crypto_test.go",
       "source_location": "L15",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_queue",
-      "target": "client_incomingwaiter",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L11",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_queue",
-      "target": "client_incomingqueue",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L18",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_queue",
-      "target": "internal_matrix_client_incoming_queue_newincomingqueue",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L27",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test",
-      "target": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_timeout",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L154",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test",
-      "target": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_rbacanddeduplication",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L183",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_incoming_test",
-      "target": "internal_matrix_client_incoming_test_testclient_waitforincomingmessage_successandautoack",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_test.go",
-      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -7993,24 +6963,13 @@
     },
     {
       "source": "internal_mcp_hitl_test",
-      "target": "internal_mcp_hitl_test_testtool_askhuman_success",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L105",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_hitl_test",
       "target": "internal_mcp_hitl_test_testtool_askhuman_timeout",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L162",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -8022,6 +6981,17 @@
       "confidence_score": 1.0,
       "source_file": "internal/mcp/hitl_test.go",
       "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "internal_mcp_hitl_test",
+      "target": "internal_mcp_hitl_test_testtool_askhuman_success",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "internal/mcp/hitl_test.go",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -8037,7 +7007,7 @@
     },
     {
       "source": "internal_mcp_interface",
-      "target": "internal_mcp_interface_go_mcp_incomingmessage",
+      "target": "internal_mcp_interface_go_mcp_roomsummary",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8048,24 +7018,13 @@
     },
     {
       "source": "internal_mcp_interface",
-      "target": "internal_mcp_interface_go_mcp_roomsummary",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/interface.go",
-      "source_location": "L33",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_interface",
       "target": "mcp_matrixoperations",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/interface.go",
-      "source_location": "L41",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -8092,24 +7051,13 @@
     },
     {
       "source": "internal_mcp_server_test",
-      "target": "internal_mcp_server_test_extractresulttext",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L103",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_server_test",
       "target": "internal_mcp_server_test_testtool_sendmessage",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L115",
+      "source_location": "L100",
       "weight": 1.0
     },
     {
@@ -8120,7 +7068,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L177",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "internal_mcp_server_test",
+      "target": "internal_mcp_server_test_testtool_uploadmedia",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "internal/mcp/server_test.go",
+      "source_location": "L198",
       "weight": 1.0
     },
     {
@@ -8136,24 +7095,13 @@
     },
     {
       "source": "internal_mcp_server_test",
-      "target": "internal_mcp_server_test_testtool_uploadmedia",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L213",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_server_test",
       "target": "internal_mcp_server_test_testtool_listroomsandresource",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L264",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -8164,7 +7112,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L336",
+      "source_location": "L321",
       "weight": 1.0
     },
     {
@@ -8175,7 +7123,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L92",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "internal_mcp_server_test",
+      "target": "internal_mcp_server_test_extractresulttext",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "internal/mcp/server_test.go",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -8198,28 +7157,6 @@
       "confidence_score": 1.0,
       "source_file": "internal/mcp/sse_test.go",
       "source_location": "L20",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test",
-      "target": "internal_mcp_wait_message_test_testtool_waitmessage_success",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test",
-      "target": "internal_mcp_wait_message_test_testtool_waitmessage_timeout",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L95",
       "weight": 1.0
     },
     {
@@ -8323,17 +7260,6 @@
     },
     {
       "source": "plan_matrix_mcp_universal_gateway_project_plan",
-      "target": "plan_phase_7_universal_agent_inbound_polling_matrix_wait_message",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Plan.md",
-      "source_location": "L52",
-      "weight": 1.0
-    },
-    {
-      "source": "plan_matrix_mcp_universal_gateway_project_plan",
       "target": "plan_phase_1_project_scaffolding_configuration",
       "relation": "contains",
       "_origin": "ast",
@@ -8345,90 +7271,13 @@
     },
     {
       "source": "readme",
-      "target": "readme_configuration_reference",
+      "target": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L112",
-      "weight": 1.0
-    },
-    {
-      "source": "readme",
-      "target": "readme_ai_agent_integration",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L179",
-      "weight": 1.0
-    },
-    {
-      "source": "readme",
-      "target": "readme_highlights",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L21",
-      "weight": 1.0
-    },
-    {
-      "source": "readme",
-      "target": "readme_available_mcp_tools",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L226",
-      "weight": 1.0
-    },
-    {
-      "source": "readme",
-      "target": "readme_testing_verification",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L286",
-      "weight": 1.0
-    },
-    {
-      "source": "readme",
-      "target": "readme_license",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L301",
-      "weight": 1.0
-    },
-    {
-      "source": "readme",
-      "target": "readme_architecture",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L34",
-      "weight": 1.0
-    },
-    {
-      "source": "readme",
-      "target": "readme_quickstart",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L81",
+      "source_location": "L1",
       "weight": 1.0
     },
     {
@@ -8439,7 +7288,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L181",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -8450,45 +7299,12 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L197",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_ai_agent_integration",
-      "target": "readme_remote_network_deployment_sse_mode",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L208",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_available_mcp_tools",
-      "target": "readme_universal_autonomous_agent_loop_pattern_matrix_wait_message",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L237",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_available_mcp_tools",
-      "target": "readme_available_mcp_resources",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L281",
+      "source_location": "L200",
       "weight": 1.0
     },
     {
       "source": "readme_configuration_reference",
-      "target": "readme_config_yaml",
+      "target": "readme_configuration_fields_config_yaml",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8505,117 +7321,183 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L165",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
-      "source": "readme_quickstart",
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_configuration_reference",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_architecture_overview",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_ai_agent_integration",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_mcp_tools_reference",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L224",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_observability_metrics",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L275",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_testing_verification",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L292",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_license",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L311",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_key_capabilities",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_matrix_mcp_universal_gateway_matrix_mcp_go",
+      "target": "readme_quickstart_installation",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_mcp_tools_reference",
+      "target": "readme_1_matrix_send_message",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_mcp_tools_reference",
+      "target": "readme_2_matrix_ask_human_human_in_the_loop",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L234",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_mcp_tools_reference",
+      "target": "readme_3_matrix_send_reaction",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_mcp_tools_reference",
+      "target": "readme_4_matrix_upload_media",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L264",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_mcp_tools_reference",
+      "target": "readme_5_matrix_list_rooms",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L270",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_quickstart_installation",
       "target": "readme_option_2_go_toolchain",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L102",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_quickstart",
-      "target": "readme_option_1_nix_flake_recommended",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L83",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_universal_autonomous_agent_loop_pattern_matrix_wait_message",
-      "target": "readme_response_format",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L258",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener",
-      "target": "scripts_matrix_agent_listener_main",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/matrix_agent_listener.py",
       "source_location": "L101",
       "weight": 1.0
     },
     {
-      "source": "scripts_matrix_agent_listener",
-      "target": "scripts_matrix_agent_listener_load_config",
+      "source": "readme_quickstart_installation",
+      "target": "readme_option_1_using_nix_flake_recommended",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener",
-      "target": "scripts_matrix_agent_listener_matrix_request",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L34",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener",
-      "target": "scripts_matrix_agent_listener_set_typing",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L49",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener",
-      "target": "scripts_matrix_agent_listener_send_reaction",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L53",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener",
-      "target": "scripts_matrix_agent_listener_send_message",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L65",
-      "weight": 1.0
-    },
-    {
-      "source": "scripts_matrix_agent_listener",
-      "target": "scripts_matrix_agent_listener_ask_pi",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "scripts/matrix_agent_listener.py",
-      "source_location": "L83",
+      "source_file": "README.md",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -8660,28 +7542,6 @@
       "confidence_score": 1.0,
       "source_file": "flake.nix",
       "source_location": "L31",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue",
-      "target": "client_incomingqueue_register",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L41",
-      "weight": 1.0
-    },
-    {
-      "source": "client_incomingqueue",
-      "target": "client_incomingqueue_dispatch",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L65",
       "weight": 1.0
     },
     {
@@ -8857,7 +7717,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L177",
+      "source_location": "L154",
       "weight": 1.0
     },
     {
@@ -8868,7 +7728,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L205",
+      "source_location": "L182",
       "weight": 1.0
     },
     {
@@ -8879,7 +7739,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L272",
+      "source_location": "L249",
       "weight": 1.0
     },
     {
@@ -8890,7 +7750,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278",
+      "source_location": "L255",
       "weight": 1.0
     },
     {
@@ -8901,7 +7761,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -8912,18 +7772,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_client_go_client_client",
-      "target": "client_client_waitforincomingmessage",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
+      "source_location": "L268",
       "weight": 1.0
     },
     {
@@ -8934,7 +7783,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L369",
+      "source_location": "L305",
       "weight": 1.0
     },
     {
@@ -8945,7 +7794,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L438",
+      "source_location": "L374",
       "weight": 1.0
     },
     {
@@ -8956,7 +7805,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L458",
+      "source_location": "L394",
       "weight": 1.0
     },
     {
@@ -8967,18 +7816,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L463",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_client_go_client_client",
-      "target": "client_client_incomingqueue",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L468",
+      "source_location": "L399",
       "weight": 1.0
     },
     {
@@ -8989,7 +7827,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L473",
+      "source_location": "L404",
       "weight": 1.0
     },
     {
@@ -9000,7 +7838,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L83",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -9224,17 +8062,6 @@
       "weight": 1.0
     },
     {
-      "source": "mcp_hitlmockoperations",
-      "target": "mcp_hitlmockoperations_waitforincomingmessage",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L82",
-      "weight": 1.0
-    },
-    {
       "source": "mcp_mockmatrixops",
       "target": "mcp_mockmatrixops_sendmessage",
       "relation": "method",
@@ -9242,7 +8069,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -9253,7 +8080,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -9264,7 +8091,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L45",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -9275,7 +8102,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -9286,7 +8113,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L61",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -9297,18 +8124,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server_test.go",
-      "source_location": "L68",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_mockmatrixops",
-      "target": "mcp_mockmatrixops_waitforincomingmessage",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/server_test.go",
-      "source_location": "L78",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -9363,7 +8179,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server.go",
-      "source_location": "L228",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
@@ -9374,7 +8190,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server.go",
-      "source_location": "L241",
+      "source_location": "L229",
       "weight": 1.0
     },
     {
@@ -9385,7 +8201,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server.go",
-      "source_location": "L272",
+      "source_location": "L260",
       "weight": 1.0
     },
     {
@@ -9396,7 +8212,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server.go",
-      "source_location": "L306",
+      "source_location": "L294",
       "weight": 1.0
     },
     {
@@ -9407,7 +8223,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server.go",
-      "source_location": "L336",
+      "source_location": "L324",
       "weight": 1.0
     },
     {
@@ -9418,7 +8234,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server.go",
-      "source_location": "L369",
+      "source_location": "L357",
       "weight": 1.0
     },
     {
@@ -9429,18 +8245,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/mcp/server.go",
-      "source_location": "L382",
-      "weight": 1.0
-    },
-    {
-      "source": "mcp_server",
-      "target": "mcp_server_handlewaitmessage",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L442",
+      "source_location": "L370",
       "weight": 1.0
     },
     {
@@ -9497,19 +8302,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L69",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_matrix_client_client_new",
-      "target": "internal_matrix_client_incoming_queue_newincomingqueue",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "context": "call",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L70",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -9521,7 +8314,7 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L148",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -9533,34 +8326,10 @@
       "confidence_score": 0.85,
       "context": "call",
       "source_file": "internal/mcp/hitl_test.go",
-      "source_location": "L196",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_success",
-      "target": "internal_mcp_server_test_extractresulttext",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "context": "call",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L66",
-      "weight": 1.0
-    },
-    {
-      "source": "internal_mcp_wait_message_test_testtool_waitmessage_timeout",
-      "target": "internal_mcp_server_test_extractresulttext",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "context": "call",
-      "source_file": "internal/mcp/wait_message_test.go",
-      "source_location": "L128",
+      "source_location": "L173",
       "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "2bc31ce6465043f5d1f45082f032f59c027e73ef"
+  "built_at_commit": "495e5fbe7e4ab9cb6a08242680c682826438008d"
 }
