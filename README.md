@@ -283,6 +283,24 @@ When timed out (clean return allowing agent turn renewal):
 
 ---
 
+## 🤖 Agent Integrations & Bridges
+
+In addition to the standard MCP server, `matrix-mcp-go` includes first-class integrations for interactive AI coding harnesses:
+
+### 1. Pi Coding Agent Native Extension (`integrations/pi/`)
+A dedicated high-performance extension for [Pi Coding Agent](https://github.com/earendil-works/pi-coding-agent):
+- **Zero Token Overhead**: Directly injects Matrix messages into Pi via `pi.sendUserMessage()` without bloated subagent prompts.
+- **Live Progress Reporting with Cooldown**: Hooks `tool_execution_start` (`bash`, `read`, `write`, `edit`) and `turn_start` to announce background activities with a debounced cooldown (default: 5s).
+- **In-Place Live Updates (`m.replace`)**: Updates progress in-place via MSC2676 without spamming notifications.
+- **BiDi RTL/LTR & Sanitization**: Strips thinking tags (`<think>...</think>`), wraps Persian in RTL and code blocks in LTR.
+- **Matrix Slash Commands**: Remote control via `/status`, `/new`, `/model`, `/thinking`, `/compact`, `/help`.
+- See [`integrations/pi/README.md`](integrations/pi/README.md) for full setup instructions.
+
+### 2. Standalone Agent Polling Daemon (`scripts/matrix_agent_listener.py`)
+A lightweight, zero-dependency Python daemon that listens for Matrix events, reacts with `👀`, invokes a local CLI agent (`pi -p`), and replies with `✅`.
+
+---
+
 ## 🧪 Testing & Verification
 
 ```bash

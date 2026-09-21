@@ -60,9 +60,9 @@
     "semantic_hash": ""
   },
   "internal/matrix/client/client.go": {
-    "mtime": 1790033373.6268973,
-    "seen": 1790035030.1002214,
-    "ast_hash": "22b324d6665fc4f28ab5a8c06ca124b9",
+    "mtime": 1790017171.7672803,
+    "seen": 1790017930.3615906,
+    "ast_hash": "513bb54949829f5cf56bd7310c8aa52b",
     "semantic_hash": ""
   },
   "internal/matrix/client/client_test.go": {
@@ -78,9 +78,9 @@
     "semantic_hash": ""
   },
   "internal/matrix/client/operations.go": {
-    "mtime": 1790033530.3614097,
-    "seen": 1790035030.1002293,
-    "ast_hash": "6131809f5f73cd7cc4962b1fe36d3ef0",
+    "mtime": 1790014523.24528,
+    "seen": 1790015428.3068814,
+    "ast_hash": "22297ce1cc8b1c6f22f6947621915a54",
     "semantic_hash": ""
   },
   "internal/matrix/client/presence.go": {
@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790035025.279521,
-    "seen": 1790035030.1002579,
-    "ast_hash": "26a777800d44014da38320c7ce854ee0",
+    "mtime": 1790017429.6732492,
+    "seen": 1790017930.3616235,
+    "ast_hash": "ec24a2258361ddcf880f8dd6eb1a2cbd",
     "semantic_hash": ""
   },
   "config.example.yaml": {
@@ -213,24 +213,6 @@
     "mtime": 1790015790.6482365,
     "seen": 1790017930.3616261,
     "ast_hash": "b90dcb628126e3ac7d6d2fce30c81847",
-    "semantic_hash": ""
-  },
-  "integrations/pi/matrix-bridge.ts": {
-    "mtime": 1790035015.5243344,
-    "seen": 1790035030.10021,
-    "ast_hash": "63cfd3547fc76fbf294002fced162b03",
-    "semantic_hash": ""
-  },
-  "scripts/antigravity_bridge.py": {
-    "mtime": 1790033534.560474,
-    "seen": 1790035030.1002543,
-    "ast_hash": "16aaad9c7c92c365f4ba0ec0b662d177",
-    "semantic_hash": ""
-  },
-  "integrations/pi/README.md": {
-    "mtime": 1790035019.4088142,
-    "seen": 1790035030.10026,
-    "ast_hash": "fd5d6ade4db78d3c3e16cdca980736d3",
     "semantic_hash": ""
   }
 }
