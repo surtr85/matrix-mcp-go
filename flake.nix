@@ -31,6 +31,7 @@
           version = "0.1.0";
           src = ./.;
           vendorHash = null;
+          tags = [ "goolm" ];
           CGO_ENABLED = 1;
           buildInputs = with pkgs; [ sqlite ];
           nativeBuildInputs = with pkgs; [ pkg-config ];

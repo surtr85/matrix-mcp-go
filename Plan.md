@@ -11,11 +11,11 @@ It is structured as an iterative, phase-by-phase checklist for AI agents to foll
 - [x] **CHECKPOINT:** Run `go build` and ensure the binary compiles via `nix develop`.
 
 ## Phase 2: Matrix Core Engine (Powered by mautrix-go)
-- [ ] Setup embedded SQLite database for `mautrix-go` state persistence (crypto, sync tokens, room state).
-- [ ] Implement Matrix Client initialization and login (using Access Token/Password from config).
-- [ ] Implement `/sync` loop with exponential backoff, retry mechanisms, and error handling.
-- [ ] Enable E2EE (Olm/Megolm) support in the client for encrypted rooms.
-- [ ] **CHECKPOINT:** Test matrix login and basic message reception (log to stdout). Run `go test` for client wrapper.
+- [x] Setup embedded SQLite database for `mautrix-go` state persistence (crypto, sync tokens, room state).
+- [x] Implement Matrix Client initialization and login (using Access Token/Password from config).
+- [x] Implement `/sync` loop with exponential backoff, retry mechanisms, and error handling.
+- [x] Enable E2EE (Olm/Megolm) support in the client for encrypted rooms.
+- [x] **CHECKPOINT:** Test matrix login and basic message reception (log to stdout). Run `go test` for client wrapper.
 
 ## Phase 3: The Formatting Engine (Markdown & RTL)
 - [ ] Integrate `goldmark` (or similar fast parser) for Markdown parsing.
