@@ -1,15 +1,37 @@
-# Matrix MCP Universal Gateway (`matrix-mcp-go`)
+<p align="center">
+  <img src="assets/banner.png" alt="Matrix MCP Go Banner" width="100%" />
+</p>
 
-[![Go Version](https://img.shields.io/badge/go-1.26+-00ADD8?style=flat&logo=go)](https://golang.org)
-[![Nix Flake](https://img.shields.io/badge/nix-flake-5277C3?style=flat&logo=nixos)](flake.nix)
-[![MCP Protocol](https://img.shields.io/badge/MCP-2024--11--05-blueviolet)](https://modelcontextprotocol.io)
-[![Matrix E2EE](https://img.shields.io/badge/Matrix-E2EE%20(Pure%20Go)-008080?style=flat&logo=matrix)](https://matrix.org)
+<p align="center">
+  <a href="https://golang.org"><img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go Version" /></a>
+  <a href="https://matrix.org"><img src="https://img.shields.io/badge/Matrix-Pure%20Go%20E2EE-008080?style=for-the-badge&logo=matrix&logoColor=white" alt="Matrix E2EE" /></a>
+  <a href="flake.nix"><img src="https://img.shields.io/badge/Nix-Flake%20Ready-5277C3?style=for-the-badge&logo=nixos&logoColor=white" alt="Nix Flake" /></a>
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Standard%20Compliant-purple?style=for-the-badge" alt="MCP Protocol" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" /></a>
+</p>
 
-A high-performance, universal Matrix MCP (Model Context Protocol) server implemented in Go. Connects AI agents (Claude Desktop, Pi, Cursor, Antigravity, Devin, etc.) directly to the decentralized Matrix communications network with full end-to-end encryption (E2EE), bidirectional text formatting (RTL/LTR), human-in-the-loop workflows, and dual transports (Stdio & HTTP/SSE).
+<p align="center">
+  <strong>Universal, high-performance Model Context Protocol (MCP) server bridging autonomous AI agents to the decentralized Matrix network.</strong>
+  <br />
+  <em>Zero hardcoded secrets &bull; Pure-Go End-to-End Encryption &bull; AST BiDi Formatting &bull; Human-in-the-Loop &bull; Dual Stdio/SSE Transport</em>
+</p>
 
 ---
 
-## 🏛 Architecture Overview
+## ⚡ Highlights
+
+- 🔐 **Pure-Go E2EE Cryptography:** Powered by `mautrix-go` with pure-Go Olm/Megolm (`-tags goolm`). Zero vulnerable legacy C `libolm` shared library dependencies.
+- 💬 **Human-in-the-Loop (`matrix_ask_human`):** Agents can pause execution, prompt an authorized human over a Matrix thread, maintain active typing indicators, and automatically resume once answered.
+- 🌐 **AST-Level Bidirectional (BiDi) Markdown:** Seamless Arabic/Persian RTL and English LTR rendering using Goldmark AST transformation. Fenced code blocks and identifiers remain strictly LTR.
+- 🔄 **Dual Transport Architecture:** Run locally as an agent subprocess via **Stdio** (with guaranteed JSON-RPC isolation on `os.Stdout`) or deploy as a persistent remote network daemon via **HTTP/SSE**.
+- 🛡️ **Role-Based Access Control (RBAC):** Built-in sender allowlisting to protect agents against prompt injection and malicious bot manipulation.
+- 💾 **Embedded Persistence:** SQLite storage in WAL mode preserves sync batch tokens, crypto sessions, and device credentials across reboots without creating ghost sessions.
+- 📊 **Prometheus Observability:** Native `/metrics` endpoint tracking tool latency histograms, message counts, and sync loop throughput.
+- ❄️ **Hermetic Nix Packaging:** First-class `flake.nix` providing instant zero-install execution (`nix run`) and reproducible builds (`nix build`).
+
+---
+
+## 🏛 Architecture
 
 ```
 +-------------------------------------------------------------------------------+
@@ -24,7 +46,7 @@ A high-performance, universal Matrix MCP (Model Context Protocol) server impleme
 |                                                                               |
 |  +-------------------------------------------------------------------------+  |
 |  |                           MCP Server Layer                              |  |
-|  |   - Stdio Transport (Log-isolated, stdin/stdout framed)                 |  |
+|  |   - Stdio Transport (Log-isolated to stderr, clean stdout JSON-RPC)     |  |
 |  |   - HTTP/SSE Server (/sse, /message, /metrics, /healthz)                |  |
 |  |   - Tools: send_message, ask_human, reaction, upload, list_rooms        |  |
 |  |   - Resources: matrix://rooms/joined                                    |  |
@@ -39,7 +61,7 @@ A high-performance, universal Matrix MCP (Model Context Protocol) server impleme
 |                                     |                                         |
 |  +-------------------------------------------------------------------------+  |
 |  |                       Matrix Engine (mautrix-go)                        |  |
-|  |   - Pure Go Olm/Megolm E2EE (goolm, memory-safe, zero insecure C olm)   |  |
+|  |   - Pure Go Olm/Megolm E2EE (goolm, memory-safe, zero C olm)            |  |
 |  |   - Resilient Sync Loop (Exponential backoff + M_LIMIT_EXCEEDED retry)  |  |
 |  |   - Embedded SQLite Persistence (WAL mode, crypto state, batch tokens)  |  |
 |  |   - Human-in-the-Loop Reply Registry with Live Typing Indicators        |  |
@@ -56,39 +78,18 @@ A high-performance, universal Matrix MCP (Model Context Protocol) server impleme
 
 ---
 
-## 🚀 Key Capabilities
+## 🚀 Quickstart
 
-1. **Dual Transport Architecture:**
-   - **Stdio Transport:** Standard input/output for local agent sub-processes. All diagnostic and operational logs are strictly routed to `os.Stderr` to prevent JSON-RPC framing corruption.
-   - **HTTP / SSE Transport:** Network daemon serving Server-Sent Events (`/sse`), JSON-RPC message endpoint (`/message`), health checks (`/healthz`), and Prometheus metrics (`/metrics`).
-2. **Pure-Go E2EE Cryptography:**
-   - Powered by `mautrix-go` with pure Go Olm (`-tags goolm`). Zero vulnerable C `libolm` shared library dependencies.
-3. **AST-Level Bidirectional (BiDi) Markdown Formatting:**
-   - Converts Markdown directly to Matrix-compliant HTML using Goldmark AST transforms.
-   - Scans for the first strong directional Unicode characters (Persian/Arabic vs Latin) to automatically set `dir="rtl"` or `dir="ltr"`.
-   - Strictly enforces `dir="ltr"` on inline `<code>` and `<pre><code>` blocks so code indentation and syntax never flip in RTL viewports.
-4. **Interactive Human-in-the-Loop (`matrix_ask_human`):**
-   - Enables agents to pause execution, prompt a human in a dedicated Matrix thread, emit active typing indicators, and resume when an authorized answer is received.
-   - Resilient timeout handling and context cancellation.
-5. **Security & RBAC:**
-   - Enforces user allowlisting (`matrix.allowed_users`). Messages from unauthorized senders are dropped immediately.
-6. **Declarative Nix Flake Packaging:**
-   - Hermetic, reproducible builds via Nix Flakes.
+### Option 1: Nix Flake (Recommended)
 
----
-
-## 📦 Quickstart & Installation
-
-### Option 1: Using Nix Flake (Recommended)
-
-Run directly without installation:
+Run directly without installing anything:
 ```bash
-nix run github:amadeus/matrix-mcp-go -- -config config.yaml
+nix run github:surtr85/matrix-mcp-go -- -config config.yaml
 ```
 
-Or build the standalone binary:
+Build the standalone binary:
 ```bash
-nix build
+nix build github:surtr85/matrix-mcp-go
 ./result/bin/matrix-mcp-go -version
 ```
 
@@ -101,7 +102,7 @@ go test -tags goolm -v ./...
 ### Option 2: Go Toolchain
 
 ```bash
-git clone https://github.com/amadeus/matrix-mcp-go.git
+git clone https://github.com/surtr85/matrix-mcp-go.git
 cd matrix-mcp-go
 go build -tags goolm -o bin/matrix-mcp-go ./cmd/matrix-mcp-go
 ```
@@ -112,46 +113,44 @@ go build -tags goolm -o bin/matrix-mcp-go ./cmd/matrix-mcp-go
 
 Configuration can be specified using a YAML file or environment variables (`MATRIX_MCP_*`).
 
-Copy the example configuration:
 ```bash
 cp config.example.yaml config.yaml
 ```
 
-### Configuration Fields (`config.yaml`)
+### `config.yaml`
 
 ```yaml
 matrix:
   # Matrix Homeserver URL
-  homeserver_url: "https://matrix.example.com"
+  homeserver_url: "https://matrix.org"
 
   # Bot User ID
-  user_id: "@bot:example.com"
+  user_id: "@myagent:matrix.org"
 
-  # Authentication: provide either access_token or password
+  # Authentication: provide either access_token OR password
   access_token: "syt_your_matrix_access_token"
   # password: "your-secret-password"
 
-  # Persistent Device ID (preserves session across restarts)
+  # Persistent Device ID (prevents spawning ghost sessions on restarts)
   device_id: "matrix-mcp-gateway"
 
   # SQLite database path for session/crypto/state persistence
   db_path: "data/matrix-mcp.db"
 
   # Optional encryption key for crypto pickle storage
-  pickle_key: "your-32-byte-secret-pickle-key"
+  pickle_key: "your-secret-pickle-key"
 
   # Security & RBAC: Allowlisted Matrix users.
   # Use ["*"] or leave empty to allow all users.
   allowed_users:
-    - "@alice:example.com"
-    - "@admin:example.com"
+    - "@admin:matrix.org"
+    - "@developer:matrix.org"
 
 mcp:
-  # Server metadata
   server_name: "matrix-mcp-go"
   server_version: "0.1.0"
 
-  # Transport: "stdio" or "sse"
+  # Transport: "stdio" (local agent) or "sse" (network daemon)
   transport: "stdio"
 
   # SSE network settings
@@ -160,12 +159,12 @@ mcp:
 
 log:
   level: "info"     # debug, info, warn, error
-  format: "json"    # json, text
+  format: "json"    # json, text (all stdio logs go to stderr)
 ```
 
 ### Environment Variable Overrides
 
-Any setting can be overridden using environment variables prefixed with `MATRIX_MCP_` and double-underscores (`__`) for nested sections:
+All options support environment variable overrides with prefix `MATRIX_MCP_`:
 
 ```bash
 export MATRIX_MCP_MATRIX__HOMESERVER_URL="https://matrix.org"
@@ -180,8 +179,6 @@ export MATRIX_MCP_LOG__LEVEL="debug"
 ## 🤖 AI Agent Integration
 
 ### Claude Desktop (`claude_desktop_config.json`)
-
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `~/.config/Claude/claude_desktop_config.json` (Linux):
 
 ```json
 {
@@ -199,8 +196,6 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 
 ### Cursor / Antigravity / Pi Agent
 
-In your agent's MCP configuration settings:
-
 ```json
 {
   "name": "matrix",
@@ -210,7 +205,14 @@ In your agent's MCP configuration settings:
 }
 ```
 
-Or for remote HTTP/SSE deployments:
+### Remote Network Deployment (SSE Mode)
+
+Run the server as a systemd service or container:
+```bash
+./result/bin/matrix-mcp-go -config config.yaml -transport sse
+```
+
+And connect any remote agent:
 ```json
 {
   "name": "matrix-remote",
@@ -221,88 +223,31 @@ Or for remote HTTP/SSE deployments:
 
 ---
 
-## 🛠 MCP Tools Reference
+## 🛠 Available MCP Tools
 
-### 1. `matrix_send_message`
-Sends a formatted message to a Matrix room, automatically converting Markdown to compliant Matrix HTML with BiDi direction.
+| Tool | Description | Parameters |
+| :--- | :--- | :--- |
+| `matrix_send_message` | Sends formatted Markdown with auto BiDi RTL/LTR to room or thread | `room_id` (str), `message` (str), `thread_id` (opt) |
+| `matrix_ask_human` | Prompts a human in Matrix, displays typing indicator, and awaits reply | `room_id` (str), `question` (str), `thread_id` (opt), `timeout_seconds` (opt) |
+| `matrix_send_reaction` | Reacts to an event with an emoji | `room_id` (str), `event_id` (str), `emoji` (str) |
+| `matrix_upload_media` | Uploads local file to Matrix content repo and returns `mxc://` URI | `file_path` (str) |
+| `matrix_list_rooms` | Lists joined rooms with names, topics, and member counts | None |
 
-**Parameters:**
-- `room_id` *(string, required)*: Target Matrix room ID (e.g., `!abc123:example.com`).
-- `message` *(string, required)*: Markdown message text (supports Persian/Arabic BiDi, code blocks, tables, lists).
-- `thread_id` *(string, optional)*: Root event ID if replying within a thread.
-
-### 2. `matrix_ask_human` (Human-in-the-Loop)
-Prompts a human user in a Matrix room/thread, maintains typing indicators, and pauses tool execution until the human replies.
-
-**Parameters:**
-- `room_id` *(string, required)*: Target Matrix room ID.
-- `question` *(string, required)*: Question or decision prompt in Markdown.
-- `thread_id` *(string, optional)*: Existing thread root ID; if empty, the question itself forms a new thread root.
-- `timeout_seconds` *(number, optional, default: 300)*: Maximum time to wait for a human reply.
-
-**Response Example:**
-```json
-{
-  "success": true,
-  "answer": "Approved. Proceed with production migration.",
-  "sender": "@admin:example.com",
-  "room_id": "!ops:example.com",
-  "thread_id": "$prompt_event_id",
-  "event_id": "$reply_event_id",
-  "timestamp": 1726945200000
-}
-```
-
-### 3. `matrix_send_reaction`
-Sends an emoji reaction to a specific Matrix event.
-
-**Parameters:**
-- `room_id` *(string, required)*: Room containing the target event.
-- `event_id` *(string, required)*: Target Matrix event ID.
-- `emoji` *(string, required)*: Emoji character (e.g., `👍`, `🚀`, `✅`).
-
-### 4. `matrix_upload_media`
-Uploads a local file to the Matrix media repository and returns the `mxc://` URI.
-
-**Parameters:**
-- `file_path` *(string, required)*: Path to the local file to upload.
-
-### 5. `matrix_list_rooms`
-Lists joined rooms with room names, topics, and member counts.
-
----
-
-## 📊 Observability & Metrics
-
-When running with SSE or network transport, `matrix-mcp-go` exposes a standard Prometheus metrics endpoint at `/metrics`:
-
-- `matrix_messages_sent_total{room_id, status}` — Total messages sent.
-- `matrix_sync_events_total{type}` — Sync loop event throughput by event type.
-- `matrix_mcp_tool_calls_total{tool, status}` — Tool calls partitioned by tool and outcome.
-- `matrix_mcp_tool_duration_seconds` — Histogram of tool execution latencies.
-
-Health check endpoint:
-```bash
-curl http://localhost:8080/healthz
-# {"status":"ok"}
-```
+### Available MCP Resources
+- `matrix://rooms/joined` — Returns live snapshot of joined rooms and summaries.
 
 ---
 
 ## 🧪 Testing & Verification
 
-Run all unit and integration tests:
 ```bash
+# Run all unit and integration tests
 nix develop --command go test -tags goolm -v ./...
-```
 
-Run formatter benchmarks:
-```bash
+# Run formatter benchmarks
 nix develop --command go test -tags goolm -bench=. ./internal/format
-```
 
-Run linter:
-```bash
+# Run linter
 nix develop --command golangci-lint run --build-tags goolm ./...
 ```
 
@@ -310,4 +255,4 @@ nix develop --command golangci-lint run --build-tags goolm ./...
 
 ## 📄 License
 
-MIT License. Designed with excellence for decentralized AI agent autonomy.
+Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
