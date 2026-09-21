@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,20 +13,24 @@ import (
 
 	"github.com/amadeus/matrix-mcp-go/internal/config"
 	"github.com/amadeus/matrix-mcp-go/internal/format"
+	"github.com/amadeus/matrix-mcp-go/internal/metrics"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"maunium.net/go/mautrix/id"
 )
 
 // Server encapsulates the MCP server instance and registered Matrix tools.
 type Server struct {
-	mcpServer *server.MCPServer
-	matrixOps MatrixOperations
-	log       *slog.Logger
-	cfg       config.MCPConfig
+	mcpServer  *server.MCPServer
+	sseServer  *server.SSEServer
+	httpServer *http.Server
+	matrixOps  MatrixOperations
+	log        *slog.Logger
+	cfg        config.MCPConfig
 }
 
-// NewServer initializes a new MCP server with Matrix tools and resources.
+// NewServer initializes a new MCP server with Matrix tools, resources, and dual-transport support.
 func NewServer(cfg config.MCPConfig, matrixOps MatrixOperations, log *slog.Logger) *Server {
 	if log == nil {
 		log = slog.Default()
@@ -40,12 +45,14 @@ func NewServer(cfg config.MCPConfig, matrixOps MatrixOperations, log *slog.Logge
 		ver = "0.1.0"
 	}
 
+	baseMCPServer := server.NewMCPServer(name, ver,
+		server.WithToolCapabilities(true),
+		server.WithResourceCapabilities(true, true),
+		server.WithLogging(),
+	)
+
 	s := &Server{
-		mcpServer: server.NewMCPServer(name, ver,
-			server.WithToolCapabilities(true),
-			server.WithResourceCapabilities(true, true),
-			server.WithLogging(),
-		),
+		mcpServer: baseMCPServer,
 		matrixOps: matrixOps,
 		log:       log.With("component", "mcp_server"),
 		cfg:       cfg,
@@ -53,6 +60,12 @@ func NewServer(cfg config.MCPConfig, matrixOps MatrixOperations, log *slog.Logge
 
 	s.registerTools()
 	s.registerResources()
+
+	// Initialize SSE server wrapper
+	s.sseServer = server.NewSSEServer(baseMCPServer,
+		server.WithSSEEndpoint("/sse"),
+		server.WithMessageEndpoint("/message"),
+	)
 
 	return s
 }
@@ -62,10 +75,84 @@ func (s *Server) MCPServer() *server.MCPServer {
 	return s.mcpServer
 }
 
+// SSEServer returns the underlying *server.SSEServer.
+func (s *Server) SSEServer() *server.SSEServer {
+	return s.sseServer
+}
+
+// HTTPServerHandler constructs the complete HTTP handler including SSE, metrics, and healthz.
+func (s *Server) HTTPServerHandler() http.Handler {
+	mux := http.NewServeMux()
+
+	// MCP SSE endpoints
+	mux.Handle("/sse", s.sseServer.SSEHandler())
+	mux.Handle("/message", s.sseServer.MessageHandler())
+
+	// Health check
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`{"status":"ok"}`))
+	})
+
+	// Prometheus metrics endpoint
+	mux.Handle("/metrics", promhttp.Handler())
+
+	return mux
+}
+
 // ServeStdio starts serving MCP requests over standard I/O.
 func (s *Server) ServeStdio() error {
 	s.log.Info("serving MCP over stdio transport")
 	return server.ServeStdio(s.mcpServer)
+}
+
+// StartHTTP starts serving MCP requests over HTTP/SSE with Prometheus metrics on the configured address.
+func (s *Server) StartHTTP(ctx context.Context) error {
+	addr := fmt.Sprintf("%s:%d", s.cfg.ListenAddress, s.cfg.HTTPPort)
+	s.httpServer = &http.Server{
+		Addr:              addr,
+		Handler:           s.HTTPServerHandler(),
+		ReadHeaderTimeout: 10 * time.Second,
+		BaseContext: func(net.Listener) context.Context {
+			return ctx
+		},
+	}
+
+	s.log.Info("starting MCP HTTP/SSE server",
+		"address", addr,
+		"sse_endpoint", "/sse",
+		"message_endpoint", "/message",
+		"metrics_endpoint", "/metrics",
+		"healthz_endpoint", "/healthz",
+	)
+
+	errCh := make(chan error, 1)
+	go func() {
+		if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			errCh <- err
+		}
+		close(errCh)
+	}()
+
+	select {
+	case <-ctx.Done():
+		return s.Shutdown(context.Background())
+	case err := <-errCh:
+		return err
+	}
+}
+
+// Shutdown gracefully terminates HTTP sessions and listeners.
+func (s *Server) Shutdown(ctx context.Context) error {
+	s.log.Info("shutting down MCP server")
+	if s.sseServer != nil {
+		s.sseServer.CloseSessions()
+	}
+	if s.httpServer != nil {
+		return s.httpServer.Shutdown(ctx)
+	}
+	return nil
 }
 
 func (s *Server) registerTools() {
@@ -78,7 +165,7 @@ func (s *Server) registerTools() {
 			mcp.WithString("message", mcp.Required(), mcp.Description("The message text in Markdown format (supports Persian/Arabic BiDi and code blocks)")),
 			mcp.WithString("thread_id", mcp.Description("Optional Matrix root event ID if replying within a thread")),
 		),
-		s.handleSendMessage,
+		s.instrumentTool("matrix_send_message", s.handleSendMessage),
 	)
 
 	// Tool 2: matrix_send_reaction
@@ -90,7 +177,7 @@ func (s *Server) registerTools() {
 			mcp.WithString("event_id", mcp.Required(), mcp.Description("The Matrix Event ID to react to (e.g. $eventid)")),
 			mcp.WithString("emoji", mcp.Required(), mcp.Description("The emoji string for the reaction (e.g. 👍, ❤️, 🚀)")),
 		),
-		s.handleSendReaction,
+		s.instrumentTool("matrix_send_reaction", s.handleSendReaction),
 	)
 
 	// Tool 3: matrix_upload_media
@@ -100,7 +187,7 @@ func (s *Server) registerTools() {
 			mcp.WithDescription("Upload a local file to the Matrix media repository and return its mxc:// URI."),
 			mcp.WithString("file_path", mcp.Required(), mcp.Description("Absolute or relative local file path to upload")),
 		),
-		s.handleUploadMedia,
+		s.instrumentTool("matrix_upload_media", s.handleUploadMedia),
 	)
 
 	// Tool 4: matrix_list_rooms
@@ -109,7 +196,7 @@ func (s *Server) registerTools() {
 			"matrix_list_rooms",
 			mcp.WithDescription("List all joined Matrix rooms with metadata such as name, topic, and member count."),
 		),
-		s.handleListRooms,
+		s.instrumentTool("matrix_list_rooms", s.handleListRooms),
 	)
 
 	// Tool 5: matrix_ask_human (Human-in-the-Loop)
@@ -122,8 +209,21 @@ func (s *Server) registerTools() {
 			mcp.WithString("thread_id", mcp.Description("Optional existing thread ID; if empty, the question creates a new thread root")),
 			mcp.WithNumber("timeout_seconds", mcp.Description("Maximum wait time in seconds (default: 300)")),
 		),
-		s.handleAskHuman,
+		s.instrumentTool("matrix_ask_human", s.handleAskHuman),
 	)
+}
+
+func (s *Server) instrumentTool(toolName string, handler server.ToolHandlerFunc) server.ToolHandlerFunc {
+	return func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		start := time.Now()
+		res, err := handler(ctx, req)
+		duration := time.Since(start).Seconds()
+
+		isError := (err != nil) || (res != nil && res.IsError)
+		metrics.RecordToolCall(toolName, isError, duration)
+
+		return res, err
+	}
 }
 
 func (s *Server) registerResources() {
@@ -177,9 +277,11 @@ func (s *Server) handleSendMessage(ctx context.Context, req mcp.CallToolRequest)
 
 	resp, err := s.matrixOps.SendMessage(ctx, id.RoomID(roomIDStr), plainText, formattedHTML, id.EventID(threadIDStr))
 	if err != nil {
+		metrics.RecordMessageSent(roomIDStr, false)
 		return mcp.NewToolResultError(fmt.Sprintf("failed to send matrix message: %v", err)), nil
 	}
 
+	metrics.RecordMessageSent(roomIDStr, true)
 	res := map[string]interface{}{
 		"success":  true,
 		"event_id": resp.EventID,
@@ -283,19 +385,18 @@ func (s *Server) handleAskHuman(ctx context.Context, req mcp.CallToolRequest) (*
 	}
 	timeoutDur := time.Duration(timeoutSeconds) * time.Second
 
-	// Format question
 	plainText, formattedHTML, err := format.FormatMessage(question)
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("failed to format question: %v", err)), nil
 	}
 
-	// Send question message to Matrix
 	resp, err := s.matrixOps.SendMessage(ctx, id.RoomID(roomIDStr), plainText, formattedHTML, id.EventID(threadIDStr))
 	if err != nil {
+		metrics.RecordMessageSent(roomIDStr, false)
 		return mcp.NewToolResultError(fmt.Sprintf("failed to send question to matrix: %v", err)), nil
 	}
+	metrics.RecordMessageSent(roomIDStr, true)
 
-	// If no thread_id was provided, the question's event becomes the thread root
 	activeThreadID := id.EventID(threadIDStr)
 	if activeThreadID == "" {
 		activeThreadID = resp.EventID
@@ -307,7 +408,6 @@ func (s *Server) handleAskHuman(ctx context.Context, req mcp.CallToolRequest) (*
 		"timeout_seconds", timeoutSeconds,
 	)
 
-	// Wait for human response
 	reply, err := s.matrixOps.WaitForHumanReply(ctx, id.RoomID(roomIDStr), activeThreadID, timeoutDur)
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("human did not reply within timeout (%v): %v", timeoutDur, err)), nil

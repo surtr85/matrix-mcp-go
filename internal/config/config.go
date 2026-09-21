@@ -36,6 +36,7 @@ type MCPConfig struct {
 	ServerName    string `koanf:"server_name"`
 	ServerVersion string `koanf:"server_version"`
 	Transport     string `koanf:"transport"` // "stdio" or "sse"
+	ListenAddress string `koanf:"listen_address"`
 	HTTPPort      int    `koanf:"http_port"`
 }
 
@@ -55,6 +56,7 @@ func DefaultConfig() *Config {
 			ServerName:    "matrix-mcp-go",
 			ServerVersion: "0.1.0",
 			Transport:     "stdio",
+			ListenAddress: "0.0.0.0",
 			HTTPPort:      8080,
 		},
 		Log: LogConfig{
@@ -149,6 +151,7 @@ func (p rawStructProvider) Read() (map[string]interface{}, error) {
 			"server_name":    p.cfg.MCP.ServerName,
 			"server_version": p.cfg.MCP.ServerVersion,
 			"transport":      p.cfg.MCP.Transport,
+			"listen_address": p.cfg.MCP.ListenAddress,
 			"http_port":      p.cfg.MCP.HTTPPort,
 		},
 		"log": map[string]interface{}{

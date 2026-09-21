@@ -5,9 +5,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/amadeus/matrix-mcp-go/internal/config"
 	"github.com/amadeus/matrix-mcp-go/internal/logger"
@@ -22,6 +24,7 @@ var (
 
 func main() {
 	configPath := flag.String("config", "", "Path to configuration YAML file")
+	transportFlag := flag.String("transport", "", "MCP transport override: 'stdio' or 'sse'")
 	showVersion := flag.Bool("version", false, "Display version and exit")
 	flag.Parse()
 
@@ -36,6 +39,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Override transport if provided via CLI flag
+	if *transportFlag != "" {
+		cfg.MCP.Transport = *transportFlag
+	}
+
 	// CRITICAL RULE: All logs must go to stderr so stdout is reserved for MCP JSON-RPC Stdio transport!
 	log := logger.Setup(cfg.Log, os.Stderr)
 	log.Info("matrix-mcp-go starting",
@@ -46,6 +54,7 @@ func main() {
 		"matrix_user", cfg.Matrix.UserID,
 	)
 
+	// Intercept SIGINT and SIGTERM for deterministic graceful shutdown
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
@@ -55,9 +64,21 @@ func main() {
 		log.Error("failed to create matrix client", "err", err)
 		os.Exit(1)
 	}
+
+	// Matrix shutdown sequence
 	defer func() {
+		log.Info("executing Matrix graceful shutdown")
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		// Set presence to offline
+		if err := matrixCli.SetOffline(shutdownCtx); err != nil {
+			log.Warn("failed to set presence offline", "err", err)
+		}
+
+		// Close SQLite DB connections and crypto stores
 		if err := matrixCli.Close(); err != nil {
-			log.Warn("error closing matrix client", "err", err)
+			log.Warn("error closing matrix client resources", "err", err)
 		}
 	}()
 
@@ -88,17 +109,30 @@ func main() {
 		}
 	}()
 
-	// Initialize and run MCP server
+	// Initialize MCP Server (with Stdio and SSE transports + Prometheus metrics)
 	mcpSrv := mcpinternal.NewServer(cfg.MCP, matrixCli, log)
 
-	if cfg.MCP.Transport == "stdio" {
-		log.Info("running MCP stdio server loop")
-		if err := mcpSrv.ServeStdio(); err != nil && !errors.Is(err, context.Canceled) {
-			log.Error("mcp stdio server terminated with error", "err", err)
+	if cfg.MCP.Transport == "sse" {
+		log.Info("starting server in SSE network transport mode")
+		if err := mcpSrv.StartHTTP(ctx); err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, http.ErrServerClosed) {
+			log.Error("mcp http/sse server terminated with error", "err", err)
 		}
 	} else {
-		log.Info("transport not stdio, waiting on context shutdown", "transport", cfg.MCP.Transport)
-		<-ctx.Done()
+		log.Info("starting server in Stdio transport mode")
+		// In Stdio mode, wait on Stdio serve loop
+		stdioDone := make(chan error, 1)
+		go func() {
+			stdioDone <- mcpSrv.ServeStdio()
+		}()
+
+		select {
+		case <-ctx.Done():
+			log.Info("received shutdown signal, stopping stdio transport")
+		case err := <-stdioDone:
+			if err != nil && !errors.Is(err, context.Canceled) {
+				log.Error("mcp stdio server terminated with error", "err", err)
+			}
+		}
 	}
 
 	log.Info("matrix-mcp-go shut down cleanly")

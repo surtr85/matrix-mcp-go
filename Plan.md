@@ -43,8 +43,8 @@ It is structured as an iterative, phase-by-phase checklist for AI agents to foll
 - [x] **CHECKPOINT:** E2E integration test: AI agent asks a question via MCP -> message appears in Matrix -> human replies -> AI agent receives the reply.
 
 ## Phase 6: Reliability, Dual-Transport & Observability
-- [ ] Add SSE/HTTP transport support (allowing remote agents to connect to the daemon over network).
-- [ ] Implement Graceful Shutdown (capturing SIGINT/SIGTERM, closing DB connections safely, sending offline presence).
-- [ ] Add Prometheus metrics endpoint (tracking messages sent, sync latency, tool call frequency).
-- [ ] **CHECKPOINT & BENCHMARK:** Load testing the Sync loop and HTTP MCP endpoints. Check memory leaks during long-running execution.
-- [ ] Finalize Nix packaging (`nix build .#matrix-mcp-go`) and document setup instructions.
+- [x] Add SSE/HTTP transport support (allowing remote agents to connect to the daemon over network).
+- [x] Implement Graceful Shutdown (capturing SIGINT/SIGTERM, closing DB connections safely, sending offline presence).
+- [x] Add Prometheus metrics endpoint (tracking messages sent, sync latency, tool call frequency).
+- [x] **CHECKPOINT & BENCHMARK:** Load testing the Sync loop and HTTP MCP endpoints. Check memory leaks during long-running execution.
+- [x] Finalize Nix packaging (`nix build .#matrix-mcp-go`) and document setup instructions.

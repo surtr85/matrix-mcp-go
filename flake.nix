@@ -23,18 +23,24 @@
             gcc
           ];
 
-          CGO_ENABLED = "1";
+          env = {
+            CGO_ENABLED = "1";
+          };
         };
 
         packages.default = pkgs.buildGoModule {
           pname = "matrix-mcp-go";
           version = "0.1.0";
           src = ./.;
-          vendorHash = null;
+          vendorHash = "sha256-wu3jpDmo7gP+RV7v1HmNkosiaOOulInCJRW8CeLd83w=";
           tags = [ "goolm" ];
-          CGO_ENABLED = 1;
+          env = {
+            CGO_ENABLED = "1";
+          };
           buildInputs = with pkgs; [ sqlite ];
           nativeBuildInputs = with pkgs; [ pkg-config ];
         };
+
+        packages.matrix-mcp-go = self.packages.${system}.default;
       });
 }

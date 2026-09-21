@@ -12,6 +12,7 @@ import (
 	"github.com/amadeus/matrix-mcp-go/internal/matrix/rbac"
 	"github.com/amadeus/matrix-mcp-go/internal/matrix/store"
 	"github.com/amadeus/matrix-mcp-go/internal/mcp"
+	"github.com/amadeus/matrix-mcp-go/internal/metrics"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"maunium.net/go/mautrix/event"
@@ -82,6 +83,9 @@ func (c *Client) dispatchIncomingEvent(ctx context.Context, evt *event.Event) {
 	if evt.Sender == c.matrixCli.UserID {
 		return
 	}
+
+	// Track metrics
+	metrics.RecordSyncEvent(evt.Type.Type)
 
 	// Security & RBAC: verify sender
 	if !c.authorizer.IsAllowed(evt.Sender) {

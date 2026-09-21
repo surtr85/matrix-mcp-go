@@ -20,20 +20,27 @@ matrix:
   # Key used to encrypt SQLite pickle storage (optional)
   pickle_key: ""
 
+  # RBAC: Allowlisted Matrix user IDs who can interact with the bot.
+  # Leave empty or use ["*"] to allow all users.
+  allowed_users:
+    - "@admin:example.com"
+    - "@developer:example.com"
+
 mcp:
   # MCP Server identification
   server_name: "matrix-mcp-go"
   server_version: "0.1.0"
   
-  # Transport: "stdio" or "sse"
+  # Transport: "stdio" (for local agent subprocess) or "sse" (for network daemon)
   transport: "stdio"
-  
-  # HTTP Port (used when transport is "sse")
+
+  # Network listen address and port (used when transport is "sse")
+  listen_address: "0.0.0.0"
   http_port: 8080
 
 log:
   # Log level: "debug", "info", "warn", "error"
   level: "info"
   
-  # Log format: "json" or "text"
+  # Log format: "json" or "text" (Stdio transport logs always go to stderr)
   format: "json"
