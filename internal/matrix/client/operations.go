@@ -25,9 +25,13 @@ func (c *Client) SendMessage(ctx context.Context, roomID id.RoomID, plainText, f
 	}
 
 	if threadID != "" {
+		eventID := threadID
+		if len(eventID) > 0 && eventID[0] != '$' {
+			eventID = "$" + eventID
+		}
 		content.RelatesTo = &event.RelatesTo{
 			InReplyTo: &event.InReplyTo{
-				EventID: threadID,
+				EventID: eventID,
 			},
 		}
 	}
