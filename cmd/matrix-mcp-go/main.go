@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/amadeus/matrix-mcp-go/internal/config"
 	"github.com/amadeus/matrix-mcp-go/internal/logger"
 	"github.com/amadeus/matrix-mcp-go/internal/matrix/client"
+	mcpinternal "github.com/amadeus/matrix-mcp-go/internal/mcp"
 	"maunium.net/go/mautrix/event"
 )
 
@@ -34,6 +36,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// CRITICAL RULE: All logs must go to stderr so stdout is reserved for MCP JSON-RPC Stdio transport!
 	log := logger.Setup(cfg.Log, os.Stderr)
 	log.Info("matrix-mcp-go starting",
 		"version", version,
@@ -78,12 +81,24 @@ func main() {
 		)
 	})
 
-	log.Info("matrix client ready, entering sync loop")
+	// Start Matrix sync loop in background
+	go func() {
+		if err := matrixCli.SyncLoop(ctx); err != nil && !errors.Is(err, context.Canceled) {
+			log.Error("sync loop terminated with error", "err", err)
+		}
+	}()
 
-	// Run sync loop until context cancellation
-	if err := matrixCli.SyncLoop(ctx); err != nil && err != context.Canceled {
-		log.Error("sync loop terminated with error", "err", err)
-		os.Exit(1)
+	// Initialize and run MCP server
+	mcpSrv := mcpinternal.NewServer(cfg.MCP, matrixCli, log)
+
+	if cfg.MCP.Transport == "stdio" {
+		log.Info("running MCP stdio server loop")
+		if err := mcpSrv.ServeStdio(); err != nil && !errors.Is(err, context.Canceled) {
+			log.Error("mcp stdio server terminated with error", "err", err)
+		}
+	} else {
+		log.Info("transport not stdio, waiting on context shutdown", "transport", cfg.MCP.Transport)
+		<-ctx.Done()
 	}
 
 	log.Info("matrix-mcp-go shut down cleanly")

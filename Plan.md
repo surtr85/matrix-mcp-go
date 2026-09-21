@@ -25,16 +25,16 @@ It is structured as an iterative, phase-by-phase checklist for AI agents to foll
 - [x] **CHECKPOINT & BENCHMARK:** Write extensive unit tests for the formatter with complex Markdown and mixed Persian/English text. Benchmark formatter performance.
 
 ## Phase 4: MCP Protocol Integration
-- [ ] Integrate Go MCP SDK (e.g., `github.com/mark3labs/mcp-go`).
-- [ ] Setup Stdio transport for the MCP server.
-- [ ] Define and expose core MCP Tools:
-  - [ ] `matrix_send_message` (Target room, text, optional thread_id).
-  - [ ] `matrix_send_reaction` (Event ID, Emoji).
-  - [ ] `matrix_upload_media` (Upload local file path, return `mxc://` URI).
-  - [ ] `matrix_list_rooms` (Return joined rooms with metadata).
-- [ ] Define and expose core MCP Resources:
-  - [ ] `matrix://notifications/active`
-- [ ] **CHECKPOINT:** Use an MCP inspector or dummy client to connect via stdio and call `matrix_list_rooms` and `matrix_send_message`.
+- [x] Integrate Go MCP SDK (e.g., `github.com/mark3labs/mcp-go`).
+- [x] Setup Stdio transport for the MCP server.
+- [x] Define and expose core MCP Tools:
+  - [x] `matrix_send_message` (Target room, text, optional thread_id).
+  - [x] `matrix_send_reaction` (Event ID, Emoji).
+  - [x] `matrix_upload_media` (Upload local file path, return `mxc://` URI).
+  - [x] `matrix_list_rooms` (Return joined rooms with metadata).
+- [x] Define and expose core MCP Resources:
+  - [x] `matrix://notifications/active`
+- [x] **CHECKPOINT:** Use an MCP inspector or dummy client to connect via stdio and call `matrix_list_rooms` and `matrix_send_message`.
 
 ## Phase 5: Event Routing & Human-in-the-Loop Workflow
 - [ ] Implement Thread management logic: Automatically reply to the correct thread if a tool call is related to a specific Matrix thread.
