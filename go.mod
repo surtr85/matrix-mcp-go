@@ -22,6 +22,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
+	github.com/yuin/goldmark v1.8.6 // indirect
 	go.mau.fi/util v0.10.1 // indirect
 	go.yaml.in/yaml/v3 v3.0.3 // indirect
 	golang.org/x/crypto v0.57.0 // indirect

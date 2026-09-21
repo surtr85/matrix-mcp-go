@@ -18,11 +18,11 @@ It is structured as an iterative, phase-by-phase checklist for AI agents to foll
 - [x] **CHECKPOINT:** Test matrix login and basic message reception (log to stdout). Run `go test` for client wrapper.
 
 ## Phase 3: The Formatting Engine (Markdown & RTL)
-- [ ] Integrate `goldmark` (or similar fast parser) for Markdown parsing.
-- [ ] Develop custom Goldmark renderer/AST transformer to convert standard Markdown to Matrix-compatible HTML.
-- [ ] Implement BiDi (Bidirectional) text detection algorithm to wrap paragraphs with `dir="rtl"` or `dir="ltr"` natively without breaking formatting.
-- [ ] Ensure nested elements (code blocks, blockquotes, lists, tables) are rendered correctly without breaking Matrix clients.
-- [ ] **CHECKPOINT & BENCHMARK:** Write extensive unit tests for the formatter with complex Markdown and mixed Persian/English text. Benchmark formatter performance.
+- [x] Integrate `goldmark` (or similar fast parser) for Markdown parsing.
+- [x] Develop custom Goldmark renderer/AST transformer to convert standard Markdown to Matrix-compatible HTML.
+- [x] Implement BiDi (Bidirectional) text detection algorithm to wrap paragraphs with `dir="rtl"` or `dir="ltr"` natively without breaking formatting.
+- [x] Ensure nested elements (code blocks, blockquotes, lists, tables) are rendered correctly without breaking Matrix clients.
+- [x] **CHECKPOINT & BENCHMARK:** Write extensive unit tests for the formatter with complex Markdown and mixed Persian/English text. Benchmark formatter performance.
 
 ## Phase 4: MCP Protocol Integration
 - [ ] Integrate Go MCP SDK (e.g., `github.com/mark3labs/mcp-go`).
