@@ -25,6 +25,7 @@ type mockMatrixOps struct {
 	listedRooms   func() ([]mcpinternal.RoomSummary, error)
 	setTyping     func(ctx context.Context, roomID id.RoomID, typing bool, timeout time.Duration) error
 	waitReply     func(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcpinternal.HumanReply, error)
+	waitIncoming  func(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcpinternal.IncomingMessage, error)
 }
 
 func (m *mockMatrixOps) SendMessage(ctx context.Context, roomID id.RoomID, plainText, formattedHTML string, threadID id.EventID) (*mautrix.RespSendEvent, error) {
@@ -71,6 +72,20 @@ func (m *mockMatrixOps) WaitForHumanReply(ctx context.Context, roomID id.RoomID,
 	return &mcpinternal.HumanReply{
 		EventID: "$default_reply",
 		Body:    "default reply",
+	}, nil
+}
+
+func (m *mockMatrixOps) WaitForIncomingMessage(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcpinternal.IncomingMessage, error) {
+	if m.waitIncoming != nil {
+		return m.waitIncoming(ctx, roomID, threadID, timeout)
+	}
+	return &mcpinternal.IncomingMessage{
+		EventID:   "$default_incoming",
+		RoomID:    string(roomID),
+		ThreadID:  string(threadID),
+		Sender:    "@user:example.com",
+		Body:      "default incoming",
+		Timestamp: time.Now().UnixMilli(),
 	}, nil
 }
 

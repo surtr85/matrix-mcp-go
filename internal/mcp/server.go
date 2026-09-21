@@ -211,6 +211,18 @@ func (s *Server) registerTools() {
 		),
 		s.instrumentTool("matrix_ask_human", s.handleAskHuman),
 	)
+
+	// Tool 6: matrix_wait_message (Universal Inbound Polling)
+	s.mcpServer.AddTool(
+		mcp.NewTool(
+			"matrix_wait_message",
+			mcp.WithDescription("Wait for an incoming message from an authorized Matrix user (long-polling) for autonomous agent loops."),
+			mcp.WithString("room_id", mcp.Description("Optional target Matrix room ID to listen to. If omitted, listens across all joined rooms.")),
+			mcp.WithString("thread_id", mcp.Description("Optional thread root event ID to filter incoming messages")),
+			mcp.WithNumber("timeout_seconds", mcp.Description("Maximum wait time in seconds before returning timeout (default: 120, max: 600)")),
+		),
+		s.instrumentTool("matrix_wait_message", s.handleWaitMessage),
+	)
 }
 
 func (s *Server) instrumentTool(toolName string, handler server.ToolHandlerFunc) server.ToolHandlerFunc {
@@ -426,3 +438,53 @@ func (s *Server) handleAskHuman(ctx context.Context, req mcp.CallToolRequest) (*
 	resJSON, _ := json.Marshal(result)
 	return mcp.NewToolResultText(string(resJSON)), nil
 }
+
+func (s *Server) handleWaitMessage(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	roomIDStr := req.GetString("room_id", "")
+	threadIDStr := req.GetString("thread_id", "")
+
+	timeoutSeconds := req.GetInt("timeout_seconds", 120)
+	if timeoutSeconds <= 0 {
+		timeoutSeconds = 120
+	}
+	if timeoutSeconds > 600 {
+		timeoutSeconds = 600
+	}
+	timeoutDur := time.Duration(timeoutSeconds) * time.Second
+
+	s.log.Debug("waiting for incoming Matrix message",
+		"room_id", roomIDStr,
+		"thread_id", threadIDStr,
+		"timeout_seconds", timeoutSeconds,
+	)
+
+	incoming, err := s.matrixOps.WaitForIncomingMessage(ctx, id.RoomID(roomIDStr), id.EventID(threadIDStr), timeoutDur)
+	if err != nil {
+		// Context cancellation
+		if ctx.Err() != nil {
+			return mcp.NewToolResultError(fmt.Sprintf("context cancelled: %v", ctx.Err())), nil
+		}
+
+		// Timeout: Return structured JSON with has_message: false
+		res := map[string]interface{}{
+			"has_message": false,
+			"message":     "No new messages received within timeout window.",
+		}
+		resJSON, _ := json.Marshal(res)
+		return mcp.NewToolResultText(string(resJSON)), nil
+	}
+
+	res := map[string]interface{}{
+		"has_message": true,
+		"room_id":     incoming.RoomID,
+		"event_id":    incoming.EventID,
+		"thread_id":   incoming.ThreadID,
+		"sender":      incoming.Sender,
+		"message":     incoming.Body,
+		"timestamp":   incoming.Timestamp,
+	}
+
+	resJSON, _ := json.Marshal(res)
+	return mcp.NewToolResultText(string(resJSON)), nil
+}
+

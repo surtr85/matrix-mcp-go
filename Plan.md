@@ -48,3 +48,12 @@ It is structured as an iterative, phase-by-phase checklist for AI agents to foll
 - [x] Add Prometheus metrics endpoint (tracking messages sent, sync latency, tool call frequency).
 - [x] **CHECKPOINT & BENCHMARK:** Load testing the Sync loop and HTTP MCP endpoints. Check memory leaks during long-running execution.
 - [x] Finalize Nix packaging (`nix build .#matrix-mcp-go`) and document setup instructions.
+
+## Phase 7: Universal Agent Inbound Polling (`matrix_wait_message`)
+- [x] Extend `MatrixOperations` interface with `WaitForIncomingMessage(ctx, roomID, threadID, timeout)`.
+- [x] Implement thread-safe `IncomingQueue` with LRU/ring event deduplication and matching dispatch.
+- [x] Implement `WaitForIncomingMessage` in Matrix client with auto-acknowledgement (reaction `👀` and typing indicator).
+- [x] Implement RBAC enforcement guaranteeing only allowlisted users trigger tool return.
+- [x] Register `matrix_wait_message` tool in `internal/mcp` with structured JSON output and timeout handling.
+- [x] Add comprehensive unit tests in `internal/matrix/client` and `internal/mcp`.
+

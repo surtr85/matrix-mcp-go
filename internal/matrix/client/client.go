@@ -31,6 +31,7 @@ type Client struct {
 	syncer        *mautrix.DefaultSyncer
 	msgHandlers   []MessageHandler
 	replyRegistry *ReplyRegistry
+	incomingQueue *IncomingQueue
 	authorizer    *rbac.Authorizer
 	log           *slog.Logger
 }
@@ -66,6 +67,7 @@ func New(cfg config.MatrixConfig, log *slog.Logger) (*Client, error) {
 		syncer:        syncer,
 		msgHandlers:   make([]MessageHandler, 0),
 		replyRegistry: NewReplyRegistry(),
+		incomingQueue: NewIncomingQueue(10000),
 		authorizer:    rbac.New(cfg.AllowedUsers),
 		log:           log.With("component", "matrix_client"),
 	}
@@ -137,13 +139,34 @@ func (c *Client) dispatchIncomingEvent(ctx context.Context, evt *event.Event) {
 		Timestamp: evt.Timestamp,
 	}
 
-	// If a waiter claims this reply, dispatch it
-	if c.replyRegistry.Dispatch(evt.RoomID, threadID, reply) {
+	// 1. If a HITL waiter claims this reply, dispatch it
+	hitlMatched := c.replyRegistry.Dispatch(evt.RoomID, threadID, reply)
+	if hitlMatched {
 		c.log.Info("routed human reply to active HITL waiter",
 			"room_id", evt.RoomID,
 			"thread_id", threadID,
 			"sender", evt.Sender,
 		)
+	}
+
+	// 2. If not consumed by HITL waiter, dispatch to incoming message polling queue
+	if !hitlMatched {
+		incoming := &mcp.IncomingMessage{
+			EventID:   string(evt.ID),
+			RoomID:    string(evt.RoomID),
+			ThreadID:  string(threadID),
+			Sender:    string(evt.Sender),
+			Body:      body,
+			Timestamp: evt.Timestamp,
+		}
+		if c.incomingQueue.Dispatch(incoming) {
+			c.log.Info("routed message to active incoming polling waiter",
+				"room_id", evt.RoomID,
+				"thread_id", threadID,
+				"sender", evt.Sender,
+				"event_id", evt.ID,
+			)
+		}
 	}
 
 	// Also invoke generic message listeners
@@ -301,6 +324,47 @@ func (c *Client) WaitForHumanReply(ctx context.Context, roomID id.RoomID, thread
 	}
 }
 
+// WaitForIncomingMessage blocks until a matching incoming message arrives, timeout occurs, or ctx is cancelled.
+// Upon receiving a matching message, it automatically reacts with 👀 and turns on typing indicator in the room.
+func (c *Client) WaitForIncomingMessage(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcp.IncomingMessage, error) {
+	msgCh, cleanup := c.incomingQueue.Register(roomID, threadID)
+	defer cleanup()
+
+	timeoutTimer := time.NewTimer(timeout)
+	defer timeoutTimer.Stop()
+
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+
+	case <-timeoutTimer.C:
+		return nil, errors.New("timeout waiting for incoming message")
+
+	case msg := <-msgCh:
+		// Auto-acknowledgement:
+		// 1. Add reaction 👀
+		targetRoomID := id.RoomID(msg.RoomID)
+		targetEventID := id.EventID(msg.EventID)
+		if _, err := c.SendReaction(ctx, targetRoomID, targetEventID, "👀"); err != nil {
+			c.log.Warn("failed to send auto-acknowledgement reaction 👀",
+				"room_id", targetRoomID,
+				"event_id", targetEventID,
+				"err", err,
+			)
+		}
+
+		// 2. Enable typing indicator in the room
+		if err := c.SetTyping(ctx, targetRoomID, true, 10*time.Second); err != nil {
+			c.log.Warn("failed to set typing indicator on incoming message",
+				"room_id", targetRoomID,
+				"err", err,
+			)
+		}
+
+		return msg, nil
+	}
+}
+
 // SyncLoop runs the Matrix sync loop with exponential backoff and 429 rate limit handling.
 func (c *Client) SyncLoop(ctx context.Context) error {
 	c.log.Info("starting Matrix sync loop", "user_id", c.matrixCli.UserID)
@@ -398,6 +462,11 @@ func (c *Client) UnderlyingClient() *mautrix.Client {
 // ReplyRegistry returns the Client's internal reply registry for tests.
 func (c *Client) ReplyRegistry() *ReplyRegistry {
 	return c.replyRegistry
+}
+
+// IncomingQueue returns the Client's incoming message queue.
+func (c *Client) IncomingQueue() *IncomingQueue {
+	return c.incomingQueue
 }
 
 // Syncer returns the underlying *mautrix.DefaultSyncer.

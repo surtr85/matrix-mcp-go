@@ -228,10 +228,55 @@ And connect any remote agent:
 | Tool | Description | Parameters |
 | :--- | :--- | :--- |
 | `matrix_send_message` | Sends formatted Markdown with auto BiDi RTL/LTR to room or thread | `room_id` (str), `message` (str), `thread_id` (opt) |
+| `matrix_wait_message` | Long-polls for incoming messages from authorized users for 24/7 autonomous bot loops | `room_id` (opt), `thread_id` (opt), `timeout_seconds` (opt, default: 120, max: 600) |
 | `matrix_ask_human` | Prompts a human in Matrix, displays typing indicator, and awaits reply | `room_id` (str), `question` (str), `thread_id` (opt), `timeout_seconds` (opt) |
 | `matrix_send_reaction` | Reacts to an event with an emoji | `room_id` (str), `event_id` (str), `emoji` (str) |
 | `matrix_upload_media` | Uploads local file to Matrix content repo and returns `mxc://` URI | `file_path` (str) |
 | `matrix_list_rooms` | Lists joined rooms with names, topics, and member counts | None |
+
+### Universal Autonomous Agent Loop Pattern (`matrix_wait_message`)
+
+In standard MCP environments (Claude Desktop, Cursor, Antigravity, Pi Agent, etc.), the MCP server cannot forcefully inject prompts into the host agent's session.
+To turn any AI agent into an autonomous, 24/7 responsive Matrix bot, `matrix_wait_message` implements universal inbound long-polling:
+
+```
++-------------------------------------------------------------------------+
+|                           Agent Polling Loop                            |
+|                                                                         |
+|  1. Call `matrix_wait_message(timeout_seconds: 120)`                     |
+|     └── Holds execution until an authorized Matrix user sends a message |
+|  2. On message:                                                         |
+|     ├── Gateway auto-acknowledges with reaction `👀`                    |
+|     ├── Gateway turns on typing indicator                               |
+|     └── Tool returns `{ "has_message": true, "message": "...", ... }`   |
+|  3. Agent processes message with LLM                                    |
+|  4. Agent calls `matrix_send_message` with response                     |
+|  5. Loop back to step 1                                                 |
++-------------------------------------------------------------------------+
+```
+
+#### Response Format
+
+When a message is received:
+```json
+{
+  "has_message": true,
+  "room_id": "!room:example.com",
+  "event_id": "$event_id",
+  "thread_id": "$thread_id",
+  "sender": "@user:example.com",
+  "message": "text content",
+  "timestamp": 1726945200000
+}
+```
+
+When timed out (clean return allowing agent turn renewal):
+```json
+{
+  "has_message": false,
+  "message": "No new messages received within timeout window."
+}
+```
 
 ### Available MCP Resources
 - `matrix://rooms/joined` — Returns live snapshot of joined rooms and summaries.

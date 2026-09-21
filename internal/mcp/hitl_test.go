@@ -79,6 +79,29 @@ func (h *hitlMockOperations) WaitForHumanReply(ctx context.Context, roomID id.Ro
 	}
 }
 
+func (h *hitlMockOperations) WaitForIncomingMessage(ctx context.Context, roomID id.RoomID, threadID id.EventID, timeout time.Duration) (*mcpinternal.IncomingMessage, error) {
+	if h.failReply != nil {
+		return nil, h.failReply
+	}
+
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case <-time.After(h.replyDelay):
+		if h.replyToSend != nil {
+			return &mcpinternal.IncomingMessage{
+				EventID:   h.replyToSend.EventID,
+				RoomID:    h.replyToSend.RoomID,
+				ThreadID:  h.replyToSend.ThreadID,
+				Sender:    h.replyToSend.Sender,
+				Body:      h.replyToSend.Body,
+				Timestamp: h.replyToSend.Timestamp,
+			}, nil
+		}
+		return nil, errors.New("timeout waiting for incoming message")
+	}
+}
+
 func TestTool_AskHuman_Success(t *testing.T) {
 	mockOps := &hitlMockOperations{
 		waiterActive: make(chan struct{}),
