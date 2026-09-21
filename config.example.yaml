@@ -1,0 +1,39 @@
+# Matrix MCP Server Configuration Example
+
+matrix:
+  # Homeserver URL (e.g., https://matrix.org or self-hosted)
+  homeserver_url: "https://matrix.example.com"
+  
+  # Matrix User ID
+  user_id: "@bot:example.com"
+  
+  # Authentication: provide either access_token OR password
+  access_token: "your-secret-access-token"
+  # password: "your-secret-password"
+  
+  # Device ID (optional, will be generated/restored if empty)
+  device_id: "matrix-mcp-gateway"
+  
+  # SQLite database path for session/crypto/state persistence
+  db_path: "data/matrix-mcp.db"
+  
+  # Key used to encrypt SQLite pickle storage (optional)
+  pickle_key: ""
+
+mcp:
+  # MCP Server identification
+  server_name: "matrix-mcp-go"
+  server_version: "0.1.0"
+  
+  # Transport: "stdio" or "sse"
+  transport: "stdio"
+  
+  # HTTP Port (used when transport is "sse")
+  http_port: 8080
+
+log:
+  # Log level: "debug", "info", "warn", "error"
+  level: "info"
+  
+  # Log format: "json" or "text"
+  format: "json"

@@ -1,0 +1,36 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+matrix-mcp-go
+
+# Test artifacts
+*.test
+*.out
+coverage.html
+
+# Go workspace & vendor
+go.work
+go.work.sum
+
+# Environments & IDEs
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+*.swp
+*~
+
+# Data & SQLite databases
+*.db
+*.db-shm
+*.db-wal
+data/
+
+# Result symlink for nix build
+result
+result-*
