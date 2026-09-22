@@ -4,8 +4,24 @@ import { execFile } from "node:child_process";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import type { TelegramApiClient } from "./api.js";
 import type { TelegramQueue } from "./queue.js";
+import type { InlineKeyboardMarkup } from "./types.js";
 import { getHomeDir } from "./config.js";
 import { escapeHtml } from "./formatter.js";
+
+export function getQuickActionMarkup(): InlineKeyboardMarkup {
+  return {
+    inline_keyboard: [
+      [
+        { text: "🧹 جلسه جدید", callback_data: "cmd_new" },
+        { text: "📊 وضعیت", callback_data: "cmd_status" },
+      ],
+      [
+        { text: "🗜️ فشرده‌سازی", callback_data: "cmd_compact" },
+        { text: "🛑 لغو", callback_data: "cmd_abort" },
+      ],
+    ],
+  };
+}
 
 export async function handleSlashCommand(
   chatId: number,
@@ -32,13 +48,13 @@ export async function handleSlashCommand(
 • <code>/upload &lt;path&gt;</code> - Send a file/photo from host to Telegram
 • <code>/abort</code> - Abort current thinking / execution
 • <code>/help</code> - Show this menu`;
-    await api.sendMessage(chatId, helpMsg, messageId);
+    await api.sendMessage(chatId, helpMsg, messageId, getQuickActionMarkup());
     return true;
   }
 
   if (cmdName === "new" || cmdName === "reset" || cmdName === "clear") {
     await pi.sendUserMessage("/new", { deliverAs: "followUp" });
-    await api.sendMessage(chatId, "🧹 <b>Context cleared. Fresh session started!</b>", messageId);
+    await api.sendMessage(chatId, "🧹 <b>Context cleared. Fresh session started!</b>", messageId, getQuickActionMarkup());
     return true;
   }
 
@@ -78,7 +94,7 @@ export async function handleSlashCommand(
 • <b>Thinking Budget:</b> <code>${ctx.thinkingBudget || "default"}</code>
 • <b>Queue Depth:</b> <code>${queueLen} pending turn(s)</code>
 • <b>Active Turn:</b> <code>${active ? active.id : "idle"}</code>`;
-    await api.sendMessage(chatId, statusMsg, messageId);
+    await api.sendMessage(chatId, statusMsg, messageId, getQuickActionMarkup());
     return true;
   }
 

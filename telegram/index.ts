@@ -1,10 +1,11 @@
 /**
- * Telegram Bridge Extension for Pi Coding Agent (v2.3 Modular Architecture)
+ * Telegram Bridge Extension for Pi Coding Agent (v2.4 Modular Architecture)
  *
  * High-performance, zero-latency, token-efficient bridge between Telegram and Pi:
  * - Security First: Strict RBAC allowlisting (allowedUsers by numerical ID & allowedUsernames).
  * - Multi-turn FIFO Queue: Concurrency safe with exact message and chat tracking.
  * - Reactive Emoji Feedback: Acknowledges incoming prompts with 👀 and seals with ✅.
+ * - Zero-Token Quick Actions: Interactive inline buttons for /new, /status, /compact, /abort.
  * - In-place Live Progress: Live edit status or reactions while thinking.
  * - Auto-Adaptive Media Uplink: Auto-sends generated photos as sendPhoto and files as sendDocument.
  * - Multimodal Vision: Full support for incoming photos with text captions passed straight to Pi vision.
@@ -32,7 +33,7 @@ import { loadConfig, getHomeDir, formatFileSize } from "./src/config.js";
 import { TelegramApiClient } from "./src/api.js";
 import { TelegramProgressReporter } from "./src/progress.js";
 import { TelegramQueue } from "./src/queue.js";
-import { handleSlashCommand } from "./src/commands.js";
+import { handleSlashCommand, getQuickActionMarkup } from "./src/commands.js";
 import { cleanAssistantText, escapeHtml } from "./src/formatter.js";
 import type { PendingTelegramTurn } from "./src/types.js";
 
@@ -85,6 +86,40 @@ export default function (pi: ExtensionAPI) {
 
         for (const update of data.result) {
           offset = Math.max(offset, update.update_id + 1);
+
+          // Handle Callback Queries (Inline Quick Action Buttons)
+          if (update.callback_query) {
+            const cb = update.callback_query;
+            const cbSenderId = cb.from?.id;
+            const cbUsername = cb.from?.username || "";
+            const cbChatId = cb.message?.chat?.id;
+            const cbMessageId = cb.message?.message_id;
+
+            const isAllowed =
+              config.allowedUsers.includes(cbSenderId) ||
+              (cbUsername && config.allowedUsernames.includes(cbUsername));
+
+            if (!isAllowed) {
+              await api.answerCallbackQuery(cb.id, "Access Denied");
+              continue;
+            }
+
+            await api.answerCallbackQuery(cb.id);
+
+            if (cbChatId && cbMessageId && cb.data) {
+              const cmdMap: Record<string, string> = {
+                cmd_new: "/new",
+                cmd_status: "/status",
+                cmd_compact: "/compact",
+                cmd_abort: "/abort",
+              };
+              const mappedCmd = cmdMap[cb.data];
+              if (mappedCmd) {
+                await handleSlashCommand(cbChatId, cbMessageId, mappedCmd, cbSenderId, ctx, pi, api, queue);
+              }
+            }
+            continue;
+          }
 
           const msg = update.message;
           if (!msg) continue;
@@ -275,6 +310,7 @@ export default function (pi: ExtensionAPI) {
             chatId,
             cleaned,
             triggerMessageId,
+            getQuickActionMarkup(),
           );
 
           // Update trigger message reaction to completion

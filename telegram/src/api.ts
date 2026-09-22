@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { TelegramConfig, DownloadedFile } from "./types.js";
+import type { TelegramConfig, DownloadedFile, InlineKeyboardMarkup } from "./types.js";
 import { getMediaDir } from "./config.js";
 import { markdownToTelegramHtml, stripHtmlToPlainText } from "./formatter.js";
 
@@ -63,6 +63,18 @@ export class TelegramApiClient {
     }
   }
 
+  async answerCallbackQuery(callbackQueryId: string, text?: string): Promise<boolean> {
+    try {
+      await this.callApi("answerCallbackQuery", {
+        callback_query_id: callbackQueryId,
+        text,
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async sendChatAction(chatId: number, action = "typing"): Promise<void> {
     try {
       await this.callApi("sendChatAction", { chat_id: chatId, action });
@@ -106,12 +118,14 @@ export class TelegramApiClient {
     chatId: number,
     text: string,
     replyToMessageId?: number,
+    replyMarkup?: InlineKeyboardMarkup,
   ): Promise<number | null> {
     const chunks = this.chunkText(text);
     let lastMessageId: number | null = null;
 
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
+      const isLastChunk = i === chunks.length - 1;
       const htmlText = markdownToTelegramHtml(chunk);
 
       try {
@@ -122,6 +136,7 @@ export class TelegramApiClient {
           reply_to_message_id: i === 0 ? replyToMessageId : lastMessageId,
           allow_sending_without_reply: true,
           disable_web_page_preview: true,
+          reply_markup: isLastChunk ? replyMarkup : undefined,
         });
         lastMessageId = res.message_id;
       } catch {
@@ -133,6 +148,7 @@ export class TelegramApiClient {
             text: safePlainText,
             reply_to_message_id: i === 0 ? replyToMessageId : lastMessageId,
             allow_sending_without_reply: true,
+            reply_markup: isLastChunk ? replyMarkup : undefined,
           });
           lastMessageId = res.message_id;
         } catch {
