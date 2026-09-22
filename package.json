@@ -1,0 +1,34 @@
+{
+  "name": "pi-matrix",
+  "version": "1.0.0",
+  "description": "Native, zero-token-overhead Matrix chat bridge extension for Pi Coding Agent",
+  "main": "index.ts",
+  "types": "index.ts",
+  "files": [
+    "index.ts",
+    "README.md",
+    "LICENSE",
+    "assets"
+  ],
+  "author": "Amadeus <surtr85>",
+  "license": "MIT",
+  "homepage": "https://github.com/surtr85/pi-matrix",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/surtr85/pi-matrix.git"
+  },
+  "bugs": {
+    "url": "https://github.com/surtr85/pi-matrix/issues"
+  },
+  "keywords": [
+    "pi-coding-agent",
+    "pi-extension",
+    "matrix",
+    "matrix-bridge",
+    "ai-agent",
+    "coding-agent"
+  ],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": ">=0.80.0"
+  }
+}

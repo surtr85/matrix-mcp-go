@@ -14,7 +14,7 @@
       "file_type": "code",
       "norm_label": "boundedeventcache",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L286"
+      "source_location": "L287"
     },
     {
       "id": "integrations_pi_matrix_bridge_downloadedmedia",
@@ -53,7 +53,7 @@
       "file_type": "code",
       "norm_label": "progressreporter",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L534"
+      "source_location": "L539"
     },
     {
       "id": "scripts_matrix_agent_listener_ask_pi",
@@ -149,7 +149,7 @@
       "file_type": "code",
       "norm_label": ".add()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L295"
+      "source_location": "L296"
     },
     {
       "id": "integrations_pi_matrix_bridge_boundedeventcache_constructor",
@@ -161,7 +161,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L289"
+      "source_location": "L290"
     },
     {
       "id": "integrations_pi_matrix_bridge_boundedeventcache_has",
@@ -173,7 +173,7 @@
       "file_type": "code",
       "norm_label": ".has()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L291"
+      "source_location": "L292"
     },
     {
       "id": "integrations_pi_matrix_bridge_cleanassistanttext",
@@ -317,7 +317,7 @@
       "file_type": "code",
       "norm_label": ".cleanup()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L601"
+      "source_location": "L614"
     },
     {
       "id": "integrations_pi_matrix_bridge_progressreporter_constructor",
@@ -329,7 +329,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L544"
+      "source_location": "L549"
     },
     {
       "id": "integrations_pi_matrix_bridge_progressreporter_emitstatus",
@@ -341,7 +341,7 @@
       "file_type": "code",
       "norm_label": ".emitstatus()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L580"
+      "source_location": "L585"
     },
     {
       "id": "integrations_pi_matrix_bridge_progressreporter_report",
@@ -353,7 +353,7 @@
       "file_type": "code",
       "norm_label": ".report()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L556"
+      "source_location": "L561"
     },
     {
       "id": "integrations_pi_matrix_bridge_progressreporter_reset",
@@ -365,7 +365,7 @@
       "file_type": "code",
       "norm_label": ".reset()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L617"
+      "source_location": "L630"
     },
     {
       "id": "integrations_pi_matrix_bridge_progressreporter_start",
@@ -377,7 +377,7 @@
       "file_type": "code",
       "norm_label": ".start()",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L548"
+      "source_location": "L553"
     },
     {
       "id": "integrations_pi_matrix_bridge_savesynctoken",
@@ -3736,7 +3736,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L614",
+      "source_location": "L627",
       "weight": 1.0
     },
     {
@@ -3748,7 +3748,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L563",
+      "source_location": "L568",
       "weight": 1.0
     },
     {
@@ -3760,7 +3760,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L549",
+      "source_location": "L554",
       "weight": 1.0
     },
     {
@@ -8166,7 +8166,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L286",
+      "source_location": "L287",
       "weight": 1.0
     },
     {
@@ -8199,7 +8199,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L534",
+      "source_location": "L539",
       "weight": 1.0
     },
     {
@@ -9871,7 +9871,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L289",
+      "source_location": "L290",
       "weight": 1.0
     },
     {
@@ -9882,7 +9882,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L291",
+      "source_location": "L292",
       "weight": 1.0
     },
     {
@@ -9893,7 +9893,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L295",
+      "source_location": "L296",
       "weight": 1.0
     },
     {
@@ -9904,7 +9904,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L544",
+      "source_location": "L549",
       "weight": 1.0
     },
     {
@@ -9915,7 +9915,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L548",
+      "source_location": "L553",
       "weight": 1.0
     },
     {
@@ -9926,7 +9926,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L556",
+      "source_location": "L561",
       "weight": 1.0
     },
     {
@@ -9937,7 +9937,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L580",
+      "source_location": "L585",
       "weight": 1.0
     },
     {
@@ -9948,7 +9948,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L601",
+      "source_location": "L614",
       "weight": 1.0
     },
     {
@@ -9959,7 +9959,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "integrations/pi/matrix-bridge.ts",
-      "source_location": "L617",
+      "source_location": "L630",
       "weight": 1.0
     },
     {
@@ -10686,5 +10686,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "285c8fa9481e43edc48c0c1b1917f51d83544bae"
+  "built_at_commit": "5df4b88ef08071b205f82ba78efa9ea3f9e1fa70"
 }

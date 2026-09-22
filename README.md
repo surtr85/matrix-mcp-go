@@ -1,321 +1,185 @@
-<p align="center">
-  <img src="assets/banner.png" alt="Matrix MCP Go Banner" width="100%" />
-</p>
+<div align="center">
 
-<p align="center">
-  <a href="https://golang.org"><img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go Version" /></a>
-  <a href="https://matrix.org"><img src="https://img.shields.io/badge/Matrix-Pure%20Go%20E2EE-008080?style=for-the-badge&logo=matrix&logoColor=white" alt="Matrix E2EE" /></a>
-  <a href="flake.nix"><img src="https://img.shields.io/badge/Nix-Flake%20Ready-5277C3?style=for-the-badge&logo=nixos&logoColor=white" alt="Nix Flake" /></a>
-  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Standard%20Compliant-purple?style=for-the-badge" alt="MCP Protocol" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" /></a>
-</p>
+![pi-matrix Banner](assets/banner.jpg)
 
-<p align="center">
-  <strong>Universal, high-performance Model Context Protocol (MCP) server bridging autonomous AI agents to the decentralized Matrix network.</strong>
-  <br />
-  <em>Zero hardcoded secrets &bull; Pure-Go End-to-End Encryption &bull; AST BiDi Formatting &bull; Human-in-the-Loop &bull; Dual Stdio/SSE Transport</em>
-</p>
+# pi-matrix
+
+**Native, high-performance, zero-token-overhead Matrix bridge extension for [Pi Coding Agent](https://github.com/earendil-works/pi-coding-agent).**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Pi Coding Agent](https://img.shields.io/badge/Agent-Pi%20Coding%20Agent-00d2ff.svg)](https://github.com/earendil-works/pi-coding-agent)
+[![Matrix Protocol](https://img.shields.io/badge/Protocol-Matrix%20v1.11-0ebd8f.svg)](https://matrix.org)
+[![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178c6.svg)](https://www.typescriptlang.org/)
+
+</div>
 
 ---
 
-## ⚡ Highlights
+## ⚡ Overview
 
-- 🔐 **Pure-Go E2EE Cryptography:** Powered by `mautrix-go` with pure-Go Olm/Megolm (`-tags goolm`). Zero vulnerable legacy C `libolm` shared library dependencies.
-- 💬 **Human-in-the-Loop (`matrix_ask_human`):** Agents can pause execution, prompt an authorized human over a Matrix thread, maintain active typing indicators, and automatically resume once answered.
-- 🌐 **AST-Level Bidirectional (BiDi) Markdown:** Seamless Arabic/Persian RTL and English LTR rendering using Goldmark AST transformation. Fenced code blocks and identifiers remain strictly LTR.
-- 🔄 **Dual Transport Architecture:** Run locally as an agent subprocess via **Stdio** (with guaranteed JSON-RPC isolation on `os.Stdout`) or deploy as a persistent remote network daemon via **HTTP/SSE**.
-- 🛡️ **Role-Based Access Control (RBAC):** Built-in sender allowlisting to protect agents against prompt injection and malicious bot manipulation.
-- 💾 **Embedded Persistence:** SQLite storage in WAL mode preserves sync batch tokens, crypto sessions, and device credentials across reboots without creating ghost sessions.
-- 📊 **Prometheus Observability:** Native `/metrics` endpoint tracking tool latency histograms, message counts, and sync loop throughput.
-- ❄️ **Hermetic Nix Packaging:** First-class `flake.nix` providing instant zero-install execution (`nix run`) and reproducible builds (`nix build`).
+`pi-matrix` is a dedicated bridge extension engineered specifically for **Pi Coding Agent**. Unlike traditional bots that spin up separate API sessions or wrap messages in hundreds of tokens of subagent instructions, `pi-matrix` directly injects messages into your active Pi TUI session, giving you full access to your agent, its workspaces, tools, and subscriptions seamlessly over Matrix.
 
----
+```mermaid
+flowchart LR
+    User([User on Matrix / Element])
+    subgraph pi-matrix [pi-matrix Extension]
+        Sync[Long-Polling Sync & Coalesce]
+        Media[Media Downloader & Disk Cache]
+        Reporter[Progress Reporter / m.replace]
+        Commands[Command Interceptor]
+    end
+    subgraph PiRuntime [Pi Coding Agent Runtime]
+        Session[(Active Interactive Session)]
+        Tools[Coding Tools: bash, edit, read]
+        Vision[Multimodal Vision Model]
+    end
 
-## 🏛 Architecture
-
-```
-+-------------------------------------------------------------------------------+
-|                                AI AGENTS                                      |
-|    Claude Desktop  /  Pi Agent  /  Cursor  /  Antigravity  /  Devin / Custom  |
-+-------------------------------------------------------------------------------+
-           |                                                      ^
-           | MCP JSON-RPC (Stdio / SSE)                           |
-           v                                                      |
-+-------------------------------------------------------------------------------+
-|                       matrix-mcp-go Gateway Daemon                            |
-|                                                                               |
-|  +-------------------------------------------------------------------------+  |
-|  |                           MCP Server Layer                              |  |
-|  |   - Stdio Transport (Log-isolated to stderr, clean stdout JSON-RPC)     |  |
-|  |   - HTTP/SSE Server (/sse, /message, /metrics, /healthz)                |  |
-|  |   - Tools: send_message, ask_human, reaction, upload, list_rooms        |  |
-|  |   - Resources: matrix://rooms/joined                                    |  |
-|  +-------------------------------------------------------------------------+  |
-|                                     |                                         |
-|  +----------------------------------+--------------------------------------+  |
-|  | Formatter & BiDi Engine          | Security & RBAC                      |  |
-|  |  - Goldmark AST Markdown parser  |  - Allowlist user filtering          |  |
-|  |  - Auto RTL/LTR detection        |  - Malicious prompt drop             |  |
-|  |  - LTR-enforced code blocks      |  - Thread binding & verification     |  |
-|  +----------------------------------+--------------------------------------+  |
-|                                     |                                         |
-|  +-------------------------------------------------------------------------+  |
-|  |                       Matrix Engine (mautrix-go)                        |  |
-|  |   - Pure Go Olm/Megolm E2EE (goolm, memory-safe, zero C olm)            |  |
-|  |   - Resilient Sync Loop (Exponential backoff + M_LIMIT_EXCEEDED retry)  |  |
-|  |   - Embedded SQLite Persistence (WAL mode, crypto state, batch tokens)  |  |
-|  |   - Human-in-the-Loop Reply Registry with Live Typing Indicators        |  |
-|  +-------------------------------------------------------------------------+  |
-+-------------------------------------------------------------------------------+
-                                      |
-                           Matrix Client-Server API
-                                      v
-+-------------------------------------------------------------------------------+
-|                     Matrix Homeserver (Synapse / Dendrite)                   |
-|                        Encrypted Rooms, Threads, Media                        |
-+-------------------------------------------------------------------------------+
+    User -- "Prompt / Image / Video / File" --> Sync
+    Sync --> Media --> Session
+    Sync -- "/new, /status, /model" --> Commands --> Session
+    Session -- "tool_execution_start" --> Reporter -- "⏳ Status (m.replace)" --> User
+    Session -- "agent_end" --> Reporter -- "Delete status & Send final answer" --> User
 ```
 
 ---
 
-## 🚀 Quickstart
+## ✨ Features
 
-### Option 1: Nix Flake (Recommended)
-
-Run directly without installing anything:
-```bash
-nix run github:surtr85/matrix-mcp-go -- -config config.yaml
-```
-
-Build the standalone binary:
-```bash
-nix build github:surtr85/matrix-mcp-go
-./result/bin/matrix-mcp-go -version
-```
-
-Enter reproducible development shell:
-```bash
-nix develop
-go test -tags goolm -v ./...
-```
-
-### Option 2: Go Toolchain
-
-```bash
-git clone https://github.com/surtr85/matrix-mcp-go.git
-cd matrix-mcp-go
-go build -tags goolm -o bin/matrix-mcp-go ./cmd/matrix-mcp-go
-```
+- **🚀 Direct Session Injection (Zero Token Bloat)**: Messages are dispatched directly via `pi.sendUserMessage()` with `{ deliverAs: "followUp" }`. No system-prompt wrapping, no wasted context tokens, and no concurrency crashes.
+- **⏱️ Live Progress Reporter with Cooldown**: Hooks into Pi lifecycle events (`turn_start`, `tool_execution_start`, `tool_execution_end`) to report what the agent is doing (`⚙️ Running bash: ...`, `📖 Reading ...`, `✏️ Editing ...`, `🔍 Searching ...`) with a debounced cooldown (default: `5s`).
+- **🧹 In-Place Updates (`m.replace`) & Auto-Cleanup**: Status updates are edited in-place inside a single Matrix message (MSC2676) so chat rooms never get spammed. When Pi finishes, the temporary progress message is automatically redacted (deleted), leaving only your prompt and the final response.
+- **🖼️ Comprehensive Multimodal Media**:
+  - **Images (`m.image`)**: Downloads media, passes Base64 directly into Pi's multimodal vision model, and saves the file locally in `~/.pi/agent/media/`.
+  - **Videos (`m.video`)**: Downloads to local disk, extracts metadata, and notifies Pi of the local path for tool analysis.
+  - **Audio (`m.audio`)**: Downloads and caches audio files locally for agent inspection.
+  - **Files / Documents (`m.file`)**: Saves documents/code to disk and generates syntax-highlighted code previews for text files under 64KB.
+- **🔗 Intelligent Batch Coalescing**: Automatically merges rapid-fire text captions and media events from Matrix clients into a single multimodal turn.
+- **💾 Disk-Backed Sync Token**: Automatically saves `next_batch` to `~/.pi/agent/matrix_sync_token` so restarts never replay past messages.
+- **🛠️ Remote Control Slash Commands**: Control your agent straight from Matrix chat without touching your terminal:
+  - `/new` or `/reset`: Instantly resets the session via `ctx.newSession()` without prompting the LLM.
+  - `/status`: Displays connection state, active model, thinking budget, and exact session token/message counts.
+  - `/model [name]`: Inspects available models or dynamically switches models.
+  - `/thinking [level]`: Adjusts reasoning depth (`off`, `low`, `medium`, `high`, `max`).
+  - `/compact`: Triggers context compaction.
+  - `/help`: Lists available commands.
+- **🌐 Persian & Bilingual BiDi Formatting**: Automatically wraps Persian text lines in right-to-left (`dir="rtl"`) tags and code blocks in left-to-right (`dir="ltr"`).
+- **🧠 Clean Output**: Strips `<think>...</think>` tags automatically before delivering replies.
+- **👀 Fast Reactions**: Immediate acknowledgment reaction (`👀`) and task completion checkmark (`✅`).
+- **🔔 Hardened Notifications**: Desktop notifications via `execFile("notify-send", ...)` with zero shell-interpolation risks.
 
 ---
 
-## ⚙️ Configuration Reference
+## 📦 Installation
 
-Configuration can be specified using a YAML file or environment variables (`MATRIX_MCP_*`).
+### 1. Declarative (NixOS & Home-Manager)
 
-```bash
-cp config.example.yaml config.yaml
-```
+Add the extension and declarative configuration into your Home-Manager setup:
 
-### `config.yaml`
-
-```yaml
-matrix:
-  # Matrix Homeserver URL
-  homeserver_url: "https://matrix.org"
-
-  # Bot User ID
-  user_id: "@myagent:matrix.org"
-
-  # Authentication: provide either access_token OR password
-  access_token: "syt_your_matrix_access_token"
-  # password: "your-secret-password"
-
-  # Persistent Device ID (prevents spawning ghost sessions on restarts)
-  device_id: "matrix-mcp-gateway"
-
-  # SQLite database path for session/crypto/state persistence
-  db_path: "data/matrix-mcp.db"
-
-  # Optional encryption key for crypto pickle storage
-  pickle_key: "your-secret-pickle-key"
-
-  # Security & RBAC: Allowlisted Matrix users.
-  # Use ["*"] or leave empty to allow all users.
-  allowed_users:
-    - "@admin:matrix.org"
-    - "@developer:matrix.org"
-
-mcp:
-  server_name: "matrix-mcp-go"
-  server_version: "0.1.0"
-
-  # Transport: "stdio" (local agent) or "sse" (network daemon)
-  transport: "stdio"
-
-  # SSE network settings
-  listen_address: "0.0.0.0"
-  http_port: 8080
-
-log:
-  level: "info"     # debug, info, warn, error
-  format: "json"    # json, text (all stdio logs go to stderr)
-```
-
-### Environment Variable Overrides
-
-All options support environment variable overrides with prefix `MATRIX_MCP_`:
-
-```bash
-export MATRIX_MCP_MATRIX__HOMESERVER_URL="https://matrix.org"
-export MATRIX_MCP_MATRIX__USER_ID="@agent:matrix.org"
-export MATRIX_MCP_MATRIX__ACCESS_TOKEN="syt_secret_token"
-export MATRIX_MCP_MCP__TRANSPORT="stdio"
-export MATRIX_MCP_LOG__LEVEL="debug"
-```
-
----
-
-## 🤖 AI Agent Integration
-
-### Claude Desktop (`claude_desktop_config.json`)
-
-```json
+```nix
+# modules/home/ai/pi/default.nix
+{ pkgs, ... }:
+let
+  piAgentDir = ".pi/agent";
+in
 {
-  "mcpServers": {
-    "matrix": {
-      "command": "/path/to/matrix-mcp-go/result/bin/matrix-mcp-go",
-      "args": [
-        "-config", "/path/to/matrix-mcp-go/config.yaml",
-        "-transport", "stdio"
-      ]
-    }
-  }
+  home.file."${piAgentDir}/extensions/pi-matrix.ts".source =
+    builtins.fetchurl {
+      url = "https://raw.githubusercontent.com/surtr85/pi-matrix/main/index.ts";
+      # or reference a local clone/submodule
+    };
+
+  home.file."${piAgentDir}/matrix.json".text = builtins.toJSON {
+    homeserver = "https://matrix.example.com";
+    accessToken = "YOUR_MATRIX_ACCESS_TOKEN";
+    botUserId = "@pi_bot:matrix.example.com";
+    allowedUsers = [ "@you:matrix.example.com" ];
+    autoStart = true;
+    useSubagent = false;
+    progressCooldownSeconds = 5;
+    progressMode = "edit";
+  };
 }
 ```
 
-### Cursor / Antigravity / Pi Agent
+### 2. Manual Installation
 
-```json
-{
-  "name": "matrix",
-  "type": "stdio",
-  "command": "matrix-mcp-go",
-  "args": ["-config", "config.yaml"]
-}
-```
-
-### Remote Network Deployment (SSE Mode)
-
-Run the server as a systemd service or container:
-```bash
-./result/bin/matrix-mcp-go -config config.yaml -transport sse
-```
-
-And connect any remote agent:
-```json
-{
-  "name": "matrix-remote",
-  "type": "sse",
-  "url": "http://10.0.0.5:8080/sse"
-}
-```
-
----
-
-## 🛠 Available MCP Tools
-
-| Tool | Description | Parameters |
-| :--- | :--- | :--- |
-| `matrix_send_message` | Sends formatted Markdown with auto BiDi RTL/LTR to room or thread | `room_id` (str), `message` (str), `thread_id` (opt) |
-| `matrix_wait_message` | Long-polls for incoming messages from authorized users for 24/7 autonomous bot loops | `room_id` (opt), `thread_id` (opt), `timeout_seconds` (opt, default: 120, max: 600) |
-| `matrix_ask_human` | Prompts a human in Matrix, displays typing indicator, and awaits reply | `room_id` (str), `question` (str), `thread_id` (opt), `timeout_seconds` (opt) |
-| `matrix_send_reaction` | Reacts to an event with an emoji | `room_id` (str), `event_id` (str), `emoji` (str) |
-| `matrix_upload_media` | Uploads local file to Matrix content repo and returns `mxc://` URI | `file_path` (str) |
-| `matrix_list_rooms` | Lists joined rooms with names, topics, and member counts | None |
-
-### Universal Autonomous Agent Loop Pattern (`matrix_wait_message`)
-
-In standard MCP environments (Claude Desktop, Cursor, Antigravity, Pi Agent, etc.), the MCP server cannot forcefully inject prompts into the host agent's session.
-To turn any AI agent into an autonomous, 24/7 responsive Matrix bot, `matrix_wait_message` implements universal inbound long-polling:
-
-```
-+-------------------------------------------------------------------------+
-|                           Agent Polling Loop                            |
-|                                                                         |
-|  1. Call `matrix_wait_message(timeout_seconds: 120)`                     |
-|     └── Holds execution until an authorized Matrix user sends a message |
-|  2. On message:                                                         |
-|     ├── Gateway auto-acknowledges with reaction `👀`                    |
-|     ├── Gateway turns on typing indicator                               |
-|     └── Tool returns `{ "has_message": true, "message": "...", ... }`   |
-|  3. Agent processes message with LLM                                    |
-|  4. Agent calls `matrix_send_message` with response                     |
-|  5. Loop back to step 1                                                 |
-+-------------------------------------------------------------------------+
-```
-
-#### Response Format
-
-When a message is received:
-```json
-{
-  "has_message": true,
-  "room_id": "!room:example.com",
-  "event_id": "$event_id",
-  "thread_id": "$thread_id",
-  "sender": "@user:example.com",
-  "message": "text content",
-  "timestamp": 1726945200000
-}
-```
-
-When timed out (clean return allowing agent turn renewal):
-```json
-{
-  "has_message": false,
-  "message": "No new messages received within timeout window."
-}
-```
-
-### Available MCP Resources
-- `matrix://rooms/joined` — Returns live snapshot of joined rooms and summaries.
-
----
-
-## 🤖 Agent Integrations & Bridges
-
-In addition to the standard MCP server, `matrix-mcp-go` includes first-class integrations for interactive AI coding harnesses:
-
-### 1. Pi Coding Agent Native Extension (`integrations/pi/`)
-A dedicated high-performance extension for [Pi Coding Agent](https://github.com/earendil-works/pi-coding-agent):
-- **Zero Token Overhead**: Directly injects Matrix messages into Pi via `pi.sendUserMessage()` without bloated subagent prompts.
-- **Live Progress Reporting with Cooldown**: Hooks `tool_execution_start` (`bash`, `read`, `write`, `edit`) and `turn_start` to announce background activities with a debounced cooldown (default: 5s).
-- **In-Place Live Updates (`m.replace`)**: Updates progress in-place via MSC2676 without spamming notifications.
-- **BiDi RTL/LTR & Sanitization**: Strips thinking tags (`<think>...</think>`), wraps Persian in RTL and code blocks in LTR.
-- **Matrix Slash Commands**: Remote control via `/status`, `/new`, `/model`, `/thinking`, `/compact`, `/help`.
-- See [`integrations/pi/README.md`](integrations/pi/README.md) for full setup instructions.
-
-### 2. Standalone Agent Polling Daemon (`scripts/matrix_agent_listener.py`)
-A lightweight, zero-dependency Python daemon that listens for Matrix events, reacts with `👀`, invokes a local CLI agent (`pi -p`), and replies with `✅`.
-
----
-
-## 🧪 Testing & Verification
+Clone or copy `index.ts` into your local Pi extensions directory:
 
 ```bash
-# Run all unit and integration tests
-nix develop --command go test -tags goolm -v ./...
-
-# Run formatter benchmarks
-nix develop --command go test -tags goolm -bench=. ./internal/format
-
-# Run linter
-nix develop --command golangci-lint run --build-tags goolm ./...
+mkdir -p ~/.pi/agent/extensions
+curl -fsSL https://raw.githubusercontent.com/surtr85/pi-matrix/main/index.ts \
+  -o ~/.pi/agent/extensions/pi-matrix.ts
 ```
+
+Create your configuration file at `~/.pi/agent/matrix.json`:
+
+```json
+{
+  "homeserver": "https://matrix.example.com",
+  "accessToken": "syt_xxxxxxxxxxxxxxxxxxxx",
+  "botUserId": "@bot:matrix.example.com",
+  "allowedUsers": [
+    "@your_username:matrix.example.com"
+  ],
+  "autoStart": true,
+  "progressCooldownSeconds": 5,
+  "progressMode": "edit"
+}
+```
+
+Start Pi in your terminal:
+
+```bash
+pi
+```
+
+You will see:
+```text
+Matrix Bridge connected (Direct Mode)
+```
+
+---
+
+## ⚙️ Configuration Reference (`matrix.json`)
+
+| Option | Type | Default | Description |
+| :--- | :---: | :---: | :--- |
+| `homeserver` | `string` | `"https://matrix.org"` | Matrix homeserver base URL. |
+| `accessToken` | `string` | `""` | Bot account access token. |
+| `botUserId` | `string` | `""` | The bot user ID (e.g. `@miku:matrix.kurisu.ir`). |
+| `allowedUsers` | `string[]` | `[]` | Allowlist of user IDs permitted to interact with the bot. Leave empty for open access. |
+| `autoStart` | `boolean` | `true` | Whether to automatically start listening when Pi opens. |
+| `progressCooldownSeconds`| `number` | `5` | Minimum seconds between progress updates to avoid notification spam. |
+| `progressMode` | `"edit" \| "message"` | `"edit"` | `"edit"` updates the progress in-place via MSC2676; `"message"` sends new messages. |
+| `useSubagent` | `boolean` | `false` | When `false`, messages execute directly in Pi for minimum token consumption. |
+
+---
+
+## 🎮 Interactive Slash Commands
+
+Control your agent remotely from any Matrix client:
+
+| Command | Description |
+| :--- | :--- |
+| `/new` or `/reset` | Resets the conversation and starts a new session immediately. |
+| `/status` | Shows connection status, active model, thinking level, and token metrics. |
+| `/model [id]` | Shows the active model or switches to another available model. |
+| `/thinking [level]`| Sets thinking/reasoning depth (`off`, `low`, `medium`, `high`, `max`). |
+| `/compact [prompt]`| Triggers context compaction with optional instructions. |
+| `/help` | Shows the command cheat sheet. |
+
+---
+
+## 📁 Media Storage
+
+All received media (images, videos, voice notes, PDFs, code archives) are securely saved to:
+```text
+~/.pi/agent/media/<timestamp>_<filename>
+```
+Pi is automatically informed of the file's exact location, allowing it to inspect or process files locally using its command-line tools (`read`, `bash`, Python scripts, ImageMagick, etc.).
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
+Distributed under the [MIT License](LICENSE).
