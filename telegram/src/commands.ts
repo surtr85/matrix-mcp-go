@@ -28,7 +28,7 @@ export async function handleSlashCommand(
   messageId: number,
   text: string,
   _senderId: number,
-  ctx: ExtensionContext,
+  ctx: ExtensionContext | null,
   pi: ExtensionAPI,
   api: TelegramApiClient,
   queue: TelegramQueue,
@@ -53,45 +53,94 @@ export async function handleSlashCommand(
   }
 
   if (cmdName === "new" || cmdName === "reset" || cmdName === "clear") {
-    await pi.sendUserMessage("/new", { deliverAs: "followUp" });
-    await api.sendMessage(chatId, "🧹 <b>Context cleared. Fresh session started!</b>", messageId, getQuickActionMarkup());
+    try {
+      pi.sendUserMessage("/new_session", {
+        expandPromptTemplates: true,
+        deliverAs: "followUp",
+      });
+      await api.sendMessage(chatId, "✨ <b>New session started successfully.</b>", messageId, getQuickActionMarkup());
+    } catch (err: any) {
+      await api.sendMessage(chatId, `❌ Failed to start new session: ${err.message}`, messageId);
+    }
     return true;
   }
 
   if (cmdName === "compact") {
-    await pi.sendUserMessage("/compact", { deliverAs: "followUp" });
-    await api.sendMessage(chatId, "🗜️ <b>Session history compaction requested.</b>", messageId);
+    try {
+      await api.sendMessage(chatId, "⏳ <b>Context compaction in progress...</b>", messageId);
+      pi.sendUserMessage(
+        args ? `/compact_session ${args}` : "/compact_session",
+        {
+          expandPromptTemplates: true,
+          deliverAs: "followUp",
+        },
+      );
+    } catch (err: any) {
+      await api.sendMessage(chatId, `❌ Compaction error: ${err.message}`, messageId);
+    }
     return true;
   }
 
   if (cmdName === "model") {
     if (!args) {
-      const activeModel = ctx.model ? `${ctx.model.provider} / ${ctx.model.id}` : "unknown";
-      await api.sendMessage(chatId, `🧠 <b>Current Model:</b> <code>${activeModel}</code>\n\nUsage: <code>/model &lt;model-name&gt;</code> to switch.`, messageId);
+      const currentModel = ctx?.model;
+      const modelStr = currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset";
+      await api.sendMessage(chatId, `🧠 <b>Current Model:</b> <code>${modelStr}</code>\n\nUsage: <code>/model &lt;model-name&gt;</code> to switch.`, messageId);
       return true;
     }
-    await pi.sendUserMessage(`/model ${args}`, { deliverAs: "followUp" });
-    await api.sendMessage(chatId, `🔄 <b>Model switch requested:</b> <code>${escapeHtml(args)}</code>`, messageId);
+    try {
+      const available =
+        ctx?.scopedModels && ctx.scopedModels.length > 0
+          ? ctx.scopedModels.map((sm) => sm.model)
+          : ctx?.modelRegistry?.getAvailable() || [];
+
+      const match = available.find(
+        (m: any) =>
+          m.id.toLowerCase() === args.toLowerCase() ||
+          `${m.provider}/${m.id}`.toLowerCase() === args.toLowerCase(),
+      );
+
+      if (match) {
+        const success = await pi.setModel(match);
+        if (success) {
+          await api.sendMessage(chatId, `✅ Switched model to <b>${match.provider}/${match.id}</b>.`, messageId);
+        } else {
+          await api.sendMessage(chatId, `❌ Authentication failed for model ${match.provider}/${match.id}.`, messageId);
+        }
+      } else {
+        const list = available.map((m: any) => `<code>${m.provider}/${m.id}</code>`).join(", ");
+        await api.sendMessage(chatId, `⚠️ Model <code>${escapeHtml(args)}</code> not found.\nAvailable models:\n${list || "None"}`, messageId);
+      }
+    } catch (err: any) {
+      await api.sendMessage(chatId, `❌ Error switching model: ${err.message}`, messageId);
+    }
     return true;
   }
 
   if (cmdName === "thinking" || cmdName === "think") {
     if (!args) {
-      await api.sendMessage(chatId, `🤔 <b>Thinking Budget:</b> <code>${ctx.thinkingBudget || "default"}</code>\n\nUsage: <code>/thinking &lt;tokens|off&gt;</code>`, messageId);
+      const currentLevel = pi.getThinkingLevel();
+      await api.sendMessage(chatId, `🧠 <b>Current Thinking Level:</b> <code>${currentLevel}</code>\n\nUsage: <code>/thinking &lt;off|low|medium|high|max&gt;</code>`, messageId);
       return true;
     }
-    await pi.sendUserMessage(`/thinking ${args}`, { deliverAs: "followUp" });
-    await api.sendMessage(chatId, `🧠 <b>Thinking budget set to:</b> <code>${escapeHtml(args)}</code>`, messageId);
+    try {
+      pi.setThinkingLevel(args.toLowerCase() as any);
+      await api.sendMessage(chatId, `🧠 Thinking level updated to <b>${escapeHtml(args)}</b>.`, messageId);
+    } catch (err: any) {
+      await api.sendMessage(chatId, `❌ Error setting thinking level: ${err.message}`, messageId);
+    }
     return true;
   }
 
   if (cmdName === "status") {
-    const activeModel = ctx.model ? `${ctx.model.provider} / ${ctx.model.id}` : "unknown";
+    const currentModel = ctx?.model;
+    const modelStr = currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset";
+    const currentThinking = pi.getThinkingLevel();
     const queueLen = queue.length;
     const active = queue.getActiveTurn();
     const statusMsg = `📊 <b>Pi Telegram Status</b>\n
-• <b>Active Model:</b> <code>${activeModel}</code>
-• <b>Thinking Budget:</b> <code>${ctx.thinkingBudget || "default"}</code>
+• <b>Active Model:</b> <code>${modelStr}</code>
+• <b>Thinking Budget:</b> <code>${currentThinking}</code>
 • <b>Queue Depth:</b> <code>${queueLen} pending turn(s)</code>
 • <b>Active Turn:</b> <code>${active ? active.id : "idle"}</code>`;
     await api.sendMessage(chatId, statusMsg, messageId, getQuickActionMarkup());
@@ -100,7 +149,10 @@ export async function handleSlashCommand(
 
   if (cmdName === "abort") {
     try {
-      await pi.abort();
+      if (ctx && typeof (ctx as any).abort === "function") {
+        (ctx as any).abort();
+      }
+      queue.clearActiveTurn();
       await api.sendMessage(chatId, "🛑 <b>Agent execution aborted.</b>", messageId);
     } catch (err: any) {
       await api.sendMessage(chatId, `❌ Failed to abort: ${err.message}`, messageId);

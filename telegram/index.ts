@@ -1,5 +1,5 @@
 /**
- * Telegram Bridge Extension for Pi Coding Agent (v2.4 Modular Architecture)
+ * Telegram Bridge Extension for Pi Coding Agent (v2.5 Modular Architecture)
  *
  * High-performance, zero-latency, token-efficient bridge between Telegram and Pi:
  * - Security First: Strict RBAC allowlisting (allowedUsers by numerical ID & allowedUsernames).
@@ -48,12 +48,28 @@ function sendDesktopNotification(title: string, message: string) {
 export default function (pi: ExtensionAPI) {
   let isRunning = false;
   let pollingAbortController: AbortController | null = null;
+  let latestContext: ExtensionContext | null = null;
   let config = loadConfig();
 
   const api = new TelegramApiClient(config);
   const queue = new TelegramQueue();
   const progressReporter = new TelegramProgressReporter(api, config.progressCooldownSeconds);
   const createdMediaFiles: string[] = [];
+
+  // Register internal bridge commands so Pi handles newSession and compact without prompting LLM
+  pi.registerCommand("new_session", {
+    description: "Start a new session from Telegram bridge",
+    handler: async (_args, ctx) => {
+      await ctx.newSession();
+    },
+  });
+
+  pi.registerCommand("compact_session", {
+    description: "Compact context from Telegram bridge",
+    handler: async (_args, ctx) => {
+      ctx.compact();
+    },
+  });
 
   const mediaWatcher = (filePath: string) => {
     const ext = path.extname(filePath).toLowerCase();
@@ -67,6 +83,7 @@ export default function (pi: ExtensionAPI) {
   // Long Polling Loop
   const startPolling = async (ctx: ExtensionContext) => {
     let offset = 0;
+    latestContext = ctx;
     pollingAbortController = new AbortController();
 
     while (isRunning) {
@@ -116,7 +133,7 @@ export default function (pi: ExtensionAPI) {
               };
               const mappedCmd = cmdMap[cb.data];
               if (mappedCmd) {
-                await handleSlashCommand(cbChatId, cbMessageId, mappedCmd, cbSenderId, ctx, pi, api, queue);
+                await handleSlashCommand(cbChatId, cbMessageId, mappedCmd, cbSenderId, latestContext || ctx, pi, api, queue);
               }
             }
             continue;
@@ -148,7 +165,7 @@ export default function (pi: ExtensionAPI) {
 
           // Check for slash commands
           if (text.startsWith("/")) {
-            const handled = await handleSlashCommand(chatId, messageId, text, senderId, ctx, pi, api, queue);
+            const handled = await handleSlashCommand(chatId, messageId, text, senderId, latestContext || ctx, pi, api, queue);
             if (handled) continue;
           }
 
@@ -245,7 +262,8 @@ export default function (pi: ExtensionAPI) {
   };
 
   // Pi Lifecycle Hooks
-  pi.on("turn_start", async (_event: TurnStartEvent, _ctx: ExtensionContext) => {
+  pi.on("turn_start", async (_event: TurnStartEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
     if (!queue.isEmpty() && !queue.getActiveTurn()) {
       const active = queue.next();
       if (active) {
@@ -276,6 +294,7 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.on("agent_end", async (event: AgentEndEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
     const activeTurn = queue.getActiveTurn();
     queue.clearActiveTurn();
 
@@ -350,6 +369,7 @@ export default function (pi: ExtensionAPI) {
   // Start command / auto-start
   const startBridge = (ctx: ExtensionContext) => {
     if (isRunning) return;
+    latestContext = ctx;
     config = loadConfig();
     api.updateConfig(config);
     progressReporter.setCooldown(config.progressCooldownSeconds);
