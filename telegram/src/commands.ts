@@ -54,29 +54,37 @@ export async function handleSlashCommand(
 
   if (cmdName === "new" || cmdName === "reset" || cmdName === "clear") {
     try {
-      pi.sendUserMessage("/new_session", {
-        expandPromptTemplates: true,
-        deliverAs: "followUp",
-      });
+      if (ctx && typeof (ctx as any).newSession === "function") {
+        await (ctx as any).newSession();
+      } else {
+        pi.sendUserMessage("/new_session", {
+          expandPromptTemplates: true,
+          deliverAs: "followUp",
+        });
+      }
       await api.sendMessage(chatId, "✨ <b>New session started successfully.</b>", messageId, getQuickActionMarkup());
     } catch (err: any) {
-      await api.sendMessage(chatId, `❌ Failed to start new session: ${err.message}`, messageId);
+      await api.sendMessage(chatId, `❌ Failed to start new session: ${err.message}`, messageId, getQuickActionMarkup());
     }
     return true;
   }
 
   if (cmdName === "compact") {
     try {
-      await api.sendMessage(chatId, "⏳ <b>Context compaction in progress...</b>", messageId);
-      pi.sendUserMessage(
-        args ? `/compact_session ${args}` : "/compact_session",
-        {
-          expandPromptTemplates: true,
-          deliverAs: "followUp",
-        },
-      );
+      if (ctx && typeof ctx.compact === "function") {
+        ctx.compact(args ? { customInstructions: args } : undefined);
+      } else {
+        pi.sendUserMessage(
+          args ? `/compact_session ${args}` : "/compact_session",
+          {
+            expandPromptTemplates: true,
+            deliverAs: "followUp",
+          },
+        );
+      }
+      await api.sendMessage(chatId, "⏳ <b>Context compaction initiated.</b>", messageId, getQuickActionMarkup());
     } catch (err: any) {
-      await api.sendMessage(chatId, `❌ Compaction error: ${err.message}`, messageId);
+      await api.sendMessage(chatId, `❌ Compaction error: ${err.message}`, messageId, getQuickActionMarkup());
     }
     return true;
   }
@@ -84,8 +92,13 @@ export async function handleSlashCommand(
   if (cmdName === "model") {
     if (!args) {
       const currentModel = ctx?.model;
-      const modelStr = currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset";
-      await api.sendMessage(chatId, `🧠 <b>Current Model:</b> <code>${modelStr}</code>\n\nUsage: <code>/model &lt;model-name&gt;</code> to switch.`, messageId);
+      const modelStr = currentModel ? `${currentModel.provider}/${currentModel.id}` : "default";
+      await api.sendMessage(
+        chatId,
+        `🧠 <b>Current Model:</b> <code>${escapeHtml(modelStr)}</code>\n\nUsage: <code>/model &lt;model-name&gt;</code> to switch.`,
+        messageId,
+        getQuickActionMarkup(),
+      );
       return true;
     }
     try {
@@ -103,16 +116,16 @@ export async function handleSlashCommand(
       if (match) {
         const success = await pi.setModel(match);
         if (success) {
-          await api.sendMessage(chatId, `✅ Switched model to <b>${match.provider}/${match.id}</b>.`, messageId);
+          await api.sendMessage(chatId, `✅ Switched model to <b>${escapeHtml(match.provider)}/${escapeHtml(match.id)}</b>.`, messageId, getQuickActionMarkup());
         } else {
-          await api.sendMessage(chatId, `❌ Authentication failed for model ${match.provider}/${match.id}.`, messageId);
+          await api.sendMessage(chatId, `❌ Authentication failed for model ${escapeHtml(match.provider)}/${escapeHtml(match.id)}.`, messageId, getQuickActionMarkup());
         }
       } else {
-        const list = available.map((m: any) => `<code>${m.provider}/${m.id}</code>`).join(", ");
-        await api.sendMessage(chatId, `⚠️ Model <code>${escapeHtml(args)}</code> not found.\nAvailable models:\n${list || "None"}`, messageId);
+        const list = available.map((m: any) => `<code>${escapeHtml(m.provider)}/${escapeHtml(m.id)}</code>`).join(", ");
+        await api.sendMessage(chatId, `⚠️ Model <code>${escapeHtml(args)}</code> not found.\nAvailable models:\n${list || "None"}`, messageId, getQuickActionMarkup());
       }
     } catch (err: any) {
-      await api.sendMessage(chatId, `❌ Error switching model: ${err.message}`, messageId);
+      await api.sendMessage(chatId, `❌ Error switching model: ${err.message}`, messageId, getQuickActionMarkup());
     }
     return true;
   }
@@ -120,42 +133,47 @@ export async function handleSlashCommand(
   if (cmdName === "thinking" || cmdName === "think") {
     if (!args) {
       const currentLevel = pi.getThinkingLevel();
-      await api.sendMessage(chatId, `🧠 <b>Current Thinking Level:</b> <code>${currentLevel}</code>\n\nUsage: <code>/thinking &lt;off|low|medium|high|max&gt;</code>`, messageId);
+      await api.sendMessage(
+        chatId,
+        `🧠 <b>Current Thinking Level:</b> <code>${escapeHtml(String(currentLevel))}</code>\n\nUsage: <code>/thinking &lt;off|low|medium|high|max&gt;</code>`,
+        messageId,
+        getQuickActionMarkup(),
+      );
       return true;
     }
     try {
       pi.setThinkingLevel(args.toLowerCase() as any);
-      await api.sendMessage(chatId, `🧠 Thinking level updated to <b>${escapeHtml(args)}</b>.`, messageId);
+      await api.sendMessage(chatId, `🧠 Thinking level updated to <b>${escapeHtml(args)}</b>.`, messageId, getQuickActionMarkup());
     } catch (err: any) {
-      await api.sendMessage(chatId, `❌ Error setting thinking level: ${err.message}`, messageId);
+      await api.sendMessage(chatId, `❌ Error setting thinking level: ${err.message}`, messageId, getQuickActionMarkup());
     }
     return true;
   }
 
   if (cmdName === "status") {
     const currentModel = ctx?.model;
-    const modelStr = currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset";
+    const modelStr = currentModel ? `${currentModel.provider}/${currentModel.id}` : "default";
     const currentThinking = pi.getThinkingLevel();
     const queueLen = queue.length;
     const active = queue.getActiveTurn();
     const statusMsg = `📊 <b>Pi Telegram Status</b>\n
-• <b>Active Model:</b> <code>${modelStr}</code>
-• <b>Thinking Budget:</b> <code>${currentThinking}</code>
+• <b>Active Model:</b> <code>${escapeHtml(modelStr)}</code>
+• <b>Thinking Budget:</b> <code>${escapeHtml(String(currentThinking))}</code>
 • <b>Queue Depth:</b> <code>${queueLen} pending turn(s)</code>
-• <b>Active Turn:</b> <code>${active ? active.id : "idle"}</code>`;
+• <b>Active Turn:</b> <code>${active ? escapeHtml(active.id) : "idle"}</code>`;
     await api.sendMessage(chatId, statusMsg, messageId, getQuickActionMarkup());
     return true;
   }
 
   if (cmdName === "abort") {
     try {
-      if (ctx && typeof (ctx as any).abort === "function") {
-        (ctx as any).abort();
+      if (ctx && typeof ctx.abort === "function") {
+        ctx.abort();
       }
       queue.clearActiveTurn();
-      await api.sendMessage(chatId, "🛑 <b>Agent execution aborted.</b>", messageId);
+      await api.sendMessage(chatId, "🛑 <b>Agent execution aborted.</b>", messageId, getQuickActionMarkup());
     } catch (err: any) {
-      await api.sendMessage(chatId, `❌ Failed to abort: ${err.message}`, messageId);
+      await api.sendMessage(chatId, `❌ Failed to abort: ${err.message}`, messageId, getQuickActionMarkup());
     }
     return true;
   }

@@ -23,10 +23,15 @@ import { execFile } from "node:child_process";
 import type {
   ExtensionAPI,
   ExtensionContext,
+  AgentStartEvent,
   AgentEndEvent,
   ToolExecutionStartEvent,
   ToolExecutionEndEvent,
   TurnStartEvent,
+  TurnEndEvent,
+  SessionStartEvent,
+  SessionShutdownEvent,
+  ModelSelectEvent,
 } from "@earendil-works/pi-coding-agent";
 
 import { loadConfig, getHomeDir, formatFileSize } from "./src/config.js";
@@ -66,8 +71,22 @@ export default function (pi: ExtensionAPI) {
 
   pi.registerCommand("compact_session", {
     description: "Compact context from Telegram bridge",
+    handler: async (args, ctx) => {
+      ctx.compact(args ? { customInstructions: args } : undefined);
+    },
+  });
+
+  pi.registerCommand("new", {
+    description: "Start a new session",
     handler: async (_args, ctx) => {
-      ctx.compact();
+      await ctx.newSession();
+    },
+  });
+
+  pi.registerCommand("compact", {
+    description: "Compact context",
+    handler: async (args, ctx) => {
+      ctx.compact(args ? { customInstructions: args } : undefined);
     },
   });
 
@@ -262,6 +281,25 @@ export default function (pi: ExtensionAPI) {
   };
 
   // Pi Lifecycle Hooks
+  pi.on("session_start", async (_event: SessionStartEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+    if (config.autoStart && !isRunning) {
+      startBridge(ctx);
+    }
+  });
+
+  pi.on("session_shutdown", async (_event: SessionShutdownEvent, ctx: ExtensionContext) => {
+    stopBridge(ctx);
+  });
+
+  pi.on("model_select", async (_event: ModelSelectEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+  });
+
+  pi.on("agent_start", async (_event: AgentStartEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+  });
+
   pi.on("turn_start", async (_event: TurnStartEvent, ctx: ExtensionContext) => {
     latestContext = ctx;
     if (!queue.isEmpty() && !queue.getActiveTurn()) {
@@ -291,6 +329,10 @@ export default function (pi: ExtensionAPI) {
         }
       }
     }
+  });
+
+  pi.on("turn_end", async (_event: TurnEndEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
   });
 
   pi.on("agent_end", async (event: AgentEndEvent, ctx: ExtensionContext) => {
@@ -383,7 +425,7 @@ export default function (pi: ExtensionAPI) {
     if (ctx.hasUI) ctx.ui.notify("Telegram Bridge started", "info");
   };
 
-  const stopBridge = (ctx: ExtensionContext) => {
+  const stopBridge = (ctx?: ExtensionContext) => {
     if (!isRunning) return;
     isRunning = false;
     if (pollingAbortController) {
@@ -392,7 +434,7 @@ export default function (pi: ExtensionAPI) {
     }
     api.stopTypingLoop();
     progressReporter.cleanup();
-    if (ctx.hasUI) ctx.ui.notify("Telegram Bridge stopped", "info");
+    if (ctx?.hasUI) ctx.ui.notify("Telegram Bridge stopped", "info");
   };
 
   pi.registerCommand("telegram-start", {
@@ -415,11 +457,12 @@ export default function (pi: ExtensionAPI) {
     },
   });
 
-  // Auto-start if enabled
+  // Fallback auto-start if session_start was already completed before factory
   if (config.autoStart) {
     setTimeout(() => {
-      // @ts-ignore
-      startBridge({ hasUI: false, ui: { notify: () => {} } });
+      if (!isRunning && latestContext) {
+        startBridge(latestContext);
+      }
     }, 1000);
   }
 }
