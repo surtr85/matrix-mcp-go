@@ -2,16 +2,19 @@
  * Matrix Bridge Extension for Pi Coding Agent
  *
  * Dedicated high-performance, token-efficient, zero-cost bridge between Matrix (matrix.kurisu.ir) and Pi:
- * - Direct session injection via `pi.sendUserMessage()` with zero subagent token bloat.
+ * - Direct session injection via `pi.sendUserMessage()` with `{ deliverAs: "followUp" }` to prevent concurrency crashes.
+ * - Comprehensive multimodal media handling: Images, Videos, Audio, and Documents/Files.
+ * - Saves incoming media locally to `~/.pi/agent/media/` for Pi tools (`read`, bash, python, etc.).
+ * - Intelligent batch coalescing: merges adjacent text + image/media messages into a single multimodal turn.
  * - Long-polling Matrix sync with persistent disk-backed sync tokens (~/.pi/agent/matrix_sync_token).
  * - Real-time progress reporter with debounced cooldown for tool calls (`bash`, `read`, `write`, `edit`) & thinking.
  * - In-place Matrix live status updates via `m.replace` (MSC2676) and automatic cleanup on completion.
- * - Immediate read receipts (`m.read`) and receipt reaction (`👀`).
- * - Multimodal support: automatically downloads `mxc://` media and attaches native ImageContent.
+ * - Immediate read receipts (`m.read`) and receipt reactions (`👀`).
+ * - Task completion reactions (`✅`) and secure desktop notifications via `execFile`.
+ * - Pure English system messages, statuses, commands, and notifications.
  * - Matrix control commands: `/new`, `/status`, `/model`, `/thinking`, `/compact`, `/help`.
  * - Clean Markdown-to-HTML converter with Persian BiDi (RTL for Persian text, LTR for code blocks).
  * - Automatic thinking tag `<think>...</think>` sanitization.
- * - Task completion reaction (`✅`) and secure desktop notifications via `execFile`.
  */
 
 import * as fs from "node:fs";
@@ -58,6 +61,14 @@ function getSyncTokenPath(): string {
   return path.join(getHomeDir(), ".pi/agent/matrix_sync_token");
 }
 
+function getMediaDir(): string {
+  const dir = path.join(getHomeDir(), ".pi/agent/media");
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  return dir;
+}
+
 function loadConfig(): MatrixConfig {
   const configPath = path.join(getHomeDir(), ".pi/agent/matrix.json");
   if (fs.existsSync(configPath)) {
@@ -91,6 +102,12 @@ function saveSyncToken(token: string) {
   } catch {
     // Ignore write errors
   }
+}
+
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function sendDesktopNotification(title: string, message: string) {
@@ -183,31 +200,87 @@ function markdownToMatrixHtml(md: string): string {
   return html;
 }
 
+interface DownloadedMedia {
+  data: string; // base64
+  buffer: Buffer;
+  mimeType: string;
+  filename: string;
+  localPath: string;
+  sizeBytes: number;
+}
+
 async function downloadMatrixMedia(
   homeserver: string,
   token: string,
   mxcUrl: string,
-): Promise<{ data: string; mimeType: string } | null> {
+  suggestedFilename: string = "file",
+): Promise<DownloadedMedia | null> {
   if (!mxcUrl.startsWith("mxc://")) return null;
   const [serverName, mediaId] = mxcUrl.slice(6).split("/");
   if (!serverName || !mediaId) return null;
 
-  try {
-    const downloadUrl = `${homeserver}/_matrix/client/v1/media/download/${encodeURIComponent(
+  const endpoints = [
+    `${homeserver}/_matrix/client/v1/media/download/${encodeURIComponent(
       serverName,
-    )}/${encodeURIComponent(mediaId)}`;
-    const res = await fetch(downloadUrl, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return null;
+    )}/${encodeURIComponent(mediaId)}`,
+    `${homeserver}/_matrix/media/v3/download/${encodeURIComponent(
+      serverName,
+    )}/${encodeURIComponent(mediaId)}`,
+  ];
 
-    const mimeType = res.headers.get("content-type") || "image/png";
-    const arrayBuf = await res.arrayBuffer();
-    const base64 = Buffer.from(arrayBuf).toString("base64");
-    return { data: base64, mimeType };
-  } catch {
-    return null;
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) continue;
+
+      const mimeType =
+        res.headers.get("content-type") || "application/octet-stream";
+      const arrayBuf = await res.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+      const base64 = buffer.toString("base64");
+
+      const mediaDir = getMediaDir();
+
+      // Safe filename with extension
+      let ext = path.extname(suggestedFilename);
+      if (!ext) {
+        if (mimeType.includes("jpeg") || mimeType.includes("jpg")) ext = ".jpg";
+        else if (mimeType.includes("png")) ext = ".png";
+        else if (mimeType.includes("gif")) ext = ".gif";
+        else if (mimeType.includes("webp")) ext = ".webp";
+        else if (mimeType.includes("mp4")) ext = ".mp4";
+        else if (mimeType.includes("webm")) ext = ".webm";
+        else if (mimeType.includes("ogg") || mimeType.includes("opus")) ext = ".ogg";
+        else if (mimeType.includes("pdf")) ext = ".pdf";
+        else ext = ".bin";
+      }
+
+      const baseName =
+        path
+          .basename(suggestedFilename, ext)
+          .replace(/[^a-zA-Z0-9_-]/g, "_")
+          .slice(0, 30) || "media";
+      const finalFilename = `${Date.now()}_${baseName}${ext}`;
+      const localPath = path.join(mediaDir, finalFilename);
+
+      fs.writeFileSync(localPath, buffer);
+
+      return {
+        data: base64,
+        buffer,
+        mimeType,
+        filename: finalFilename,
+        localPath,
+        sizeBytes: buffer.length,
+      };
+    } catch {
+      continue;
+    }
   }
+
+  return null;
 }
 
 class BoundedEventCache {
@@ -238,6 +311,7 @@ export default function (pi: ExtensionAPI) {
   let lastSyncBatch: string | null = loadSavedSyncToken();
   let activeRoomId: string | null = null;
   let currentTriggerEventId: string | null = null;
+  let pendingTriggerEventIds = new Set<string>();
   let pendingResponse = false;
   let typingTimer: NodeJS.Timeout | null = null;
   let typingRoomId: string | null = null;
@@ -476,7 +550,6 @@ export default function (pi: ExtensionAPI) {
       this.active = true;
       this.roomId = roomId;
       this.replyToEventId = replyToEventId;
-      // Start cooldown clock from user message arrival so fast responses don't produce an extra status message
       this.lastReportTime = Date.now();
     }
 
@@ -573,7 +646,10 @@ export default function (pi: ExtensionAPI) {
     // 1. /new, /reset, /clear
     if (cmdName === "new" || cmdName === "reset" || cmdName === "clear") {
       try {
-        pi.sendUserMessage("/new_session", { expandPromptTemplates: true });
+        pi.sendUserMessage("/new_session", {
+          expandPromptTemplates: true,
+          deliverAs: "followUp",
+        });
         await sendMatrixMessage(
           roomId,
           "✨ **New session started successfully.**",
@@ -720,6 +796,7 @@ export default function (pi: ExtensionAPI) {
         );
         pi.sendUserMessage(args ? `/compact ${args}` : "/compact", {
           expandPromptTemplates: true,
+          deliverAs: "followUp",
         });
       } catch (err: any) {
         await sendMatrixMessage(
@@ -853,92 +930,159 @@ export default function (pi: ExtensionAPI) {
         const joinedRooms = data.rooms?.join || {};
         for (const roomId of Object.keys(joinedRooms)) {
           const events = joinedRooms[roomId]?.timeline?.events || [];
-          for (const ev of events) {
-            if (
+          
+          // Filter incoming message events from allowed users
+          const candidateEvents = events.filter(
+            (ev: any) =>
               ev.type === "m.room.message" &&
-              ev.sender !== config.botUserId
-            ) {
-              if (processedEventIds.has(ev.event_id)) continue;
-              processedEventIds.add(ev.event_id);
+              ev.sender !== config.botUserId &&
+              !processedEventIds.has(ev.event_id) &&
+              (config.allowedUsers.length === 0 || config.allowedUsers.includes(ev.sender)),
+          );
 
-              if (
-                config.allowedUsers.length > 0 &&
-                !config.allowedUsers.includes(ev.sender)
-              ) {
+          for (let i = 0; i < candidateEvents.length; i++) {
+            const ev = candidateEvents[i];
+            processedEventIds.add(ev.event_id);
+
+            const msgtype = ev.content?.msgtype;
+            const rawBody = ev.content?.body || "";
+            const mediaUrl = ev.content?.url || ev.content?.file?.url;
+
+            activeRoomId = roomId;
+            currentTriggerEventId = ev.event_id;
+            pendingTriggerEventIds.add(ev.event_id);
+            pendingResponse = true;
+
+            // 1. Send read receipt & react with '👀'
+            sendReadReceipt(roomId, ev.event_id);
+            sendReaction(roomId, ev.event_id, "👀");
+
+            // 2. Start typing indicator
+            startTypingLoop(roomId);
+
+            // 3. Desktop notification
+            const notifTitle = `Matrix: ${ev.sender}`;
+            const notifBody = mediaUrl ? `📎 [${msgtype || "Media attachment"}] ${rawBody}` : rawBody;
+            sendDesktopNotification(notifTitle, notifBody.slice(0, 100));
+
+            // 4. Handle commands
+            if (typeof rawBody === "string" && rawBody.trim().startsWith("/")) {
+              stopTypingLoop();
+              pendingResponse = false;
+              const handled = await handleMatrixCommand(
+                roomId,
+                rawBody.trim(),
+                ev.sender,
+                ev.event_id,
+              );
+              if (handled) {
                 continue;
               }
-
-              const msgtype = ev.content?.msgtype;
-              const rawBody = ev.content?.body || "";
-              const mxcUrl = ev.content?.url;
-
-              activeRoomId = roomId;
-              currentTriggerEventId = ev.event_id;
               pendingResponse = true;
-
-              // 1. Send read receipt & react with '👀'
-              sendReadReceipt(roomId, ev.event_id);
-              sendReaction(roomId, ev.event_id, "👀");
-
-              // 2. Start typing indicator
               startTypingLoop(roomId);
+            }
 
-              // 3. Desktop notification
-              sendDesktopNotification(
-                `Matrix: ${ev.sender}`,
-                msgtype === "m.image"
-                  ? "📷 [Image attachment]"
-                  : rawBody.slice(0, 100),
+            // 5. Initialize Progress Reporter for this turn
+            progressReporter.start(roomId, ev.event_id);
+
+            // 6. Intelligent Batch Coalescing:
+            // Check if next event in batch is an image/media from the same sender (caption sent as separate event)
+            let coalescedCaption = rawBody;
+            let targetEv = ev;
+
+            if (msgtype === "m.text" && i + 1 < candidateEvents.length) {
+              const nextEv = candidateEvents[i + 1];
+              const nextMediaUrl = nextEv.content?.url || nextEv.content?.file?.url;
+              if (nextMediaUrl && nextEv.sender === ev.sender) {
+                // Merge text caption with next media event!
+                coalescedCaption = rawBody;
+                targetEv = nextEv;
+                i++; // Skip nextEv as it's merged
+                processedEventIds.add(nextEv.event_id);
+                sendReadReceipt(roomId, nextEv.event_id);
+                sendReaction(roomId, nextEv.event_id, "👀");
+                currentTriggerEventId = nextEv.event_id;
+                pendingTriggerEventIds.add(nextEv.event_id);
+              }
+            }
+
+            const targetMsgType = targetEv.content?.msgtype;
+            const targetMediaUrl = targetEv.content?.url || targetEv.content?.file?.url;
+            const targetBody = targetEv.content?.body || "";
+
+            // Handle Media Types: Images, Videos, Audio, Files
+            if (targetMediaUrl) {
+              const downloaded = await downloadMatrixMedia(
+                config.homeserver,
+                config.accessToken,
+                targetMediaUrl,
+                targetBody || "attachment",
               );
 
-              // 4. Handle commands
-              if (typeof rawBody === "string" && rawBody.trim().startsWith("/")) {
-                stopTypingLoop();
-                pendingResponse = false;
-                const handled = await handleMatrixCommand(
-                  roomId,
-                  rawBody.trim(),
-                  ev.sender,
-                  ev.event_id,
-                );
-                if (handled) {
+              if (downloaded) {
+                if (targetMsgType === "m.image") {
+                  // Multimodal native vision attachment
+                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
+                    ? `${coalescedCaption}\n\n[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
+                    : `[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+
+                  pi.sendUserMessage(
+                    [
+                      { type: "text", text: textPrompt },
+                      {
+                        type: "image",
+                        data: downloaded.data,
+                        mimeType: downloaded.mimeType,
+                      },
+                    ],
+                    { deliverAs: "followUp" },
+                  );
                   continue;
-                }
-                pendingResponse = true;
-                startTypingLoop(roomId);
-              }
+                } else if (targetMsgType === "m.video") {
+                  // Video file support
+                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
+                    ? `${coalescedCaption}\n\n[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
+                    : `[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath} - Please analyze or inspect this video file.]`;
 
-              // 5. Initialize Progress Reporter for this turn
-              progressReporter.start(roomId, ev.event_id);
-
-              // 6. Multimodal Image or Text Injection
-              if (msgtype === "m.image" && mxcUrl) {
-                const media = await downloadMatrixMedia(
-                  config.homeserver,
-                  config.accessToken,
-                  mxcUrl,
-                );
-                if (media) {
-                  pi.sendUserMessage([
-                    { type: "text", text: rawBody ? `[Matrix Image: ${rawBody}]` : "[Matrix Image]" },
-                    {
-                      type: "image",
-                      data: media.data,
-                      mimeType: media.mimeType,
-                    },
-                  ]);
+                  pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
-                }
-              }
+                } else if (targetMsgType === "m.audio") {
+                  // Audio file support
+                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
+                    ? `${coalescedCaption}\n\n[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
+                    : `[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
-              // Normal text injection: clean, direct, zero subagent overhead
-              if (typeof rawBody === "string" && rawBody.trim().length > 0) {
-                if (config.useSubagent) {
-                  const subagentPrompt = `[Matrix @${ev.sender}]:\n${rawBody}\n\n[Instruction: Delegate to ${config.subagentRole} subagent and return final answer.]`;
-                  pi.sendUserMessage(subagentPrompt);
+                  pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
+                  continue;
                 } else {
-                  pi.sendUserMessage(rawBody);
+                  // Generic Document/File (PDF, code, zip, csv, text, etc.)
+                  let snippet = "";
+                  if (
+                    downloaded.mimeType.startsWith("text/") ||
+                    downloaded.filename.match(/\.(ts|js|py|go|rs|nix|json|yaml|yml|md|txt|sh|csv)$/i)
+                  ) {
+                    if (downloaded.sizeBytes < 64 * 1024) {
+                      snippet = `\nFile preview:\n\`\`\`\n${downloaded.buffer.toString("utf-8").slice(0, 2000)}\n\`\`\``;
+                    }
+                  }
+
+                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
+                    ? `${coalescedCaption}\n\n[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`
+                    : `[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`;
+
+                  pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
+                  continue;
                 }
+              }
+            }
+
+            // Normal text injection: clean, direct, with deliverAs: "followUp"
+            if (typeof coalescedCaption === "string" && coalescedCaption.trim().length > 0) {
+              if (config.useSubagent) {
+                const subagentPrompt = `[Matrix @${ev.sender}]:\n${coalescedCaption}\n\n[Instruction: Delegate to ${config.subagentRole} subagent and return final answer.]`;
+                pi.sendUserMessage(subagentPrompt, { deliverAs: "followUp" });
+              } else {
+                pi.sendUserMessage(coalescedCaption, { deliverAs: "followUp" });
               }
             }
           }
@@ -965,7 +1109,7 @@ export default function (pi: ExtensionAPI) {
     progressReporter.reset();
   };
 
-  // --- Pi Lifecycle Hooks (All in English) ---
+  // --- Pi Lifecycle Hooks ---
 
   // Progress Reporting: Turn Start (Thinking)
   pi.on("turn_start", async (_event: TurnStartEvent) => {
@@ -1024,6 +1168,7 @@ export default function (pi: ExtensionAPI) {
 
     const targetRoomId = activeRoomId;
     const targetTriggerId = currentTriggerEventId;
+    const triggerEventsToAcknowledge = Array.from(pendingTriggerEventIds);
 
     try {
       const assistantMessages = event.messages.filter(
@@ -1051,8 +1196,10 @@ export default function (pi: ExtensionAPI) {
           );
 
           if (sentEventId) {
-            // Mark original message with checkmark ✅
-            sendReaction(targetRoomId, targetTriggerId, "✅");
+            // Mark all triggering messages with checkmark ✅
+            for (const trigId of triggerEventsToAcknowledge) {
+              sendReaction(targetRoomId, trigId, "✅");
+            }
 
             // Clean up / delete the temporary progress message so chat remains clean
             await progressReporter.cleanup();
@@ -1073,6 +1220,7 @@ export default function (pi: ExtensionAPI) {
       stopTypingLoop();
       pendingResponse = false;
       currentTriggerEventId = null;
+      pendingTriggerEventIds.clear();
     }
   });
 
