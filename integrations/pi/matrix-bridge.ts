@@ -252,7 +252,8 @@ async function downloadMatrixMedia(
         else if (mimeType.includes("webp")) ext = ".webp";
         else if (mimeType.includes("mp4")) ext = ".mp4";
         else if (mimeType.includes("webm")) ext = ".webm";
-        else if (mimeType.includes("ogg") || mimeType.includes("opus")) ext = ".ogg";
+        else if (mimeType.includes("ogg") || mimeType.includes("opus"))
+          ext = ".ogg";
         else if (mimeType.includes("pdf")) ext = ".pdf";
         else ext = ".bin";
       }
@@ -320,7 +321,8 @@ export default function (pi: ExtensionAPI) {
   let latestContext: ExtensionContext | null = null;
 
   // Matrix API Helpers
-  const makeTxnId = () => `m${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const makeTxnId = () =>
+    `m${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
   const sendMatrixMessage = async (
     roomId: string,
@@ -473,7 +475,10 @@ export default function (pi: ExtensionAPI) {
     }
   };
 
-  const sendReadReceipt = async (roomId: string, eventId: string): Promise<void> => {
+  const sendReadReceipt = async (
+    roomId: string,
+    eventId: string,
+  ): Promise<void> => {
     try {
       const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
         roomId,
@@ -591,10 +596,18 @@ export default function (pi: ExtensionAPI) {
             this.replyToEventId || undefined,
           );
         } else {
-          await editMatrixMessage(this.roomId, this.progressMessageId, formatted);
+          await editMatrixMessage(
+            this.roomId,
+            this.progressMessageId,
+            formatted,
+          );
         }
       } else {
-        await sendMatrixMessage(this.roomId, formatted, this.replyToEventId || undefined);
+        await sendMatrixMessage(
+          this.roomId,
+          formatted,
+          this.replyToEventId || undefined,
+        );
       }
     }
 
@@ -628,6 +641,28 @@ export default function (pi: ExtensionAPI) {
   }
 
   const progressReporter = new ProgressReporter();
+
+  // Register internal bridge commands so Pi intercepts them without prompting LLM
+  pi.registerCommand("new_session", {
+    description: "Start a new session from Matrix bridge",
+    handler: async (_args, ctx) => {
+      await ctx.newSession();
+    },
+  });
+
+  pi.registerCommand("compact_session", {
+    description: "Compact context from Matrix bridge",
+    handler: async (_args, ctx) => {
+      ctx.compact();
+    },
+  });
+
+  pi.registerCommand("reload_session", {
+    description: "Reload Pi runtime from Matrix bridge",
+    handler: async (_args, ctx) => {
+      await ctx.reload();
+    },
+  });
 
   // Handle Slash Commands (All in English)
   const handleMatrixCommand = async (
@@ -794,10 +829,13 @@ export default function (pi: ExtensionAPI) {
           "⏳ **Context compaction in progress...**",
           replyToId,
         );
-        pi.sendUserMessage(args ? `/compact ${args}` : "/compact", {
-          expandPromptTemplates: true,
-          deliverAs: "followUp",
-        });
+        pi.sendUserMessage(
+          args ? `/compact_session ${args}` : "/compact_session",
+          {
+            expandPromptTemplates: true,
+            deliverAs: "followUp",
+          },
+        );
       } catch (err: any) {
         await sendMatrixMessage(
           roomId,
@@ -930,14 +968,15 @@ export default function (pi: ExtensionAPI) {
         const joinedRooms = data.rooms?.join || {};
         for (const roomId of Object.keys(joinedRooms)) {
           const events = joinedRooms[roomId]?.timeline?.events || [];
-          
+
           // Filter incoming message events from allowed users
           const candidateEvents = events.filter(
             (ev: any) =>
               ev.type === "m.room.message" &&
               ev.sender !== config.botUserId &&
               !processedEventIds.has(ev.event_id) &&
-              (config.allowedUsers.length === 0 || config.allowedUsers.includes(ev.sender)),
+              (config.allowedUsers.length === 0 ||
+                config.allowedUsers.includes(ev.sender)),
           );
 
           for (let i = 0; i < candidateEvents.length; i++) {
@@ -962,7 +1001,9 @@ export default function (pi: ExtensionAPI) {
 
             // 3. Desktop notification
             const notifTitle = `Matrix: ${ev.sender}`;
-            const notifBody = mediaUrl ? `📎 [${msgtype || "Media attachment"}] ${rawBody}` : rawBody;
+            const notifBody = mediaUrl
+              ? `📎 [${msgtype || "Media attachment"}] ${rawBody}`
+              : rawBody;
             sendDesktopNotification(notifTitle, notifBody.slice(0, 100));
 
             // 4. Handle commands
@@ -992,7 +1033,8 @@ export default function (pi: ExtensionAPI) {
 
             if (msgtype === "m.text" && i + 1 < candidateEvents.length) {
               const nextEv = candidateEvents[i + 1];
-              const nextMediaUrl = nextEv.content?.url || nextEv.content?.file?.url;
+              const nextMediaUrl =
+                nextEv.content?.url || nextEv.content?.file?.url;
               if (nextMediaUrl && nextEv.sender === ev.sender) {
                 // Merge text caption with next media event!
                 coalescedCaption = rawBody;
@@ -1007,7 +1049,8 @@ export default function (pi: ExtensionAPI) {
             }
 
             const targetMsgType = targetEv.content?.msgtype;
-            const targetMediaUrl = targetEv.content?.url || targetEv.content?.file?.url;
+            const targetMediaUrl =
+              targetEv.content?.url || targetEv.content?.file?.url;
             const targetBody = targetEv.content?.body || "";
 
             // Handle Media Types: Images, Videos, Audio, Files
@@ -1022,9 +1065,10 @@ export default function (pi: ExtensionAPI) {
               if (downloaded) {
                 if (targetMsgType === "m.image") {
                   // Multimodal native vision attachment
-                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
-                    ? `${coalescedCaption}\n\n[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
-                    : `[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+                  const textPrompt =
+                    coalescedCaption && coalescedCaption !== targetBody
+                      ? `${coalescedCaption}\n\n[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
+                      : `[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(
                     [
@@ -1040,17 +1084,19 @@ export default function (pi: ExtensionAPI) {
                   continue;
                 } else if (targetMsgType === "m.video") {
                   // Video file support
-                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
-                    ? `${coalescedCaption}\n\n[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
-                    : `[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath} - Please analyze or inspect this video file.]`;
+                  const textPrompt =
+                    coalescedCaption && coalescedCaption !== targetBody
+                      ? `${coalescedCaption}\n\n[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
+                      : `[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath} - Please analyze or inspect this video file.]`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
                 } else if (targetMsgType === "m.audio") {
                   // Audio file support
-                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
-                    ? `${coalescedCaption}\n\n[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
-                    : `[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+                  const textPrompt =
+                    coalescedCaption && coalescedCaption !== targetBody
+                      ? `${coalescedCaption}\n\n[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
+                      : `[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
@@ -1059,16 +1105,19 @@ export default function (pi: ExtensionAPI) {
                   let snippet = "";
                   if (
                     downloaded.mimeType.startsWith("text/") ||
-                    downloaded.filename.match(/\.(ts|js|py|go|rs|nix|json|yaml|yml|md|txt|sh|csv)$/i)
+                    downloaded.filename.match(
+                      /\.(ts|js|py|go|rs|nix|json|yaml|yml|md|txt|sh|csv)$/i,
+                    )
                   ) {
                     if (downloaded.sizeBytes < 64 * 1024) {
                       snippet = `\nFile preview:\n\`\`\`\n${downloaded.buffer.toString("utf-8").slice(0, 2000)}\n\`\`\``;
                     }
                   }
 
-                  const textPrompt = coalescedCaption && coalescedCaption !== targetBody
-                    ? `${coalescedCaption}\n\n[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`
-                    : `[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`;
+                  const textPrompt =
+                    coalescedCaption && coalescedCaption !== targetBody
+                      ? `${coalescedCaption}\n\n[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`
+                      : `[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
@@ -1077,7 +1126,10 @@ export default function (pi: ExtensionAPI) {
             }
 
             // Normal text injection: clean, direct, with deliverAs: "followUp"
-            if (typeof coalescedCaption === "string" && coalescedCaption.trim().length > 0) {
+            if (
+              typeof coalescedCaption === "string" &&
+              coalescedCaption.trim().length > 0
+            ) {
               if (config.useSubagent) {
                 const subagentPrompt = `[Matrix @${ev.sender}]:\n${coalescedCaption}\n\n[Instruction: Delegate to ${config.subagentRole} subagent and return final answer.]`;
                 pi.sendUserMessage(subagentPrompt, { deliverAs: "followUp" });
@@ -1125,18 +1177,24 @@ export default function (pi: ExtensionAPI) {
     let desc = "";
     switch (event.toolName) {
       case "bash": {
-        const cmd = event.args?.command ? ` \`${event.args.command.slice(0, 60)}\`` : "";
+        const cmd = event.args?.command
+          ? ` \`${event.args.command.slice(0, 60)}\``
+          : "";
         desc = `⚙️ Running bash:${cmd}`;
         break;
       }
       case "read": {
-        const p = event.args?.path ? ` \`${path.basename(event.args.path)}\`` : "";
+        const p = event.args?.path
+          ? ` \`${path.basename(event.args.path)}\``
+          : "";
         desc = `📖 Reading${p}`;
         break;
       }
       case "edit":
       case "write": {
-        const p = event.args?.path ? ` \`${path.basename(event.args.path)}\`` : "";
+        const p = event.args?.path
+          ? ` \`${path.basename(event.args.path)}\``
+          : "";
         desc = `✏️ Editing${p}`;
         break;
       }

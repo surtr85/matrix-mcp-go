@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "integrations/pi/matrix-bridge.ts": {
-    "mtime": 1790035676.8959668,
-    "seen": 1790035715.3072495,
-    "ast_hash": "0a81f773f5635c02de3134bd16eea296",
+    "mtime": 1790036042.0632515,
+    "seen": 1790036085.0942957,
+    "ast_hash": "2fa97cfde21a1d3bb82f82c317aacd5a",
     "semantic_hash": ""
   },
   "scripts/antigravity_bridge.py": {

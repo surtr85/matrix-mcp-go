@@ -1,16 +1,16 @@
 # Graph Report - matrix-mcp-go  (2026-09-22)
 
 ## Corpus Check
-- 37 files · ~49,901 words
+- 37 files · ~50,468 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 303 nodes · 617 edges · 17 communities (16 shown, 1 thin omitted)
+- 306 nodes · 622 edges · 17 communities (16 shown, 1 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2304a352`
+- Built from commit: `285c8fa9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -109,15 +109,15 @@ Cohesion: 0.57
 Nodes (7): ask_pi(), load_config(), main(), matrix_request(), send_message(), send_reaction(), set_typing()
 
 ### Community 15 - "matrix-bridge.ts"
-Cohesion: 0.11
-Nodes (12): BoundedEventCache, DEFAULT_CONFIG, escapeHtml(), getHomeDir(), getSyncTokenPath(), isPersian(), loadConfig(), loadSavedSyncToken() (+4 more)
+Cohesion: 0.10
+Nodes (15): BoundedEventCache, DEFAULT_CONFIG, DownloadedMedia, downloadMatrixMedia(), escapeHtml(), getHomeDir(), getMediaDir(), getSyncTokenPath() (+7 more)
 
 ### Community 16 - "antigravity_bridge.py"
 Cohesion: 0.70
 Nodes (4): call_tool(), create_mcp_process(), init_mcp(), main()
 
 ## Knowledge Gaps
-- **32 isolated node(s):** `matrix-mcp-go.nix`, `pkgs.mkShell`, `pkgs.buildGoModule`, `github.com/amadeus/matrix-mcp-go`, `MatrixConfig` (+27 more)
+- **33 isolated node(s):** `matrix-mcp-go.nix`, `pkgs.mkShell`, `pkgs.buildGoModule`, `github.com/amadeus/matrix-mcp-go`, `MatrixConfig` (+28 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -125,16 +125,16 @@ Nodes (4): call_tool(), create_mcp_process(), init_mcp(), main()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `FormatMessage()` connect `FormatMessage` to `Server`, `matrixHTMLRenderer`?**
-  _High betweenness centrality (0.118) - this node is a cross-community bridge._
+  _High betweenness centrality (0.116) - this node is a cross-community bridge._
 - **Why does `Client` connect `Client` to `context.Context`, `testing.T`, `Store`, `Config`?**
-  _High betweenness centrality (0.090) - this node is a cross-community bridge._
+  _High betweenness centrality (0.088) - this node is a cross-community bridge._
 - **Why does `Server` connect `Server` to `Config`, `testing.T`?**
-  _High betweenness centrality (0.087) - this node is a cross-community bridge._
+  _High betweenness centrality (0.086) - this node is a cross-community bridge._
 - **What connects `matrix-mcp-go.nix`, `pkgs.mkShell`, `pkgs.buildGoModule` to the rest of the system?**
-  _32 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _33 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `context.Context` be split into smaller, more focused modules?**
   _Cohesion score 0.14728682170542637 - nodes in this community are weakly interconnected._
 - **Should `testing.T` be split into smaller, more focused modules?**
-  _Cohesion score 0.10241545893719807 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09898242368177614 - nodes in this community are weakly interconnected._
 - **Should `Server` be split into smaller, more focused modules?**
   _Cohesion score 0.12307692307692308 - nodes in this community are weakly interconnected._
