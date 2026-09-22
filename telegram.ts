@@ -14,6 +14,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
+import * as dns from "node:dns";
 import { execFile } from "node:child_process";
 import type {
   ExtensionAPI,
@@ -23,6 +24,13 @@ import type {
   ToolExecutionEndEvent,
   TurnStartEvent,
 } from "@earendil-works/pi-coding-agent";
+
+// Ensure IPv4 is resolved first on Node 24+ to eliminate IPv6 network timeouts / ETIMEDOUT
+try {
+  dns.setDefaultResultOrder("ipv4first");
+} catch {
+  // Ignore on unsupported runtime versions
+}
 
 interface TelegramConfig {
   botToken: string;
@@ -117,8 +125,17 @@ function escapeHtml(str: string): string {
     .replace(/>/g, "&gt;");
 }
 
-function isPersian(text: string): boolean {
-  return /[\u0600-\u06FF]/.test(text);
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'");
+}
+
+function stripHtmlToPlainText(html: string): string {
+  return decodeHtmlEntities(html.replace(/<[^>]*>/g, ""));
 }
 
 /**
@@ -249,15 +266,6 @@ export default function (pi: ExtensionAPI) {
   let currentActiveTurn: PendingTelegramTurn | null = null;
   const createdMediaFiles: string[] = [];
 
-  const pendingConfirmations = new Map<
-    string,
-    {
-      resolve: (value: boolean) => void;
-      chatId: number;
-      messageId: number;
-    }
-  >();
-
   const makeTxnId = () =>
     `tg_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
@@ -339,12 +347,13 @@ export default function (pi: ExtensionAPI) {
           disable_web_page_preview: true,
         });
         lastMessageId = res.message_id;
-      } catch (err: any) {
-        // Fallback to plain text if HTML tags cause a parse error
+      } catch {
+        // Fallback to safe plain text: strip HTML tags and decode entities so no raw tags leak into the chat
+        const safePlainText = stripHtmlToPlainText(htmlText);
         try {
           const res = await tgApi("sendMessage", {
             chat_id: chatId,
-            text: chunk,
+            text: safePlainText,
             reply_to_message_id: i === 0 ? replyToMessageId : lastMessageId,
             allow_sending_without_reply: true,
           });
@@ -436,7 +445,7 @@ export default function (pi: ExtensionAPI) {
     private timer: NodeJS.Timeout | null = null;
     private pendingText = "";
 
-    start(chatId: number, triggerMessageId: number) {
+    start(chatId: number, _triggerMessageId: number) {
       this.currentChatId = chatId;
       this.statusMessageId = null;
       this.pendingText = "⏳ <i>Pi is thinking...</i>";
@@ -525,7 +534,7 @@ export default function (pi: ExtensionAPI) {
     chatId: number,
     messageId: number,
     text: string,
-    senderId: number,
+    _senderId: number,
     ctx: ExtensionContext,
   ): Promise<boolean> => {
     const parts = text.trim().split(/\s+/);
