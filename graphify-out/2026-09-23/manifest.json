@@ -1,0 +1,38 @@
+{
+  "flake.nix": {
+    "mtime": 1790036233.698057,
+    "seen": 1790036252.3893042,
+    "ast_hash": "eb35fd8f5aeb198e2633aa0c3f8cfec9",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1790037169.0609982,
+    "seen": 1790037206.2926946,
+    "ast_hash": "4cc7bd5cbe4916952b412dab87519895",
+    "semantic_hash": ""
+  },
+  "assets/banner.png": {
+    "mtime": 1790015790.6482365,
+    "seen": 1790017930.3616261,
+    "ast_hash": "b90dcb628126e3ac7d6d2fce30c81847",
+    "semantic_hash": ""
+  },
+  "index.ts": {
+    "mtime": 1790037182.0276616,
+    "seen": 1790037206.2926872,
+    "ast_hash": "00ad1e30701a7fbe4fb6b7468f973e2b",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1790036229.5109057,
+    "seen": 1790036252.3893123,
+    "ast_hash": "02d1c4092d46671bdc22a0df5e390c01",
+    "semantic_hash": ""
+  },
+  "assets/banner.jpg": {
+    "mtime": 1790036568.2419224,
+    "seen": 1790037206.2926967,
+    "ast_hash": "75b7c7932463337c7edab9b8503aa203",
+    "semantic_hash": ""
+  }
+}

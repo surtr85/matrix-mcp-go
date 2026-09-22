@@ -2,12 +2,12 @@
   "0": "package.json",
   "1": "index.ts",
   "2": "ProgressReporter",
-  "3": "keywords",
-  "4": "files",
-  "5": "BoundedEventCache",
+  "3": "TelegramApiClient",
+  "4": "api.ts",
+  "5": "handleSlashCommand",
   "6": "pi-matrix",
-  "7": "getHomeDir",
-  "8": "markdownToMatrixHtml",
-  "9": "getSyncTokenPath",
+  "7": "telegram/index.ts",
+  "8": "TelegramQueue",
+  "9": "telegram.ts",
   "10": "flake.nix"
 }

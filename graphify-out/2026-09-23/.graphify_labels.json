@@ -1,0 +1,13 @@
+{
+  "0": "package.json",
+  "1": "index.ts",
+  "2": "ProgressReporter",
+  "3": "keywords",
+  "4": "files",
+  "5": "BoundedEventCache",
+  "6": "pi-matrix",
+  "7": "getHomeDir",
+  "8": "markdownToMatrixHtml",
+  "9": "getSyncTokenPath",
+  "10": "flake.nix"
+}
