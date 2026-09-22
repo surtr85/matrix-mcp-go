@@ -76,20 +76,6 @@ export default function (pi: ExtensionAPI) {
     },
   });
 
-  pi.registerCommand("new", {
-    description: "Start a new session",
-    handler: async (_args, ctx) => {
-      await ctx.newSession();
-    },
-  });
-
-  pi.registerCommand("compact", {
-    description: "Compact context",
-    handler: async (args, ctx) => {
-      ctx.compact(args ? { customInstructions: args } : undefined);
-    },
-  });
-
   const mediaWatcher = (filePath: string) => {
     const ext = path.extname(filePath).toLowerCase();
     if ([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf", ".mp4"].includes(ext)) {
