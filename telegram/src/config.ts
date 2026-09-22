@@ -32,6 +32,36 @@ export function getMediaDir(): string {
   return dir;
 }
 
+export function getOffsetPath(): string {
+  return path.join(getHomeDir(), ".pi/agent/telegram_offset");
+}
+
+export function loadSavedOffset(): number {
+  const file = getOffsetPath();
+  try {
+    if (fs.existsSync(file)) {
+      const val = parseInt(fs.readFileSync(file, "utf-8").trim(), 10);
+      return Number.isSafeInteger(val) && val > 0 ? val : 0;
+    }
+  } catch {
+    // Ignore read errors
+  }
+  return 0;
+}
+
+export function saveOffset(offset: number): void {
+  try {
+    const file = getOffsetPath();
+    const dir = path.dirname(file);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(file, String(offset), "utf-8");
+  } catch {
+    // Ignore write errors
+  }
+}
+
 export function loadConfig(): TelegramConfig {
   const configPath = path.join(getHomeDir(), ".config/telegram/config.json");
   let cfg = { ...DEFAULT_CONFIG };

@@ -34,7 +34,8 @@ import type {
   ModelSelectEvent,
 } from "@earendil-works/pi-coding-agent";
 
-import { loadConfig, getHomeDir, formatFileSize } from "./src/config.js";
+import { loadConfig, getHomeDir, formatFileSize, loadSavedOffset, saveOffset } from "./src/config.js";
+import { BoundedEventCache } from "./src/cache.js";
 import { TelegramApiClient } from "./src/api.js";
 import { TelegramProgressReporter } from "./src/progress.js";
 import { TelegramQueue } from "./src/queue.js";
@@ -59,6 +60,7 @@ export default function (pi: ExtensionAPI) {
   const api = new TelegramApiClient(config);
   const queue = new TelegramQueue();
   const progressReporter = new TelegramProgressReporter(api, config.progressCooldownSeconds);
+  const processedUpdateIds = new BoundedEventCache(2000);
   const createdMediaFiles: string[] = [];
 
   // Register internal bridge commands so Pi handles newSession and compact without prompting LLM
@@ -87,9 +89,28 @@ export default function (pi: ExtensionAPI) {
 
   // Long Polling Loop
   const startPolling = async (ctx: ExtensionContext) => {
-    let offset = 0;
+    let offset = loadSavedOffset();
     latestContext = ctx;
     pollingAbortController = new AbortController();
+
+    // Catch up once if offset is zero to prevent replaying stale backlog
+    if (offset === 0) {
+      try {
+        const catchUpUrl = `https://api.telegram.org/bot${config.botToken}/getUpdates?offset=-1&timeout=0`;
+        const res = await fetch(catchUpUrl, { signal: pollingAbortController.signal });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ok && Array.isArray(data.result) && data.result.length > 0) {
+            const last = data.result[data.result.length - 1];
+            offset = last.update_id + 1;
+            saveOffset(offset);
+            await api.acknowledgeOffset(offset);
+          }
+        }
+      } catch {
+        // Ignore catch-up errors
+      }
+    }
 
     while (isRunning) {
       try {
@@ -108,7 +129,12 @@ export default function (pi: ExtensionAPI) {
         }
 
         for (const update of data.result) {
+          if (processedUpdateIds.has(update.update_id)) {
+            continue;
+          }
+          processedUpdateIds.add(update.update_id);
           offset = Math.max(offset, update.update_id + 1);
+          saveOffset(offset);
 
           // Handle Callback Queries (Inline Quick Action Buttons)
           if (update.callback_query) {
@@ -138,6 +164,9 @@ export default function (pi: ExtensionAPI) {
               };
               const mappedCmd = cmdMap[cb.data];
               if (mappedCmd) {
+                if (mappedCmd === "/new") {
+                  await api.acknowledgeOffset(offset);
+                }
                 await handleSlashCommand(cbChatId, cbMessageId, mappedCmd, cbSenderId, latestContext || ctx, pi, api, queue);
               }
             }

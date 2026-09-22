@@ -5,7 +5,7 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 import type { TelegramApiClient } from "./api.js";
 import type { TelegramQueue } from "./queue.js";
 import type { InlineKeyboardMarkup } from "./types.js";
-import { getHomeDir } from "./config.js";
+import { getHomeDir, loadSavedOffset } from "./config.js";
 import { escapeHtml } from "./formatter.js";
 
 export function getQuickActionMarkup(): InlineKeyboardMarkup {
@@ -54,15 +54,25 @@ export async function handleSlashCommand(
 
   if (cmdName === "new" || cmdName === "reset" || cmdName === "clear") {
     try {
+      const currentOffset = loadSavedOffset();
+      if (currentOffset > 0) {
+        await api.acknowledgeOffset(currentOffset);
+      }
+      await api.sendMessage(chatId, "✨ <b>New session started successfully.</b>", messageId, getQuickActionMarkup());
       if (ctx && typeof (ctx as any).newSession === "function") {
-        await (ctx as any).newSession();
+        setTimeout(async () => {
+          try {
+            await (ctx as any).newSession();
+          } catch {
+            // Ignore reset teardown errors
+          }
+        }, 100);
       } else {
         pi.sendUserMessage("/telegram_new_session", {
           expandPromptTemplates: true,
           deliverAs: "followUp",
         });
       }
-      await api.sendMessage(chatId, "✨ <b>New session started successfully.</b>", messageId, getQuickActionMarkup());
     } catch (err: any) {
       await api.sendMessage(chatId, `❌ Failed to start new session: ${err.message}`, messageId, getQuickActionMarkup());
     }

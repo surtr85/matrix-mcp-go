@@ -75,6 +75,14 @@ export class TelegramApiClient {
     }
   }
 
+  async acknowledgeOffset(offset: number): Promise<void> {
+    try {
+      await this.callApi("getUpdates", { offset, limit: 1, timeout: 0 });
+    } catch {
+      // Ignore acknowledgment network errors
+    }
+  }
+
   async sendChatAction(chatId: number, action = "typing"): Promise<void> {
     try {
       await this.callApi("sendChatAction", { chat_id: chatId, action });
