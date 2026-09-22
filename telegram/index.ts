@@ -1,16 +1,18 @@
 /**
- * Telegram Bridge Extension for Pi Coding Agent (v2.2 Modular Architecture)
+ * Telegram Bridge Extension for Pi Coding Agent (v2.3 Modular Architecture)
  *
  * High-performance, zero-latency, token-efficient bridge between Telegram and Pi:
  * - Security First: Strict RBAC allowlisting (allowedUsers by numerical ID & allowedUsernames).
  * - Multi-turn FIFO Queue: Concurrency safe with exact message and chat tracking.
+ * - Reactive Emoji Feedback: Acknowledges incoming prompts with 👀 and seals with ✅.
  * - In-place Live Progress: Live edit status or reactions while thinking.
- * - Outbound Media Uplink: Auto-uploads generated media (images, plots, PDFs, files) to Telegram chat.
+ * - Auto-Adaptive Media Uplink: Auto-sends generated photos as sendPhoto and files as sendDocument.
  * - Multimodal Vision: Full support for incoming photos with text captions passed straight to Pi vision.
  * - Direct Shell Execution: /sh <cmd> executes host commands directly without consuming LLM tokens.
- * - Native Slash Commands: /new, /status, /model, /thinking, /compact, /abort, /sh, /upload, /help.
+ * - Enhanced Slash Commands: /new, /status, /model, /thinking, /compact, /abort, /sh, /upload, /help.
  * - Clean MarkdownV2 / HTML formatting: Automatic escaping, code-block preservation, and BiDi support.
  * - IPv4 Network Resilience: Configured setDefaultResultOrder("ipv4first") to eliminate IPv6 ETIMEDOUT on Node 24.
+ * - Rate-Limit & Network Resilience: Exponential backoff with auto-retry on 429 and network errors.
  * - Safe HTML Fallback: Decodes entities and strips raw HTML tags on fallback to avoid sending unescaped markup.
  */
 
@@ -113,6 +115,9 @@ export default function (pi: ExtensionAPI) {
             const handled = await handleSlashCommand(chatId, messageId, text, senderId, ctx, pi, api, queue);
             if (handled) continue;
           }
+
+          // Visual instant acknowledgment via Telegram reaction
+          api.setMessageReaction(chatId, messageId, "👀");
 
           // Handle Photo / Images
           if (msg.photo && Array.isArray(msg.photo) && msg.photo.length > 0) {
@@ -272,13 +277,16 @@ export default function (pi: ExtensionAPI) {
             triggerMessageId,
           );
 
-          // Upload any media created during turn
+          // Update trigger message reaction to completion
+          api.setMessageReaction(chatId, triggerMessageId, "✅");
+
+          // Upload any media created during turn (photos use sendPhoto, others sendDocument)
           if (createdMediaFiles.length > 0) {
             const files = [...createdMediaFiles];
             createdMediaFiles.length = 0;
             for (const f of files) {
               if (fs.existsSync(f)) {
-                await api.sendDocument(chatId, f, `📎 ${path.basename(f)}`, sentMsgId || triggerMessageId);
+                await api.sendMediaAuto(chatId, f, `📎 ${path.basename(f)}`, sentMsgId || triggerMessageId);
               }
             }
           }
