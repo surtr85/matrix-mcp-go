@@ -1,20 +1,18 @@
 /**
- * Matrix Bridge Extension for Pi Coding Agent
+ * Matrix Bridge Extension for Pi Coding Agent (v2.0)
  *
- * Dedicated high-performance, token-efficient, zero-cost bridge between Matrix (matrix.kurisu.ir) and Pi:
- * - Direct session injection via `pi.sendUserMessage()` with `{ deliverAs: "followUp" }` to prevent concurrency crashes.
- * - Comprehensive multimodal media handling: Images, Videos, Audio, and Documents/Files.
- * - Saves incoming media locally to `~/.pi/agent/media/` for Pi tools (`read`, bash, python, etc.).
- * - Intelligent batch coalescing: merges adjacent text + image/media messages into a single multimodal turn.
- * - Long-polling Matrix sync with persistent disk-backed sync tokens (~/.pi/agent/matrix_sync_token).
- * - Real-time progress reporter with debounced cooldown for tool calls (`bash`, `read`, `write`, `edit`) & thinking.
- * - In-place Matrix live status updates via `m.replace` (MSC2676) and automatic cleanup on completion.
- * - Immediate read receipts (`m.read`) and receipt reactions (`👀`).
- * - Task completion reactions (`✅`) and secure desktop notifications via `execFile`.
- * - Pure English system messages, statuses, commands, and notifications.
- * - Matrix control commands: `/new`, `/status`, `/model`, `/thinking`, `/compact`, `/help`.
- * - Clean Markdown-to-HTML converter with Persian BiDi (RTL for Persian text, LTR for code blocks).
- * - Automatic thinking tag `<think>...</think>` sanitization.
+ * Dedicated high-performance, token-efficient, zero-cost bridge between Matrix and Pi:
+ * - Security First: Zero hardcoded credentials; reads strictly from ~/.pi/agent/matrix.json or environment variables.
+ * - Concurrency Safe: Turn Queue (FIFO) mapping each turn to its exact roomId, triggerEventId, and sender.
+ * - Outbound Media Uplink: Auto-uploads generated media (images, svg, plots, pdf) & files to Matrix media repo.
+ * - Slash Commands: /new, /status, /model, /thinking, /compact, /abort, /sh, /upload, /help.
+ * - Interactive Abort: Immediate cancellation via /abort or 🛑 reaction without queue lag.
+ * - Direct Shell Execution: /sh <cmd> executes host commands without consuming LLM tokens.
+ * - PDU Overflow Protection: Automatic chunking of long messages (>4000 chars) to prevent M_TOO_LARGE errors.
+ * - Multimodal Native Vision & Attachments: Images, Videos, Audio, Documents with disk caching.
+ * - Intelligent Batch Coalescing: Seamlessly joins text captions + media events.
+ * - In-place Matrix live status updates via m.replace (MSC2676) and automatic cleanup on completion.
+ * - Enhanced Markdown-to-HTML converter with Persian BiDi (RTL for Persian, LTR for code, links, lists, headers).
  */
 
 import * as fs from "node:fs";
@@ -42,16 +40,26 @@ interface MatrixConfig {
 }
 
 const DEFAULT_CONFIG: MatrixConfig = {
-  homeserver: "https://matrix.kurisu.ir",
-  accessToken: "OQ2ggM7Yj7IMDM9Ir92ChMrSV8MMMubp",
-  botUserId: "@miku:matrix.kurisu.ir",
-  allowedUsers: ["@amadeus:matrix.kurisu.ir"],
+  homeserver: process.env.MATRIX_HOMESERVER || "",
+  accessToken: process.env.MATRIX_ACCESS_TOKEN || "",
+  botUserId: process.env.MATRIX_BOT_USER_ID || "",
+  allowedUsers: process.env.MATRIX_ALLOWED_USERS
+    ? process.env.MATRIX_ALLOWED_USERS.split(",").map((u) => u.trim())
+    : [],
   autoStart: true,
   useSubagent: false,
   subagentRole: "delegate",
   progressCooldownSeconds: 5,
   progressMode: "edit",
 };
+
+interface PendingTurn {
+  id: string;
+  roomId: string;
+  triggerEventId: string;
+  sender: string;
+  timestamp: number;
+}
 
 function getHomeDir(): string {
   return process.env.HOME || "/home/amadeus";
@@ -149,6 +157,43 @@ function isPersian(text: string): boolean {
   return persianRegex.test(textWithoutCode);
 }
 
+function getMimeType(filePath: string): string {
+  const ext = path.extname(filePath).toLowerCase();
+  switch (ext) {
+    case ".jpg":
+    case ".jpeg":
+      return "image/jpeg";
+    case ".png":
+      return "image/png";
+    case ".gif":
+      return "image/gif";
+    case ".webp":
+      return "image/webp";
+    case ".svg":
+      return "image/svg+xml";
+    case ".mp4":
+      return "video/mp4";
+    case ".webm":
+      return "video/webm";
+    case ".ogg":
+    case ".opus":
+      return "audio/ogg";
+    case ".mp3":
+      return "audio/mpeg";
+    case ".pdf":
+      return "application/pdf";
+    case ".json":
+      return "application/json";
+    case ".zip":
+      return "application/zip";
+    case ".txt":
+    case ".md":
+      return "text/plain";
+    default:
+      return "application/octet-stream";
+  }
+}
+
 function markdownToMatrixHtml(md: string): string {
   const codeBlocks: string[] = [];
   let workingText = md.replace(
@@ -174,14 +219,43 @@ function markdownToMatrixHtml(md: string): string {
 
   workingText = escapeHtml(workingText);
 
+  // Markdown links: [title](url)
+  workingText = workingText.replace(
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+    '<a href="$2">$1</a>',
+  );
+
   // Markdown formatting
   workingText = workingText.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   workingText = workingText.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
 
+  // Headers: ###, ##, #
+  workingText = workingText.replace(/^### (.*)$/gm, "<h4>$1</h4>");
+  workingText = workingText.replace(/^## (.*)$/gm, "<h3>$1</h3>");
+  workingText = workingText.replace(/^# (.*)$/gm, "<h2>$1</h2>");
+
+  // Blockquotes: > quote
+  workingText = workingText.replace(
+    /^> (.*)$/gm,
+    "<blockquote>$1</blockquote>",
+  );
+
+  // Bullet items: - item
+  workingText = workingText.replace(/^[*-] (.*)$/gm, "<li>$1</li>");
+
   const lines = workingText.split("\n");
   const processedLines = lines.map((line) => {
     if (!line.trim()) return "<br/>";
-    if (line.includes("@@CODE_BLOCK_")) return line;
+    if (
+      line.includes("@@CODE_BLOCK_") ||
+      line.startsWith("<h2>") ||
+      line.startsWith("<h3>") ||
+      line.startsWith("<h4>") ||
+      line.startsWith("<blockquote>") ||
+      line.startsWith("<li>")
+    ) {
+      return line;
+    }
     const rtl = isPersian(line);
     const dir = rtl ? "rtl" : "ltr";
     const align = rtl ? "right" : "left";
@@ -189,6 +263,9 @@ function markdownToMatrixHtml(md: string): string {
   });
 
   let html = processedLines.join("");
+
+  // Wrap consecutive list items in <ul>
+  html = html.replace(/(<li>.*?<\/li>)+/g, (match) => `<ul>${match}</ul>`);
 
   inlineCodes.forEach((code, idx) => {
     html = html.replace(`@@INLINE_CODE_${idx}@@`, code);
@@ -243,7 +320,6 @@ async function downloadMatrixMedia(
 
       const mediaDir = getMediaDir();
 
-      // Safe filename with extension
       let ext = path.extname(suggestedFilename);
       if (!ext) {
         if (mimeType.includes("jpeg") || mimeType.includes("jpg")) ext = ".jpg";
@@ -310,10 +386,14 @@ export default function (pi: ExtensionAPI) {
   let isPolling = false;
   let abortController: AbortController | null = null;
   let lastSyncBatch: string | null = loadSavedSyncToken();
-  let activeRoomId: string | null = null;
-  let currentTriggerEventId: string | null = null;
-  let pendingTriggerEventIds = new Set<string>();
-  let pendingResponse = false;
+
+  // Concurrency Queue: Each turn maintains its exact destination room and reply target
+  const pendingTurnsQueue: PendingTurn[] = [];
+  let currentActiveTurn: PendingTurn | null = null;
+
+  // Track files created or modified during the current turn to send back
+  const createdMediaFiles: string[] = [];
+
   let typingTimer: NodeJS.Timeout | null = null;
   let typingRoomId: string | null = null;
   const processedEventIds = new BoundedEventCache(1000);
@@ -324,7 +404,146 @@ export default function (pi: ExtensionAPI) {
   const makeTxnId = () =>
     `m${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
-  const sendMatrixMessage = async (
+  /**
+   * Uploads local file buffer to Matrix Media Repository
+   */
+  const uploadMatrixMedia = async (
+    localFilePath: string,
+  ): Promise<{
+    mxcUri: string;
+    sizeBytes: number;
+    mimeType: string;
+  } | null> => {
+    if (!fs.existsSync(localFilePath)) return null;
+    try {
+      const stats = fs.statSync(localFilePath);
+      const buffer = fs.readFileSync(localFilePath);
+      const mimeType = getMimeType(localFilePath);
+      const filename = path.basename(localFilePath);
+
+      const url = `${config.homeserver}/_matrix/media/v3/upload?filename=${encodeURIComponent(
+        filename,
+      )}`;
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${config.accessToken}`,
+          "Content-Type": mimeType,
+        },
+        body: buffer,
+      });
+
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data.content_uri) {
+        return {
+          mxcUri: data.content_uri,
+          sizeBytes: stats.size,
+          mimeType,
+        };
+      }
+    } catch {
+      // Ignore upload errors
+    }
+    return null;
+  };
+
+  /**
+   * Sends native Media (Image/File/Audio) to Matrix Room
+   */
+  const sendMatrixMedia = async (
+    roomId: string,
+    localFilePath: string,
+    inReplyToEventId?: string,
+  ): Promise<string | null> => {
+    try {
+      const uploadRes = await uploadMatrixMedia(localFilePath);
+      if (!uploadRes) return null;
+
+      const filename = path.basename(localFilePath);
+      const isImg = uploadRes.mimeType.startsWith("image/");
+      const isVideo = uploadRes.mimeType.startsWith("video/");
+      const isAudio = uploadRes.mimeType.startsWith("audio/");
+
+      const msgtype = isImg
+        ? "m.image"
+        : isVideo
+          ? "m.video"
+          : isAudio
+            ? "m.audio"
+            : "m.file";
+
+      const txnId = makeTxnId();
+      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
+        roomId,
+      )}/send/m.room.message/${txnId}`;
+
+      const bodyPayload: any = {
+        msgtype,
+        body: filename,
+        url: uploadRes.mxcUri,
+        info: {
+          mimetype: uploadRes.mimeType,
+          size: uploadRes.sizeBytes,
+        },
+      };
+
+      if (inReplyToEventId) {
+        bodyPayload["m.relates_to"] = {
+          "m.in_reply_to": {
+            event_id: inReplyToEventId,
+          },
+        };
+      }
+
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${config.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bodyPayload),
+      });
+
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.event_id || null;
+    } catch {
+      return null;
+    }
+  };
+
+  /**
+   * Splits long messages cleanly along newline or paragraph boundaries
+   */
+  const chunkMessage = (text: string, maxChunkSize = 4000): string[] => {
+    if (text.length <= maxChunkSize) return [text];
+    const chunks: string[] = [];
+    let remaining = text;
+
+    while (remaining.length > 0) {
+      if (remaining.length <= maxChunkSize) {
+        chunks.push(remaining);
+        break;
+      }
+
+      let splitIdx = remaining.lastIndexOf("\n\n", maxChunkSize);
+      if (splitIdx < maxChunkSize * 0.4) {
+        splitIdx = remaining.lastIndexOf("\n", maxChunkSize);
+      }
+      if (splitIdx < maxChunkSize * 0.4) {
+        splitIdx = maxChunkSize;
+      }
+
+      chunks.push(remaining.slice(0, splitIdx).trim());
+      remaining = remaining.slice(splitIdx).trim();
+    }
+
+    return chunks.filter((c) => c.length > 0);
+  };
+
+  const sendSingleMatrixMessage = async (
     roomId: string,
     text: string,
     inReplyToEventId?: string,
@@ -369,6 +588,44 @@ export default function (pi: ExtensionAPI) {
     } catch {
       return null;
     }
+  };
+
+  /**
+   * Safe message dispatcher with automated chunking for PDU limit safety
+   */
+  const sendMatrixMessage = async (
+    roomId: string,
+    text: string,
+    inReplyToEventId?: string,
+  ): Promise<string | null> => {
+    const cleanText = cleanAssistantText(text);
+    if (!cleanText) return null;
+
+    // If message is exceptionally huge (>25KB), attach as markdown file too
+    if (cleanText.length > 25000) {
+      try {
+        const tempPath = path.join(getMediaDir(), `response_${Date.now()}.md`);
+        fs.writeFileSync(tempPath, cleanText, "utf-8");
+        await sendMatrixMedia(roomId, tempPath, inReplyToEventId);
+      } catch {
+        // Fallback to chunks
+      }
+    }
+
+    const chunks = chunkMessage(cleanText, 4000);
+    let firstEventId: string | null = null;
+
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      const replyTarget = i === 0 ? inReplyToEventId : undefined;
+      const evId = await sendSingleMatrixMessage(roomId, chunk, replyTarget);
+      if (i === 0) firstEventId = evId;
+      if (chunks.length > 1) {
+        await new Promise((r) => setTimeout(r, 200));
+      }
+    }
+
+    return firstEventId;
   };
 
   const editMatrixMessage = async (
@@ -558,6 +815,10 @@ export default function (pi: ExtensionAPI) {
       this.lastReportTime = Date.now();
     }
 
+    matchesMessageId(id: string): boolean {
+      return this.progressMessageId === id;
+    }
+
     report(statusText: string) {
       if (!this.active || !this.roomId) return;
 
@@ -590,7 +851,7 @@ export default function (pi: ExtensionAPI) {
 
       if (config.progressMode === "edit") {
         if (!this.progressMessageId) {
-          this.progressMessageId = await sendMatrixMessage(
+          this.progressMessageId = await sendSingleMatrixMessage(
             this.roomId,
             formatted,
             this.replyToEventId || undefined,
@@ -603,7 +864,7 @@ export default function (pi: ExtensionAPI) {
           );
         }
       } else {
-        await sendMatrixMessage(
+        await sendSingleMatrixMessage(
           this.roomId,
           formatted,
           this.replyToEventId || undefined,
@@ -619,7 +880,6 @@ export default function (pi: ExtensionAPI) {
       }
       this.pendingStatus = null;
 
-      // Automatically redact (delete) the temporary progress message on completion
       if (this.progressMessageId && this.roomId) {
         await redactMatrixMessage(this.roomId, this.progressMessageId);
       }
@@ -678,7 +938,127 @@ export default function (pi: ExtensionAPI) {
     const cmdName = cmdNameRaw.toLowerCase();
     const args = restParts.join(" ").trim();
 
-    // 1. /new, /reset, /clear
+    // 1. /abort, /stop, /cancel (Immediate Interruption)
+    if (cmdName === "abort" || cmdName === "stop" || cmdName === "cancel") {
+      try {
+        if (latestContext && typeof latestContext.abort === "function") {
+          latestContext.abort();
+        }
+        stopTypingLoop();
+        await progressReporter.cleanup();
+        pendingTurnsQueue.length = 0;
+        currentActiveTurn = null;
+        createdMediaFiles.length = 0;
+
+        await sendReaction(roomId, replyToId, "🛑");
+        await sendMatrixMessage(
+          roomId,
+          "🛑 **Agent execution aborted.**",
+          replyToId,
+        );
+      } catch (err: any) {
+        await sendMatrixMessage(
+          roomId,
+          `❌ Failed to abort: ${err.message || String(err)}`,
+          replyToId,
+        );
+      }
+      return true;
+    }
+
+    // 2. /sh, /bash, /run (Zero-Token Direct Shell Execution)
+    if (cmdName === "sh" || cmdName === "bash" || cmdName === "run") {
+      if (!args) {
+        await sendMatrixMessage(
+          roomId,
+          "⚠️ Usage: `/sh <command>` (Executes host command directly without LLM tokens)",
+          replyToId,
+        );
+        return true;
+      }
+
+      // Security check
+      if (
+        config.allowedUsers.length > 0 &&
+        !config.allowedUsers.includes(sender)
+      ) {
+        await sendMatrixMessage(
+          roomId,
+          "⛔ Permission denied: sender is not in allowedUsers list.",
+          replyToId,
+        );
+        return true;
+      }
+
+      await sendReaction(roomId, replyToId, "⚙️");
+
+      execFile(
+        "/bin/sh",
+        ["-c", args],
+        {
+          timeout: 30000,
+          maxBuffer: 1024 * 1024,
+          env: { ...process.env, PAGER: "cat" },
+          cwd: getHomeDir(),
+        },
+        async (error, stdout, stderr) => {
+          let output = "";
+          if (stdout) output += stdout;
+          if (stderr) output += (output ? "\n--- stderr ---\n" : "") + stderr;
+          if (error && !output) output = `Process error: ${error.message}`;
+          if (!output.trim()) output = "Command completed with no output.";
+
+          if (output.length > 6000) {
+            output = output.slice(0, 6000) + "\n... (truncated)";
+          }
+
+          const formatted = `💻 **Exec:** \`${args.slice(0, 80)}\`\n\`\`\`sh\n${output}\n\`\`\``;
+          await sendMatrixMessage(roomId, formatted, replyToId);
+          await sendReaction(roomId, replyToId, "✅");
+        },
+      );
+      return true;
+    }
+
+    // 3. /upload, /file (Send server file to Matrix)
+    if (cmdName === "upload" || cmdName === "file") {
+      if (!args) {
+        await sendMatrixMessage(
+          roomId,
+          "⚠️ Usage: `/upload <local_path>`",
+          replyToId,
+        );
+        return true;
+      }
+
+      const targetPath = path.isAbsolute(args)
+        ? args
+        : path.resolve(getHomeDir(), args);
+
+      if (!fs.existsSync(targetPath)) {
+        await sendMatrixMessage(
+          roomId,
+          `❌ File not found: \`${targetPath}\``,
+          replyToId,
+        );
+        return true;
+      }
+
+      await sendReaction(roomId, replyToId, "📤");
+      const evId = await sendMatrixMedia(roomId, targetPath, replyToId);
+      if (evId) {
+        await sendReaction(roomId, replyToId, "✅");
+      } else {
+        await sendMatrixMessage(
+          roomId,
+          `❌ Failed to upload file \`${path.basename(targetPath)}\``,
+          replyToId,
+        );
+      }
+      return true;
+    }
+
+    // 4. /new, /reset, /clear
     if (cmdName === "new" || cmdName === "reset" || cmdName === "clear") {
       try {
         pi.sendUserMessage("/new_session", {
@@ -700,7 +1080,7 @@ export default function (pi: ExtensionAPI) {
       return true;
     }
 
-    // 2. /status or /info or /session
+    // 5. /status or /info or /session
     if (cmdName === "status" || cmdName === "info" || cmdName === "session") {
       let statsText = "";
       try {
@@ -720,12 +1100,13 @@ export default function (pi: ExtensionAPI) {
       const currentThinking = pi.getThinkingLevel();
 
       const msg = [
-        `📡 **Pi Matrix Bridge Status:**`,
+        `📡 **Pi Matrix Bridge Status (v2.0):**`,
         `- Connection: ${isPolling ? "🟢 Connected & Active" : "🔴 Stopped"}`,
         `- Execution Mode: ${config.useSubagent ? `⚡ Subagent (${config.subagentRole})` : "🚀 Direct (Zero Token Bloat)"}`,
         `- Active Model: \`${currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset"}\``,
         `- Thinking Level: \`${currentThinking}\``,
         `- Progress Cooldown: \`${config.progressCooldownSeconds}s\` (Mode: \`${config.progressMode}\`)`,
+        `- Pending Queue: \`${pendingTurnsQueue.length} turns\``,
         statsText,
       ]
         .filter(Boolean)
@@ -735,7 +1116,7 @@ export default function (pi: ExtensionAPI) {
       return true;
     }
 
-    // 3. /model [model_id]
+    // 6. /model [model_id]
     if (cmdName === "model") {
       if (!args) {
         const currentModel = latestContext?.model;
@@ -792,7 +1173,7 @@ export default function (pi: ExtensionAPI) {
       return true;
     }
 
-    // 4. /thinking [level]
+    // 7. /thinking [level]
     if (cmdName === "thinking") {
       if (!args) {
         const currentLevel = pi.getThinkingLevel();
@@ -821,7 +1202,7 @@ export default function (pi: ExtensionAPI) {
       return true;
     }
 
-    // 5. /compact
+    // 8. /compact
     if (cmdName === "compact") {
       try {
         await sendMatrixMessage(
@@ -846,16 +1227,21 @@ export default function (pi: ExtensionAPI) {
       return true;
     }
 
-    // 6. /help
+    // 9. /help
     if (cmdName === "help") {
       const helpMsg = [
-        `🛠️ **Matrix Bridge Commands for Pi:**`,
+        `🛠️ **Pi Matrix Bridge Commands:**`,
+        `- \`/abort\` or \`/stop\`: Instantly cancel running agent task`,
+        `- \`/sh <cmd>\`: Direct zero-token shell execution on host`,
+        `- \`/upload <path>\`: Upload host file/image to Matrix`,
         `- \`/new\` or \`/reset\`: Start a fresh session`,
         `- \`/status\`: View connection status, active model, and token stats`,
         `- \`/model [name]\`: View or switch active model`,
-        `- \`/thinking [off|low|medium|high|max]\`: Adjust reasoning/thinking level`,
+        `- \`/thinking [off|low|medium|high|max]\`: Adjust reasoning level`,
         `- \`/compact [instructions]\`: Compact chat context history`,
         `- \`/help\`: View this guide`,
+        ``,
+        `💡 *Tip: You can also react with 🛑 to abort a running task!*`,
       ].join("\n");
       await sendMatrixMessage(roomId, helpMsg, replyToId);
       return true;
@@ -890,7 +1276,6 @@ export default function (pi: ExtensionAPI) {
               body: JSON.stringify({}),
             },
           );
-          activeRoomId = roomId;
         }
       } catch {
         // Ignore join errors
@@ -900,10 +1285,20 @@ export default function (pi: ExtensionAPI) {
 
   const syncLoop = async (ctx?: ExtensionContext) => {
     if (isPolling) return;
+    if (!config.homeserver || !config.accessToken) {
+      if (ctx?.hasUI) {
+        ctx.ui.notify(
+          "Matrix Bridge: homeserver or accessToken is not configured in ~/.pi/agent/matrix.json",
+          "error",
+        );
+      }
+      return;
+    }
+
     isPolling = true;
     abortController = new AbortController();
 
-    // If no saved sync token, perform quick catch-up sync (timeout=0)
+    // Catch-up sync (timeout=0) if no saved token
     if (!lastSyncBatch) {
       try {
         const initialRes = await fetch(
@@ -969,7 +1364,52 @@ export default function (pi: ExtensionAPI) {
         for (const roomId of Object.keys(joinedRooms)) {
           const events = joinedRooms[roomId]?.timeline?.events || [];
 
-          // Filter incoming message events from allowed users
+          // 1. Check for Abort Reactions (🛑 or ⏹️)
+          for (const ev of events) {
+            if (
+              ev.type === "m.reaction" &&
+              !processedEventIds.has(ev.event_id) &&
+              (config.allowedUsers.length === 0 ||
+                config.allowedUsers.includes(ev.sender))
+            ) {
+              processedEventIds.add(ev.event_id);
+              const rel = ev.content?.["m.relates_to"];
+              if (rel?.rel_type === "m.annotation") {
+                const key = rel.key;
+                const targetEventId = rel.event_id;
+                if (key === "🛑" || key === "⏹️") {
+                  const matchesActive =
+                    currentActiveTurn?.triggerEventId === targetEventId ||
+                    progressReporter.matchesMessageId(targetEventId) ||
+                    pendingTurnsQueue.some(
+                      (t) => t.triggerEventId === targetEventId,
+                    );
+
+                  if (matchesActive) {
+                    if (
+                      latestContext &&
+                      typeof latestContext.abort === "function"
+                    ) {
+                      latestContext.abort();
+                    }
+                    stopTypingLoop();
+                    await progressReporter.cleanup();
+                    pendingTurnsQueue.length = 0;
+                    currentActiveTurn = null;
+                    createdMediaFiles.length = 0;
+
+                    await sendMatrixMessage(
+                      roomId,
+                      "🛑 **Agent task cancelled via reaction.**",
+                      targetEventId,
+                    );
+                  }
+                }
+              }
+            }
+          }
+
+          // 2. Filter incoming message events from allowed users
           const candidateEvents = events.filter(
             (ev: any) =>
               ev.type === "m.room.message" &&
@@ -987,29 +1427,19 @@ export default function (pi: ExtensionAPI) {
             const rawBody = ev.content?.body || "";
             const mediaUrl = ev.content?.url || ev.content?.file?.url;
 
-            activeRoomId = roomId;
-            currentTriggerEventId = ev.event_id;
-            pendingTriggerEventIds.add(ev.event_id);
-            pendingResponse = true;
-
             // 1. Send read receipt & react with '👀'
             sendReadReceipt(roomId, ev.event_id);
             sendReaction(roomId, ev.event_id, "👀");
 
-            // 2. Start typing indicator
-            startTypingLoop(roomId);
-
-            // 3. Desktop notification
+            // 2. Desktop notification
             const notifTitle = `Matrix: ${ev.sender}`;
             const notifBody = mediaUrl
               ? `📎 [${msgtype || "Media attachment"}] ${rawBody}`
               : rawBody;
             sendDesktopNotification(notifTitle, notifBody.slice(0, 100));
 
-            // 4. Handle commands
+            // 3. Handle commands directly
             if (typeof rawBody === "string" && rawBody.trim().startsWith("/")) {
-              stopTypingLoop();
-              pendingResponse = false;
               const handled = await handleMatrixCommand(
                 roomId,
                 rawBody.trim(),
@@ -1019,15 +1449,9 @@ export default function (pi: ExtensionAPI) {
               if (handled) {
                 continue;
               }
-              pendingResponse = true;
-              startTypingLoop(roomId);
             }
 
-            // 5. Initialize Progress Reporter for this turn
-            progressReporter.start(roomId, ev.event_id);
-
-            // 6. Intelligent Batch Coalescing:
-            // Check if next event in batch is an image/media from the same sender (caption sent as separate event)
+            // 4. Intelligent Batch Coalescing: Check for following media event
             let coalescedCaption = rawBody;
             let targetEv = ev;
 
@@ -1036,17 +1460,26 @@ export default function (pi: ExtensionAPI) {
               const nextMediaUrl =
                 nextEv.content?.url || nextEv.content?.file?.url;
               if (nextMediaUrl && nextEv.sender === ev.sender) {
-                // Merge text caption with next media event!
                 coalescedCaption = rawBody;
                 targetEv = nextEv;
-                i++; // Skip nextEv as it's merged
+                i++; // Skip merged event
                 processedEventIds.add(nextEv.event_id);
                 sendReadReceipt(roomId, nextEv.event_id);
                 sendReaction(roomId, nextEv.event_id, "👀");
-                currentTriggerEventId = nextEv.event_id;
-                pendingTriggerEventIds.add(nextEv.event_id);
               }
             }
+
+            // 5. Enqueue Turn into Concurrency-Safe Queue
+            const turn: PendingTurn = {
+              id: makeTxnId(),
+              roomId,
+              triggerEventId: targetEv.event_id,
+              sender: targetEv.sender,
+              timestamp: Date.now(),
+            };
+            pendingTurnsQueue.push(turn);
+
+            startTypingLoop(roomId);
 
             const targetMsgType = targetEv.content?.msgtype;
             const targetMediaUrl =
@@ -1064,7 +1497,6 @@ export default function (pi: ExtensionAPI) {
 
               if (downloaded) {
                 if (targetMsgType === "m.image") {
-                  // Multimodal native vision attachment
                   const textPrompt =
                     coalescedCaption && coalescedCaption !== targetBody
                       ? `${coalescedCaption}\n\n[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
@@ -1083,16 +1515,14 @@ export default function (pi: ExtensionAPI) {
                   );
                   continue;
                 } else if (targetMsgType === "m.video") {
-                  // Video file support
                   const textPrompt =
                     coalescedCaption && coalescedCaption !== targetBody
                       ? `${coalescedCaption}\n\n[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
-                      : `[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath} - Please analyze or inspect this video file.]`;
+                      : `[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath} - Please inspect this video file.]`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
                 } else if (targetMsgType === "m.audio") {
-                  // Audio file support
                   const textPrompt =
                     coalescedCaption && coalescedCaption !== targetBody
                       ? `${coalescedCaption}\n\n[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
@@ -1101,7 +1531,6 @@ export default function (pi: ExtensionAPI) {
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
                 } else {
-                  // Generic Document/File (PDF, code, zip, csv, text, etc.)
                   let snippet = "";
                   if (
                     downloaded.mimeType.startsWith("text/") ||
@@ -1165,14 +1594,28 @@ export default function (pi: ExtensionAPI) {
 
   // Progress Reporting: Turn Start (Thinking)
   pi.on("turn_start", async (_event: TurnStartEvent) => {
-    if (pendingResponse && activeRoomId) {
+    if (!currentActiveTurn && pendingTurnsQueue.length > 0) {
+      currentActiveTurn = pendingTurnsQueue[0];
+      progressReporter.start(
+        currentActiveTurn.roomId,
+        currentActiveTurn.triggerEventId,
+      );
+    }
+    if (currentActiveTurn) {
       progressReporter.report("🧠 Thinking...");
     }
   });
 
   // Progress Reporting: Tool Execution Start
   pi.on("tool_execution_start", async (event: ToolExecutionStartEvent) => {
-    if (!pendingResponse || !activeRoomId) return;
+    if (!currentActiveTurn && pendingTurnsQueue.length > 0) {
+      currentActiveTurn = pendingTurnsQueue[0];
+      progressReporter.start(
+        currentActiveTurn.roomId,
+        currentActiveTurn.triggerEventId,
+      );
+    }
+    if (!currentActiveTurn) return;
 
     let desc = "";
     switch (event.toolName) {
@@ -1213,20 +1656,35 @@ export default function (pi: ExtensionAPI) {
     progressReporter.report(desc);
   });
 
-  // Progress Reporting: Tool Execution End (Error flag)
+  // Progress Reporting & Media Tracker: Tool Execution End
   pi.on("tool_execution_end", async (event: ToolExecutionEndEvent) => {
-    if (pendingResponse && activeRoomId && event.isError) {
+    if (currentActiveTurn && event.isError) {
       progressReporter.report(`⚠️ Error executing \`${event.toolName}\``);
+    }
+
+    // Auto-detect media files created by tools
+    if (!event.isError && event.toolName === "write" && event.args?.path) {
+      const p = String(event.args.path);
+      const ext = path.extname(p).toLowerCase();
+      if (
+        [".png", ".jpg", ".jpeg", ".webp", ".svg", ".gif", ".pdf"].includes(ext)
+      ) {
+        createdMediaFiles.push(p);
+      }
     }
   });
 
   // Final Outbound Delivery: Agent End
   pi.on("agent_end", async (event: AgentEndEvent, ctx: ExtensionContext) => {
-    if (!pendingResponse || !activeRoomId || !currentTriggerEventId) return;
+    const activeTurn = pendingTurnsQueue.shift() || currentActiveTurn;
+    currentActiveTurn = null;
 
-    const targetRoomId = activeRoomId;
-    const targetTriggerId = currentTriggerEventId;
-    const triggerEventsToAcknowledge = Array.from(pendingTriggerEventIds);
+    if (!activeTurn) {
+      stopTypingLoop();
+      return;
+    }
+
+    const { roomId, triggerEventId } = activeTurn;
 
     try {
       const assistantMessages = event.messages.filter(
@@ -1246,23 +1704,28 @@ export default function (pi: ExtensionAPI) {
         }
 
         if (text) {
-          // Send final answer as standard in_reply_to
+          // Send final text answer
           const sentEventId = await sendMatrixMessage(
-            targetRoomId,
+            roomId,
             text,
-            targetTriggerId,
+            triggerEventId,
           );
 
           if (sentEventId) {
-            // Mark all triggering messages with checkmark ✅
-            for (const trigId of triggerEventsToAcknowledge) {
-              sendReaction(targetRoomId, trigId, "✅");
-            }
-
-            // Clean up / delete the temporary progress message so chat remains clean
+            sendReaction(roomId, triggerEventId, "✅");
             await progressReporter.cleanup();
 
-            // Desktop notification
+            // Outbound Media Uplink: Send newly created media files
+            if (createdMediaFiles.length > 0) {
+              const filesToSend = [...createdMediaFiles];
+              createdMediaFiles.length = 0;
+              for (const filePath of filesToSend) {
+                if (fs.existsSync(filePath)) {
+                  await sendMatrixMedia(roomId, filePath, sentEventId);
+                }
+              }
+            }
+
             sendDesktopNotification(
               "Matrix Bridge",
               "Pi response delivered to Matrix 🚀",
@@ -1275,10 +1738,17 @@ export default function (pi: ExtensionAPI) {
         }
       }
     } finally {
-      stopTypingLoop();
-      pendingResponse = false;
-      currentTriggerEventId = null;
-      pendingTriggerEventIds.clear();
+      if (pendingTurnsQueue.length === 0) {
+        stopTypingLoop();
+      } else {
+        // Start next turn from queue
+        currentActiveTurn = pendingTurnsQueue[0];
+        progressReporter.start(
+          currentActiveTurn.roomId,
+          currentActiveTurn.triggerEventId,
+        );
+        startTypingLoop(currentActiveTurn.roomId);
+      }
     }
   });
 
@@ -1317,11 +1787,12 @@ export default function (pi: ExtensionAPI) {
           ctx.ui.notify("Usage: /matrix send <message>", "warning");
           return;
         }
-        if (!activeRoomId) {
+        const targetRoom = currentActiveTurn?.roomId;
+        if (!targetRoom) {
           ctx.ui.notify("No active Matrix room set", "error");
           return;
         }
-        const ok = await sendMatrixMessage(activeRoomId, subarg);
+        const ok = await sendMatrixMessage(targetRoom, subarg);
         if (ok) {
           ctx.ui.notify("Message sent to Matrix room", "info");
         } else {
@@ -1331,9 +1802,9 @@ export default function (pi: ExtensionAPI) {
         const statusLines = [
           `📡 Status: ${isPolling ? "🟢 Connected & Listening" : "🔴 Stopped"}`,
           `🚀 Mode: ${config.useSubagent ? `Subagent (${config.subagentRole})` : "Direct (Zero Token Bloat)"}`,
-          `🏠 Homeserver: ${config.homeserver}`,
-          `🤖 Bot User: ${config.botUserId}`,
-          `💬 Active Room: ${activeRoomId || "None"}`,
+          `🏠 Homeserver: ${config.homeserver || "Not configured"}`,
+          `🤖 Bot User: ${config.botUserId || "Not configured"}`,
+          `💬 Active Queue: ${pendingTurnsQueue.length} turns`,
           `⏱️ Progress Cooldown: ${config.progressCooldownSeconds}s (${config.progressMode})`,
           `👥 Allowed Users: ${config.allowedUsers.join(", ") || "All"}`,
         ].join("\n");

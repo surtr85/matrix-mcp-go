@@ -1,212 +1,14 @@
 {
-  "cmd/matrix-mcp-go/main.go": {
-    "mtime": 1790014983.4440708,
-    "seen": 1790015428.306859,
-    "ast_hash": "e9d9389a330a03282172cb24e3f77c7c",
-    "semantic_hash": ""
-  },
   "flake.nix": {
-    "mtime": 1790015091.1650748,
-    "seen": 1790015428.306864,
-    "ast_hash": "5b33d8d4729f3264834b5a25d293ebb6",
-    "semantic_hash": ""
-  },
-  "go.mod": {
-    "mtime": 1790014905.9392023,
-    "seen": 1790015428.3068666,
-    "ast_hash": "0873de1a81387c4d54f1073a1a983f23",
-    "semantic_hash": ""
-  },
-  "internal/config/config.go": {
-    "mtime": 1790014923.9771605,
-    "seen": 1790015428.3068683,
-    "ast_hash": "87dbb04c44848b08578526d3553490e1",
-    "semantic_hash": ""
-  },
-  "internal/config/config_test.go": {
-    "mtime": 1790012878.2159214,
-    "seen": 1790015428.3068695,
-    "ast_hash": "38768d4c5543ecdaafd8835409cd45b4",
-    "semantic_hash": ""
-  },
-  "internal/format/bidi.go": {
-    "mtime": 1790013659.9479625,
-    "seen": 1790015428.3068707,
-    "ast_hash": "2d98092a9d85634e8a191748273d2a9d",
-    "semantic_hash": ""
-  },
-  "internal/format/format.go": {
-    "mtime": 1790013712.304932,
-    "seen": 1790015428.3068726,
-    "ast_hash": "25cd8b0b4511f134dffacb6a2193d3ce",
-    "semantic_hash": ""
-  },
-  "internal/format/format_test.go": {
-    "mtime": 1790013735.0023534,
-    "seen": 1790015428.3068736,
-    "ast_hash": "0b80a3ffa66ae9a3494130bd68434a39",
-    "semantic_hash": ""
-  },
-  "internal/logger/logger.go": {
-    "mtime": 1790012880.8229725,
-    "seen": 1790015428.3068745,
-    "ast_hash": "39597706b07f5dc98a410413bf9b8336",
-    "semantic_hash": ""
-  },
-  "internal/logger/logger_test.go": {
-    "mtime": 1790012905.6622787,
-    "seen": 1790015428.3068762,
-    "ast_hash": "f9953bc4947fec1dcffaf9b9db0927b0",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/client.go": {
-    "mtime": 1790033373.6268973,
-    "seen": 1790035030.1002214,
-    "ast_hash": "22b324d6665fc4f28ab5a8c06ca124b9",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/client_test.go": {
-    "mtime": 1790013423.5996418,
-    "seen": 1790015428.3068788,
-    "ast_hash": "c9a5cddae3b3ab4ad85206dd55c36288",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/crypto_test.go": {
-    "mtime": 1790013438.142904,
-    "seen": 1790015428.3068802,
-    "ast_hash": "0d2d0cfa5e13abe40b5b2b2808cf4a55",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/operations.go": {
-    "mtime": 1790033530.3614097,
-    "seen": 1790035030.1002293,
-    "ast_hash": "6131809f5f73cd7cc4962b1fe36d3ef0",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/presence.go": {
-    "mtime": 1790014943.9081225,
-    "seen": 1790015428.3068826,
-    "ast_hash": "da4e18d9a393c4105da787cd633cb2b4",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/ratelimit_test.go": {
-    "mtime": 1790013478.2916305,
-    "seen": 1790015428.3068838,
-    "ast_hash": "3fb835b2b0fd211830ea423cd069e4c1",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/rbac_hitl_test.go": {
-    "mtime": 1790014469.8001578,
-    "seen": 1790015428.306885,
-    "ast_hash": "f7f5958e7610b1fd6aea8d5fc54e1ce0",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/reply_registry.go": {
-    "mtime": 1790014427.5989552,
-    "seen": 1790015428.3068864,
-    "ast_hash": "98cb657fd54798fd84d9f77b4619d8e0",
-    "semantic_hash": ""
-  },
-  "internal/matrix/rbac/rbac.go": {
-    "mtime": 1790014370.4811962,
-    "seen": 1790015428.3068876,
-    "ast_hash": "d55496de44d8a22317d4cc2602261126",
-    "semantic_hash": ""
-  },
-  "internal/matrix/rbac/rbac_test.go": {
-    "mtime": 1790014374.810095,
-    "seen": 1790015428.306889,
-    "ast_hash": "8827e7978962fe517879e7434df610f0",
-    "semantic_hash": ""
-  },
-  "internal/matrix/store/store.go": {
-    "mtime": 1790013227.5101943,
-    "seen": 1790015428.3068902,
-    "ast_hash": "206a2e2e02a2d4ca2ca97d164d0ab5fe",
-    "semantic_hash": ""
-  },
-  "internal/matrix/store/store_test.go": {
-    "mtime": 1790013231.3722603,
-    "seen": 1790015428.3068914,
-    "ast_hash": "7f049e22bc5ee75154b1eed1667496f0",
-    "semantic_hash": ""
-  },
-  "internal/mcp/hitl_test.go": {
-    "mtime": 1790017209.188454,
-    "seen": 1790017930.3616116,
-    "ast_hash": "4feba23d28dbfd50f78bb3e0a18657ff",
-    "semantic_hash": ""
-  },
-  "internal/mcp/interface.go": {
-    "mtime": 1790017135.7980678,
-    "seen": 1790017930.3616128,
-    "ast_hash": "fc351f1226599aeb361d99c9c3f45abd",
-    "semantic_hash": ""
-  },
-  "internal/mcp/server.go": {
-    "mtime": 1790017188.8097463,
-    "seen": 1790017930.3616138,
-    "ast_hash": "f2c07044b3f28da7406ac85561f6b4da",
-    "semantic_hash": ""
-  },
-  "internal/mcp/server_test.go": {
-    "mtime": 1790017197.8135068,
-    "seen": 1790017930.3616154,
-    "ast_hash": "60e116e5d118977a4e02e13865d9c8cd",
-    "semantic_hash": ""
-  },
-  "internal/mcp/sse_test.go": {
-    "mtime": 1790014976.7040775,
-    "seen": 1790015428.3068986,
-    "ast_hash": "e095d8a886680b6d256c1d1965683a8d",
-    "semantic_hash": ""
-  },
-  "internal/metrics/metrics.go": {
-    "mtime": 1790014915.9541783,
-    "seen": 1790015428.3068998,
-    "ast_hash": "b254aaf77fdbb50f9098a2e3562b34de",
-    "semantic_hash": ""
-  },
-  "Plan.md": {
-    "mtime": 1790017420.6186836,
-    "seen": 1790017930.3616223,
-    "ast_hash": "ad3bcfe1bb81903e74f79a822e28a9f6",
+    "mtime": 1790036233.698057,
+    "seen": 1790036252.3893042,
+    "ast_hash": "eb35fd8f5aeb198e2633aa0c3f8cfec9",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790035025.279521,
-    "seen": 1790035030.1002579,
-    "ast_hash": "26a777800d44014da38320c7ce854ee0",
-    "semantic_hash": ""
-  },
-  "config.example.yaml": {
-    "mtime": 1790014988.1280668,
-    "seen": 1790015428.3069036,
-    "ast_hash": "1b906c8a3acfb21127f24f3942dffb64",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/incoming_queue.go": {
-    "mtime": 1790017143.0427282,
-    "seen": 1790017930.3615956,
-    "ast_hash": "19414ef616d08107c51f417e0d1b1fb5",
-    "semantic_hash": ""
-  },
-  "internal/matrix/client/incoming_test.go": {
-    "mtime": 1790017232.7553697,
-    "seen": 1790017930.3615973,
-    "ast_hash": "069e0e12265f430f20a30504f0b10ed6",
-    "semantic_hash": ""
-  },
-  "internal/mcp/wait_message_test.go": {
-    "mtime": 1790017223.0135853,
-    "seen": 1790017930.3616183,
-    "ast_hash": "65e342b5374fefc0caf5961f02507924",
-    "semantic_hash": ""
-  },
-  "scripts/matrix_agent_listener.py": {
-    "mtime": 1790016704.3034387,
-    "seen": 1790017930.361621,
-    "ast_hash": "20a0306aa99d7e558567316ae7a206da",
+    "mtime": 1790036244.4544137,
+    "seen": 1790036252.3893151,
+    "ast_hash": "f03fce03ed20cdc956d8dc2093ad012c",
     "semantic_hash": ""
   },
   "assets/banner.png": {
@@ -215,22 +17,22 @@
     "ast_hash": "b90dcb628126e3ac7d6d2fce30c81847",
     "semantic_hash": ""
   },
-  "integrations/pi/matrix-bridge.ts": {
-    "mtime": 1790036042.0632515,
-    "seen": 1790036085.0942957,
+  "index.ts": {
+    "mtime": 1790036221.8288074,
+    "seen": 1790036252.3893094,
     "ast_hash": "2fa97cfde21a1d3bb82f82c317aacd5a",
     "semantic_hash": ""
   },
-  "scripts/antigravity_bridge.py": {
-    "mtime": 1790033534.560474,
-    "seen": 1790035030.1002543,
-    "ast_hash": "16aaad9c7c92c365f4ba0ec0b662d177",
+  "package.json": {
+    "mtime": 1790036229.5109057,
+    "seen": 1790036252.3893123,
+    "ast_hash": "02d1c4092d46671bdc22a0df5e390c01",
     "semantic_hash": ""
   },
-  "integrations/pi/README.md": {
-    "mtime": 1790035019.4088142,
-    "seen": 1790035030.10026,
-    "ast_hash": "fd5d6ade4db78d3c3e16cdca980736d3",
+  "assets/banner.jpg": {
+    "mtime": 1790036217.8429003,
+    "seen": 1790036252.3893168,
+    "ast_hash": "67b01f0854fe058c561f9943086cd464",
     "semantic_hash": ""
   }
 }

@@ -24,20 +24,24 @@ flowchart LR
     User([User on Matrix / Element])
     subgraph pi-matrix [pi-matrix Extension]
         Sync[Long-Polling Sync & Coalesce]
-        Media[Media Downloader & Disk Cache]
+        Queue[Concurrency Turn Queue]
+        MediaIn[Media Downloader & Disk Cache]
+        MediaOut[Outbound Media Uplink]
         Reporter[Progress Reporter / m.replace]
-        Commands[Command Interceptor]
+        Commands[Command & Abort Interceptor]
     end
     subgraph PiRuntime [Pi Coding Agent Runtime]
         Session[(Active Interactive Session)]
-        Tools[Coding Tools: bash, edit, read]
+        Tools[Coding Tools: bash, edit, read, write]
         Vision[Multimodal Vision Model]
     end
 
     User -- "Prompt / Image / Video / File" --> Sync
-    Sync --> Media --> Session
-    Sync -- "/new, /status, /model" --> Commands --> Session
+    Sync --> Queue --> MediaIn --> Session
+    Sync -- "/abort, 🛑 Reaction" --> Commands --> Session
+    Sync -- "/sh, /upload, /new" --> Commands
     Session -- "tool_execution_start" --> Reporter -- "⏳ Status (m.replace)" --> User
+    Session -- "write (plot/svg/image)" --> MediaOut -- "m.image / m.file" --> User
     Session -- "agent_end" --> Reporter -- "Delete status & Send final answer" --> User
 ```
 
@@ -46,6 +50,10 @@ flowchart LR
 ## ✨ Features
 
 - **🚀 Direct Session Injection (Zero Token Bloat)**: Messages are dispatched directly via `pi.sendUserMessage()` with `{ deliverAs: "followUp" }`. No system-prompt wrapping, no wasted context tokens, and no concurrency crashes.
+- **🛡️ Concurrency-Safe Turn Queue (FIFO)**: Intelligent multi-turn queue keeps track of every request's exact originating room and message event ID, ensuring answers and acknowledgments always route to the right message even during rapid typing.
+- **📤 Outbound Media Uplink**: Automatically uploads newly created plots, diagrams (`.png`, `.jpg`, `.svg`), PDFs, and generated files produced by Pi tools directly to Matrix via `/_matrix/media/v3/upload`!
+- **🛑 Interactive Instant Abort**: Interrupt runaway agent loops or long compilation jobs immediately by typing `/abort` or simply reacting with 🛑 to the message.
+- **💻 Zero-Token Shell Commands (`/sh`)**: Execute system commands (`/sh git status`, `/sh df -h`, etc.) directly on your host machine from Matrix without invoking the LLM or burning tokens.
 - **⏱️ Live Progress Reporter with Cooldown**: Hooks into Pi lifecycle events (`turn_start`, `tool_execution_start`, `tool_execution_end`) to report what the agent is doing (`⚙️ Running bash: ...`, `📖 Reading ...`, `✏️ Editing ...`, `🔍 Searching ...`) with a debounced cooldown (default: `5s`).
 - **🧹 In-Place Updates (`m.replace`) & Auto-Cleanup**: Status updates are edited in-place inside a single Matrix message (MSC2676) so chat rooms never get spammed. When Pi finishes, the temporary progress message is automatically redacted (deleted), leaving only your prompt and the final response.
 - **🖼️ Comprehensive Multimodal Media**:
@@ -53,16 +61,20 @@ flowchart LR
   - **Videos (`m.video`)**: Downloads to local disk, extracts metadata, and notifies Pi of the local path for tool analysis.
   - **Audio (`m.audio`)**: Downloads and caches audio files locally for agent inspection.
   - **Files / Documents (`m.file`)**: Saves documents/code to disk and generates syntax-highlighted code previews for text files under 64KB.
+- **📦 Matrix PDU Protection & Chunking**: Splits large responses (>4000 characters) cleanly into sequential chunks, and automatically attaches massive responses (>25KB) as markdown files to prevent Matrix `M_TOO_LARGE` errors.
 - **🔗 Intelligent Batch Coalescing**: Automatically merges rapid-fire text captions and media events from Matrix clients into a single multimodal turn.
 - **💾 Disk-Backed Sync Token**: Automatically saves `next_batch` to `~/.pi/agent/matrix_sync_token` so restarts never replay past messages.
-- **🛠️ Remote Control Slash Commands**: Control your agent straight from Matrix chat without touching your terminal:
-  - `/new` or `/reset`: Instantly resets the session via `ctx.newSession()` without prompting the LLM.
-  - `/status`: Displays connection state, active model, thinking budget, and exact session token/message counts.
+- **🛠️ Remote Control Slash Commands**:
+  - `/abort` or `/stop`: Instantly cancels active agent execution.
+  - `/sh <cmd>`: Runs a host shell command directly without LLM tokens.
+  - `/upload <path>`: Uploads a local server file to the Matrix chat.
+  - `/new` or `/reset`: Instantly resets the session via `ctx.newSession()`.
+  - `/status`: Displays connection state, active model, thinking budget, and token metrics.
   - `/model [name]`: Inspects available models or dynamically switches models.
   - `/thinking [level]`: Adjusts reasoning depth (`off`, `low`, `medium`, `high`, `max`).
   - `/compact`: Triggers context compaction.
   - `/help`: Lists available commands.
-- **🌐 Persian & Bilingual BiDi Formatting**: Automatically wraps Persian text lines in right-to-left (`dir="rtl"`) tags and code blocks in left-to-right (`dir="ltr"`).
+- **🌐 Persian & Bilingual BiDi Formatting**: Automatically wraps Persian text lines in right-to-left (`dir="rtl"`) tags, code blocks in left-to-right (`dir="ltr"`), and supports markdown links, headers, blockquotes, and lists.
 - **🧠 Clean Output**: Strips `<think>...</think>` tags automatically before delivering replies.
 - **👀 Fast Reactions**: Immediate acknowledgment reaction (`👀`) and task completion checkmark (`✅`).
 - **🔔 Hardened Notifications**: Desktop notifications via `execFile("notify-send", ...)` with zero shell-interpolation risks.
@@ -85,7 +97,6 @@ in
   home.file."${piAgentDir}/extensions/pi-matrix.ts".source =
     builtins.fetchurl {
       url = "https://raw.githubusercontent.com/surtr85/pi-matrix/main/index.ts";
-      # or reference a local clone/submodule
     };
 
   home.file."${piAgentDir}/matrix.json".text = builtins.toJSON {
@@ -144,9 +155,9 @@ Matrix Bridge connected (Direct Mode)
 
 | Option | Type | Default | Description |
 | :--- | :---: | :---: | :--- |
-| `homeserver` | `string` | `"https://matrix.org"` | Matrix homeserver base URL. |
+| `homeserver` | `string` | `""` | Matrix homeserver base URL (e.g. `https://matrix.example.com`). |
 | `accessToken` | `string` | `""` | Bot account access token. |
-| `botUserId` | `string` | `""` | The bot user ID (e.g. `@miku:matrix.kurisu.ir`). |
+| `botUserId` | `string` | `""` | The bot user ID (e.g. `@miku:matrix.example.com`). |
 | `allowedUsers` | `string[]` | `[]` | Allowlist of user IDs permitted to interact with the bot. Leave empty for open access. |
 | `autoStart` | `boolean` | `true` | Whether to automatically start listening when Pi opens. |
 | `progressCooldownSeconds`| `number` | `5` | Minimum seconds between progress updates to avoid notification spam. |
@@ -161,12 +172,17 @@ Control your agent remotely from any Matrix client:
 
 | Command | Description |
 | :--- | :--- |
+| `/abort` or `/stop` | Instantly interrupts and cancels active agent execution. |
+| `/sh <command>` | Runs a host shell command directly without burning LLM tokens. |
+| `/upload <path>` | Uploads a file or image from the host machine directly into Matrix. |
 | `/new` or `/reset` | Resets the conversation and starts a new session immediately. |
 | `/status` | Shows connection status, active model, thinking level, and token metrics. |
 | `/model [id]` | Shows the active model or switches to another available model. |
 | `/thinking [level]`| Sets thinking/reasoning depth (`off`, `low`, `medium`, `high`, `max`). |
 | `/compact [prompt]`| Triggers context compaction with optional instructions. |
 | `/help` | Shows the command cheat sheet. |
+
+> **Pro Tip**: React to any in-flight message with 🛑 to abort the task immediately!
 
 ---
 

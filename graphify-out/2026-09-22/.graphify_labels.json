@@ -1,19 +1,10 @@
 {
-  "0": "context.Context",
-  "1": "testing.T",
-  "2": "Server",
-  "3": "FormatMessage",
-  "4": "Store",
-  "5": "Client",
-  "6": "README.md",
-  "7": "matrixHTMLRenderer",
-  "8": "Config",
-  "9": "Matrix MCP Universal Gateway - Project Plan",
-  "10": "flake.nix",
-  "11": "operations.go",
-  "12": "presence.go",
-  "13": "github.com/amadeus/matrix-mcp-go",
-  "14": "matrix_agent_listener.py",
-  "15": "matrix-bridge.ts",
-  "16": "antigravity_bridge.py"
+  "0": "package.json",
+  "1": "index.ts",
+  "2": "ProgressReporter",
+  "3": "keywords",
+  "4": "files",
+  "5": "BoundedEventCache",
+  "6": "pi-matrix",
+  "10": "flake.nix"
 }

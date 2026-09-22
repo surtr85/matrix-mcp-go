@@ -1,16 +1,16 @@
 # Graph Report - matrix-mcp-go  (2026-09-22)
 
 ## Corpus Check
-- 4 files · ~51,960 words
+- 4 files · ~66,483 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 70 nodes · 77 edges · 8 communities (5 shown, 3 thin omitted)
+- 73 nodes · 80 edges · 11 communities (8 shown, 3 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c0541243`
+- Built from commit: `77e3f4ee`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,11 +22,14 @@
 - files
 - BoundedEventCache
 - pi-matrix
+- getHomeDir
+- markdownToMatrixHtml
+- getSyncTokenPath
 - flake.nix
 
 ## God Nodes (most connected - your core abstractions)
-1. `pi-matrix` - 8 edges
-2. `ProgressReporter` - 7 edges
+1. `ProgressReporter` - 8 edges
+2. `pi-matrix` - 8 edges
 3. `keywords` - 7 edges
 4. `files` - 5 edges
 5. `getHomeDir()` - 4 edges
@@ -37,20 +40,21 @@
 10. `repository` - 3 edges
 
 ## Surprising Connections (you probably didn't know these)
-- None detected - all connections are within the same source files.
+- `getSyncTokenPath()` --calls--> `getHomeDir()`  [EXTRACTED]
+  index.ts → index.ts  _Bridges community 7 → community 9_
 
 ## Import Cycles
 - None detected.
 
-## Communities (8 total, 3 thin omitted)
+## Communities (11 total, 3 thin omitted)
 
 ### Community 0 - "package.json"
 Cohesion: 0.12
 Nodes (16): @earendil-works/pi-coding-agent, author, bugs, url, description, homepage, license, main (+8 more)
 
 ### Community 1 - "index.ts"
-Cohesion: 0.18
-Nodes (13): DEFAULT_CONFIG, DownloadedMedia, downloadMatrixMedia(), escapeHtml(), getHomeDir(), getMediaDir(), getSyncTokenPath(), isPersian() (+5 more)
+Cohesion: 0.22
+Nodes (4): DEFAULT_CONFIG, DownloadedMedia, MatrixConfig, PendingTurn
 
 ### Community 3 - "keywords"
 Cohesion: 0.29
@@ -64,21 +68,33 @@ Nodes (5): files, assets, index.ts, LICENSE, README.md
 Cohesion: 0.18
 Nodes (10): 1. Declarative (NixOS & Home-Manager), 2. Manual Installation, ⚙️ Configuration Reference (`matrix.json`), ✨ Features, 📦 Installation, 🎮 Interactive Slash Commands, 📄 License, 📁 Media Storage (+2 more)
 
+### Community 7 - "getHomeDir"
+Cohesion: 0.50
+Nodes (4): downloadMatrixMedia(), getHomeDir(), getMediaDir(), loadConfig()
+
+### Community 8 - "markdownToMatrixHtml"
+Cohesion: 0.67
+Nodes (3): escapeHtml(), isPersian(), markdownToMatrixHtml()
+
+### Community 9 - "getSyncTokenPath"
+Cohesion: 0.67
+Nodes (3): getSyncTokenPath(), loadSavedSyncToken(), saveSyncToken()
+
 ## Knowledge Gaps
-- **34 isolated node(s):** `pkgs.mkShell`, `MatrixConfig`, `DEFAULT_CONFIG`, `DownloadedMedia`, `name` (+29 more)
+- **35 isolated node(s):** `pkgs.mkShell`, `MatrixConfig`, `DEFAULT_CONFIG`, `PendingTurn`, `DownloadedMedia` (+30 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `keywords` connect `keywords` to `package.json`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
 - **Why does `ProgressReporter` connect `ProgressReporter` to `index.ts`?**
-  _High betweenness centrality (0.059) - this node is a cross-community bridge._
+  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+- **Why does `keywords` connect `keywords` to `package.json`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
 - **Why does `files` connect `files` to `package.json`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **What connects `pkgs.mkShell`, `MatrixConfig`, `DEFAULT_CONFIG` to the rest of the system?**
-  _34 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _35 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `package.json` be split into smaller, more focused modules?**
   _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
