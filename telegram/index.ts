@@ -71,7 +71,8 @@ export default function (pi: ExtensionAPI) {
 
     while (isRunning) {
       try {
-        const url = `https://api.telegram.org/bot${config.botToken}/getUpdates?offset=${offset}&timeout=25`;
+        const allowedUpdates = JSON.stringify(["message", "callback_query"]);
+        const url = `https://api.telegram.org/bot${config.botToken}/getUpdates?offset=${offset}&timeout=25&allowed_updates=${encodeURIComponent(allowedUpdates)}`;
         const res = await fetch(url, { signal: pollingAbortController.signal });
         if (!res.ok) {
           await new Promise((r) => setTimeout(r, 3000));
