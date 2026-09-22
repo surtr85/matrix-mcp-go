@@ -334,12 +334,19 @@ async function downloadMatrixMedia(
         else ext = ".bin";
       }
 
-      const baseName =
-        path
-          .basename(suggestedFilename, ext)
-          .replace(/[^a-zA-Z0-9_-]/g, "_")
-          .slice(0, 30) || "media";
-      const finalFilename = `${Date.now()}_${baseName}${ext}`;
+      const hasRealExt = path.extname(suggestedFilename).length > 0;
+      const isCleanFilename =
+        hasRealExt &&
+        !/\s/.test(suggestedFilename) &&
+        suggestedFilename.length <= 40;
+
+      const safeBase = isCleanFilename
+        ? path
+            .basename(suggestedFilename, ext)
+            .replace(/[\/\\:*?"<>|\x00-\x1f]/g, "_")
+            .slice(0, 30) || "attachment"
+        : "attachment";
+      const finalFilename = `${Date.now()}_${safeBase}${ext}`;
       const localPath = path.join(mediaDir, finalFilename);
 
       fs.writeFileSync(localPath, buffer);
@@ -1496,11 +1503,24 @@ export default function (pi: ExtensionAPI) {
               );
 
               if (downloaded) {
+                // Determine user's text prompt:
+                const isGenericFilename =
+                  /^(image|screenshot|photo|file|media|pasted\s*image|attachment|\d+)[._0-9a-z]*$/i.test(
+                    targetBody.trim(),
+                  );
+                let userPromptText = "";
+                if (coalescedCaption && coalescedCaption !== targetBody) {
+                  userPromptText = coalescedCaption.trim();
+                } else if (targetBody && !isGenericFilename) {
+                  userPromptText = targetBody.trim();
+                }
+
+                const promptHeader = userPromptText
+                  ? `${userPromptText}\n\n`
+                  : "";
+
                 if (targetMsgType === "m.image") {
-                  const textPrompt =
-                    coalescedCaption && coalescedCaption !== targetBody
-                      ? `${coalescedCaption}\n\n[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
-                      : `[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+                  const textPrompt = `${promptHeader}[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(
                     [
@@ -1515,18 +1535,12 @@ export default function (pi: ExtensionAPI) {
                   );
                   continue;
                 } else if (targetMsgType === "m.video") {
-                  const textPrompt =
-                    coalescedCaption && coalescedCaption !== targetBody
-                      ? `${coalescedCaption}\n\n[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
-                      : `[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath} - Please inspect this video file.]`;
+                  const textPrompt = `${promptHeader}[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
                 } else if (targetMsgType === "m.audio") {
-                  const textPrompt =
-                    coalescedCaption && coalescedCaption !== targetBody
-                      ? `${coalescedCaption}\n\n[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`
-                      : `[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+                  const textPrompt = `${promptHeader}[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
@@ -1543,10 +1557,7 @@ export default function (pi: ExtensionAPI) {
                     }
                   }
 
-                  const textPrompt =
-                    coalescedCaption && coalescedCaption !== targetBody
-                      ? `${coalescedCaption}\n\n[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`
-                      : `[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`;
+                  const textPrompt = `${promptHeader}[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
