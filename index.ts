@@ -194,6 +194,64 @@ function getMimeType(filePath: string): string {
   }
 }
 
+function renderMarkdownTable(tableLines: string[]): string {
+  if (tableLines.length < 2) return tableLines.join("\n");
+
+  const parseRow = (line: string): string[] => {
+    const trimmed = line.trim().replace(/^\|/, "").replace(/\|$/, "");
+    return trimmed.split("|").map((cell) => cell.trim());
+  };
+
+  const headerCells = parseRow(tableLines[0]);
+  const alignRow = parseRow(tableLines[1]);
+
+  // Check if second line is actually a markdown separator row (e.g. |---|:---|---:|)
+  const isSeparator = alignRow.every((c) => /^:?-+:?$/.test(c));
+  if (!isSeparator) {
+    return tableLines.join("\n");
+  }
+
+  const alignments = alignRow.map((c) => {
+    const left = c.startsWith(":");
+    const right = c.endsWith(":");
+    if (left && right) return "center";
+    if (right) return "right";
+    if (left) return "left";
+    return "";
+  });
+
+  const bodyRows = tableLines.slice(2).map(parseRow);
+
+  // Detect overall direction for table
+  const allText = tableLines.join(" ");
+  const isTableRtl = isPersian(allText);
+  const tableDir = isTableRtl ? "rtl" : "ltr";
+  const defaultAlign = isTableRtl ? "right" : "left";
+
+  let out = `<div dir="${tableDir}" style="overflow-x: auto; margin: 10px 0;"><table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; border: 1px solid #555; width: 100%; text-align: ${defaultAlign}; font-size: 13px;">`;
+
+  out += `<thead style="background-color: rgba(128, 128, 128, 0.2);"><tr>`;
+  headerCells.forEach((cell, idx) => {
+    const colAlign = alignments[idx] || (isPersian(cell) ? "right" : defaultAlign);
+    out += `<th style="border: 1px solid #555; padding: 6px 10px; text-align: ${colAlign};">${cell}</th>`;
+  });
+  out += `</tr></thead><tbody>`;
+
+  bodyRows.forEach((row, rowIdx) => {
+    const bg = rowIdx % 2 === 1 ? "background-color: rgba(128, 128, 128, 0.08);" : "";
+    out += `<tr style="${bg}">`;
+    headerCells.forEach((_, idx) => {
+      const cell = row[idx] || "";
+      const colAlign = alignments[idx] || (isPersian(cell) ? "right" : defaultAlign);
+      out += `<td style="border: 1px solid #555; padding: 6px 10px; text-align: ${colAlign};">${cell}</td>`;
+    });
+    out += `</tr>`;
+  });
+
+  out += `</tbody></table></div>`;
+  return out;
+}
+
 function markdownToMatrixHtml(md: string): string {
   const codeBlocks: string[] = [];
   let workingText = md.replace(
@@ -240,11 +298,40 @@ function markdownToMatrixHtml(md: string): string {
     "<blockquote>$1</blockquote>",
   );
 
-  // Bullet items: - item
-  workingText = workingText.replace(/^[*-] (.*)$/gm, "<li>$1</li>");
+  // Handle Markdown Tables: group lines starting and containing |
+  const rawLines = workingText.split("\n");
+  const processedBlocks: string[] = [];
+  let currentTableLines: string[] = [];
 
-  const lines = workingText.split("\n");
-  const processedLines = lines.map((line) => {
+  const flushTable = () => {
+    if (currentTableLines.length > 0) {
+      if (currentTableLines.length >= 2 && currentTableLines[0].includes("|") && currentTableLines[1].includes("|")) {
+        processedBlocks.push(renderMarkdownTable(currentTableLines));
+      } else {
+        processedBlocks.push(...currentTableLines);
+      }
+      currentTableLines = [];
+    }
+  };
+
+  for (const line of rawLines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.length > 2) {
+      currentTableLines.push(trimmed);
+    } else {
+      flushTable();
+      processedBlocks.push(line);
+    }
+  }
+  flushTable();
+
+  // Bullet items: - item or * item (outside table)
+  const linesWithLists = processedBlocks.map((line) => {
+    if (line.startsWith("<div") || line.startsWith("<table")) return line;
+    return line.replace(/^[*-] (.*)$/, "<li>$1</li>");
+  });
+
+  const processedLines = linesWithLists.map((line) => {
     if (!line.trim()) return "<br/>";
     if (
       line.includes("@@CODE_BLOCK_") ||
@@ -252,7 +339,9 @@ function markdownToMatrixHtml(md: string): string {
       line.startsWith("<h3>") ||
       line.startsWith("<h4>") ||
       line.startsWith("<blockquote>") ||
-      line.startsWith("<li>")
+      line.startsWith("<li>") ||
+      line.startsWith("<div dir=") ||
+      line.startsWith("<table")
     ) {
       return line;
     }
@@ -1504,15 +1593,30 @@ export default function (pi: ExtensionAPI) {
 
               if (downloaded) {
                 // Determine user's text prompt:
-                const isGenericFilename =
-                  /^(image|screenshot|photo|file|media|pasted\s*image|attachment|\d+)[._0-9a-z]*$/i.test(
-                    targetBody.trim(),
-                  );
+                // An attachment body in Matrix is either:
+                // 1) The filename itself (e.g. "image.png", "1790085471690.png")
+                // 2) Or a real custom caption written by the user!
+                const trimmedBody = (targetBody || "").trim();
+                const trimmedCoalesced = (coalescedCaption || "").trim();
+
+                const isGenericFilename = (name: string) =>
+                  /^(image|screenshot|photo|file|media|pasted\s*image|attachment|\d+|[a-f0-9_-]{8,})[._0-9a-z]*$/i.test(
+                    name,
+                  ) ||
+                  name === downloaded.filename ||
+                  name === "image.png" ||
+                  name === "file";
+
                 let userPromptText = "";
-                if (coalescedCaption && coalescedCaption !== targetBody) {
-                  userPromptText = coalescedCaption.trim();
-                } else if (targetBody && !isGenericFilename) {
-                  userPromptText = targetBody.trim();
+                // If there's a coalesced text event preceding the media
+                if (trimmedCoalesced && trimmedCoalesced !== trimmedBody) {
+                  userPromptText = trimmedCoalesced;
+                }
+                // Or if the targetBody itself is a user message/caption (not just a raw filename)
+                else if (trimmedBody && !isGenericFilename(trimmedBody)) {
+                  userPromptText = trimmedBody;
+                } else if (trimmedCoalesced && !isGenericFilename(trimmedCoalesced)) {
+                  userPromptText = trimmedCoalesced;
                 }
 
                 const promptHeader = userPromptText
