@@ -12,12 +12,12 @@ export function getQuickActionMarkup(): InlineKeyboardMarkup {
   return {
     inline_keyboard: [
       [
-        { text: "🧹 جلسه جدید", callback_data: "cmd_new" },
-        { text: "📊 وضعیت", callback_data: "cmd_status" },
+        { text: "🧹 New Session", callback_data: "cmd_new" },
+        { text: "📊 Status", callback_data: "cmd_status" },
       ],
       [
-        { text: "🗜️ فشرده‌سازی", callback_data: "cmd_compact" },
-        { text: "🛑 لغو", callback_data: "cmd_abort" },
+        { text: "🗜️ Compact", callback_data: "cmd_compact" },
+        { text: "🛑 Abort", callback_data: "cmd_abort" },
       ],
     ],
   };
