@@ -1,5 +1,5 @@
 /**
- * Matrix Bridge Extension for Pi Coding Agent (v2.0)
+ * Matrix Bridge Extension for Pi Coding Agent (v2.5 Modular Architecture)
  *
  * Dedicated high-performance, token-efficient, zero-cost bridge between Matrix and Pi:
  * - Security First: Zero hardcoded credentials; reads strictly from ~/.pi/agent/matrix.json or environment variables.
@@ -17,7 +17,6 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { execFile } from "node:child_process";
 import type {
   ExtensionAPI,
   ExtensionContext,
@@ -25,456 +24,25 @@ import type {
   ToolExecutionStartEvent,
   ToolExecutionEndEvent,
   TurnStartEvent,
+  TurnEndEvent,
+  SessionStartEvent,
+  SessionShutdownEvent,
+  ModelSelectEvent,
 } from "@earendil-works/pi-coding-agent";
 
-interface MatrixConfig {
-  homeserver: string;
-  accessToken: string;
-  botUserId: string;
-  allowedUsers: string[];
-  autoStart: boolean;
-  useSubagent: boolean;
-  subagentRole?: "delegate" | "worker";
-  progressCooldownSeconds: number;
-  progressMode: "edit" | "message";
-}
-
-const DEFAULT_CONFIG: MatrixConfig = {
-  homeserver: process.env.MATRIX_HOMESERVER || "",
-  accessToken: process.env.MATRIX_ACCESS_TOKEN || "",
-  botUserId: process.env.MATRIX_BOT_USER_ID || "",
-  allowedUsers: process.env.MATRIX_ALLOWED_USERS
-    ? process.env.MATRIX_ALLOWED_USERS.split(",").map((u) => u.trim())
-    : [],
-  autoStart: true,
-  useSubagent: false,
-  subagentRole: "delegate",
-  progressCooldownSeconds: 5,
-  progressMode: "edit",
-};
-
-interface PendingTurn {
-  id: string;
-  roomId: string;
-  triggerEventId: string;
-  sender: string;
-  timestamp: number;
-}
-
-function getHomeDir(): string {
-  return process.env.HOME || "/home/amadeus";
-}
-
-function getSyncTokenPath(): string {
-  return path.join(getHomeDir(), ".pi/agent/matrix_sync_token");
-}
-
-function getMediaDir(): string {
-  const dir = path.join(getHomeDir(), ".pi/agent/media");
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  return dir;
-}
-
-function loadConfig(): MatrixConfig {
-  const configPath = path.join(getHomeDir(), ".pi/agent/matrix.json");
-  if (fs.existsSync(configPath)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-      return { ...DEFAULT_CONFIG, ...data };
-    } catch {
-      // Fallback to defaults
-    }
-  }
-  return DEFAULT_CONFIG;
-}
-
-function loadSavedSyncToken(): string | null {
-  const tokenFile = getSyncTokenPath();
-  try {
-    if (fs.existsSync(tokenFile)) {
-      const token = fs.readFileSync(tokenFile, "utf-8").trim();
-      return token.length > 0 ? token : null;
-    }
-  } catch {
-    // Ignore read errors
-  }
-  return null;
-}
-
-function saveSyncToken(token: string) {
-  try {
-    const tokenFile = getSyncTokenPath();
-    fs.writeFileSync(tokenFile, token.trim(), "utf-8");
-  } catch {
-    // Ignore write errors
-  }
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function sendDesktopNotification(title: string, message: string) {
-  execFile(
-    "notify-send",
-    ["-a", "Matrix Bridge", "-u", "normal", "-t", "5000", title, message],
-    () => {},
-  );
-}
-
-function cleanAssistantText(rawText: string): string {
-  let cleaned = rawText.replace(/<think>[\s\S]*?<\/think>/gi, "");
-  cleaned = cleaned.replace(/<think>[\s\S]*$/gi, "");
-  return cleaned.trim();
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function isPersian(text: string): boolean {
-  const textWithoutCode = text
-    .replace(/```[\s\S]*?```/g, "")
-    .replace(/`[^`]+`/g, "")
-    .replace(/https?:\/\/\S+/g, "");
-
-  const persianRegex = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
-  const firstStrong = textWithoutCode.match(
-    /[A-Za-z]|[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/,
-  );
-  if (firstStrong) {
-    return persianRegex.test(firstStrong[0]);
-  }
-  return persianRegex.test(textWithoutCode);
-}
-
-function getMimeType(filePath: string): string {
-  const ext = path.extname(filePath).toLowerCase();
-  switch (ext) {
-    case ".jpg":
-    case ".jpeg":
-      return "image/jpeg";
-    case ".png":
-      return "image/png";
-    case ".gif":
-      return "image/gif";
-    case ".webp":
-      return "image/webp";
-    case ".svg":
-      return "image/svg+xml";
-    case ".mp4":
-      return "video/mp4";
-    case ".webm":
-      return "video/webm";
-    case ".ogg":
-    case ".opus":
-      return "audio/ogg";
-    case ".mp3":
-      return "audio/mpeg";
-    case ".pdf":
-      return "application/pdf";
-    case ".json":
-      return "application/json";
-    case ".zip":
-      return "application/zip";
-    case ".txt":
-    case ".md":
-      return "text/plain";
-    default:
-      return "application/octet-stream";
-  }
-}
-
-function renderMarkdownTable(tableLines: string[]): string {
-  if (tableLines.length < 2) return tableLines.join("\n");
-
-  const parseRow = (line: string): string[] => {
-    const trimmed = line.trim().replace(/^\|/, "").replace(/\|$/, "");
-    return trimmed.split("|").map((cell) => cell.trim());
-  };
-
-  const headerCells = parseRow(tableLines[0]);
-  const alignRow = parseRow(tableLines[1]);
-
-  // Check if second line is actually a markdown separator row (e.g. |---|:---|---:|)
-  const isSeparator = alignRow.every((c) => /^:?-+:?$/.test(c));
-  if (!isSeparator) {
-    return tableLines.join("\n");
-  }
-
-  const alignments = alignRow.map((c) => {
-    const left = c.startsWith(":");
-    const right = c.endsWith(":");
-    if (left && right) return "center";
-    if (right) return "right";
-    if (left) return "left";
-    return "";
-  });
-
-  const bodyRows = tableLines.slice(2).map(parseRow);
-
-  // Detect overall direction for table
-  const allText = tableLines.join(" ");
-  const isTableRtl = isPersian(allText);
-  const tableDir = isTableRtl ? "rtl" : "ltr";
-  const defaultAlign = isTableRtl ? "right" : "left";
-
-  let out = `<div dir="${tableDir}" style="overflow-x: auto; margin: 10px 0;"><table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; border: 1px solid #555; width: 100%; text-align: ${defaultAlign}; font-size: 13px;">`;
-
-  out += `<thead style="background-color: rgba(128, 128, 128, 0.2);"><tr>`;
-  headerCells.forEach((cell, idx) => {
-    const colAlign = alignments[idx] || (isPersian(cell) ? "right" : defaultAlign);
-    out += `<th style="border: 1px solid #555; padding: 6px 10px; text-align: ${colAlign};">${cell}</th>`;
-  });
-  out += `</tr></thead><tbody>`;
-
-  bodyRows.forEach((row, rowIdx) => {
-    const bg = rowIdx % 2 === 1 ? "background-color: rgba(128, 128, 128, 0.08);" : "";
-    out += `<tr style="${bg}">`;
-    headerCells.forEach((_, idx) => {
-      const cell = row[idx] || "";
-      const colAlign = alignments[idx] || (isPersian(cell) ? "right" : defaultAlign);
-      out += `<td style="border: 1px solid #555; padding: 6px 10px; text-align: ${colAlign};">${cell}</td>`;
-    });
-    out += `</tr>`;
-  });
-
-  out += `</tbody></table></div>`;
-  return out;
-}
-
-function markdownToMatrixHtml(md: string): string {
-  const codeBlocks: string[] = [];
-  let workingText = md.replace(
-    /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g,
-    (_match, lang, code) => {
-      const idx = codeBlocks.length;
-      const escapedCode = escapeHtml(code);
-      codeBlocks.push(
-        `<div dir="ltr" style="text-align: left;"><pre><code${
-          lang ? ` class="language-${lang}"` : ""
-        }>${escapedCode}</code></pre></div>`,
-      );
-      return `@@CODE_BLOCK_${idx}@@`;
-    },
-  );
-
-  const inlineCodes: string[] = [];
-  workingText = workingText.replace(/`([^`]+)`/g, (_match, code) => {
-    const idx = inlineCodes.length;
-    inlineCodes.push(`<code dir="ltr">${escapeHtml(code)}</code>`);
-    return `@@INLINE_CODE_${idx}@@`;
-  });
-
-  workingText = escapeHtml(workingText);
-
-  // Markdown links: [title](url)
-  workingText = workingText.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    '<a href="$2">$1</a>',
-  );
-
-  // Markdown formatting
-  workingText = workingText.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  workingText = workingText.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
-
-  // Headers: ###, ##, #
-  workingText = workingText.replace(/^### (.*)$/gm, "<h4>$1</h4>");
-  workingText = workingText.replace(/^## (.*)$/gm, "<h3>$1</h3>");
-  workingText = workingText.replace(/^# (.*)$/gm, "<h2>$1</h2>");
-
-  // Blockquotes: > quote
-  workingText = workingText.replace(
-    /^> (.*)$/gm,
-    "<blockquote>$1</blockquote>",
-  );
-
-  // Handle Markdown Tables: group lines starting and containing |
-  const rawLines = workingText.split("\n");
-  const processedBlocks: string[] = [];
-  let currentTableLines: string[] = [];
-
-  const flushTable = () => {
-    if (currentTableLines.length > 0) {
-      if (currentTableLines.length >= 2 && currentTableLines[0].includes("|") && currentTableLines[1].includes("|")) {
-        processedBlocks.push(renderMarkdownTable(currentTableLines));
-      } else {
-        processedBlocks.push(...currentTableLines);
-      }
-      currentTableLines = [];
-    }
-  };
-
-  for (const line of rawLines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.length > 2) {
-      currentTableLines.push(trimmed);
-    } else {
-      flushTable();
-      processedBlocks.push(line);
-    }
-  }
-  flushTable();
-
-  // Bullet items: - item or * item (outside table)
-  const linesWithLists = processedBlocks.map((line) => {
-    if (line.startsWith("<div") || line.startsWith("<table")) return line;
-    return line.replace(/^[*-] (.*)$/, "<li>$1</li>");
-  });
-
-  const processedLines = linesWithLists.map((line) => {
-    if (!line.trim()) return "<br/>";
-    if (
-      line.includes("@@CODE_BLOCK_") ||
-      line.startsWith("<h2>") ||
-      line.startsWith("<h3>") ||
-      line.startsWith("<h4>") ||
-      line.startsWith("<blockquote>") ||
-      line.startsWith("<li>") ||
-      line.startsWith("<div dir=") ||
-      line.startsWith("<table")
-    ) {
-      return line;
-    }
-    const rtl = isPersian(line);
-    const dir = rtl ? "rtl" : "ltr";
-    const align = rtl ? "right" : "left";
-    return `<div dir="${dir}" style="text-align: ${align};">${line}</div>`;
-  });
-
-  let html = processedLines.join("");
-
-  // Wrap consecutive list items in <ul>
-  html = html.replace(/(<li>.*?<\/li>)+/g, (match) => `<ul>${match}</ul>`);
-
-  inlineCodes.forEach((code, idx) => {
-    html = html.replace(`@@INLINE_CODE_${idx}@@`, code);
-  });
-  codeBlocks.forEach((block, idx) => {
-    html = html.replace(`@@CODE_BLOCK_${idx}@@`, block);
-  });
-
-  return html;
-}
-
-interface DownloadedMedia {
-  data: string; // base64
-  buffer: Buffer;
-  mimeType: string;
-  filename: string;
-  localPath: string;
-  sizeBytes: number;
-}
-
-async function downloadMatrixMedia(
-  homeserver: string,
-  token: string,
-  mxcUrl: string,
-  suggestedFilename: string = "file",
-): Promise<DownloadedMedia | null> {
-  if (!mxcUrl.startsWith("mxc://")) return null;
-  const [serverName, mediaId] = mxcUrl.slice(6).split("/");
-  if (!serverName || !mediaId) return null;
-
-  const endpoints = [
-    `${homeserver}/_matrix/client/v1/media/download/${encodeURIComponent(
-      serverName,
-    )}/${encodeURIComponent(mediaId)}`,
-    `${homeserver}/_matrix/media/v3/download/${encodeURIComponent(
-      serverName,
-    )}/${encodeURIComponent(mediaId)}`,
-  ];
-
-  for (const url of endpoints) {
-    try {
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) continue;
-
-      const mimeType =
-        res.headers.get("content-type") || "application/octet-stream";
-      const arrayBuf = await res.arrayBuffer();
-      const buffer = Buffer.from(arrayBuf);
-      const base64 = buffer.toString("base64");
-
-      const mediaDir = getMediaDir();
-
-      let ext = path.extname(suggestedFilename);
-      if (!ext) {
-        if (mimeType.includes("jpeg") || mimeType.includes("jpg")) ext = ".jpg";
-        else if (mimeType.includes("png")) ext = ".png";
-        else if (mimeType.includes("gif")) ext = ".gif";
-        else if (mimeType.includes("webp")) ext = ".webp";
-        else if (mimeType.includes("mp4")) ext = ".mp4";
-        else if (mimeType.includes("webm")) ext = ".webm";
-        else if (mimeType.includes("ogg") || mimeType.includes("opus"))
-          ext = ".ogg";
-        else if (mimeType.includes("pdf")) ext = ".pdf";
-        else ext = ".bin";
-      }
-
-      const hasRealExt = path.extname(suggestedFilename).length > 0;
-      const isCleanFilename =
-        hasRealExt &&
-        !/\s/.test(suggestedFilename) &&
-        suggestedFilename.length <= 40;
-
-      const safeBase = isCleanFilename
-        ? path
-            .basename(suggestedFilename, ext)
-            .replace(/[\/\\:*?"<>|\x00-\x1f]/g, "_")
-            .slice(0, 30) || "attachment"
-        : "attachment";
-      const finalFilename = `${Date.now()}_${safeBase}${ext}`;
-      const localPath = path.join(mediaDir, finalFilename);
-
-      fs.writeFileSync(localPath, buffer);
-
-      return {
-        data: base64,
-        buffer,
-        mimeType,
-        filename: finalFilename,
-        localPath,
-        sizeBytes: buffer.length,
-      };
-    } catch {
-      continue;
-    }
-  }
-
-  return null;
-}
-
-class BoundedEventCache {
-  private set = new Set<string>();
-  private list: string[] = [];
-  constructor(private maxSize = 1000) {}
-
-  has(id: string): boolean {
-    return this.set.has(id);
-  }
-
-  add(id: string) {
-    if (this.set.has(id)) return;
-    if (this.list.length >= this.maxSize) {
-      const oldest = this.list.shift();
-      if (oldest) this.set.delete(oldest);
-    }
-    this.list.push(id);
-    this.set.add(id);
-  }
-}
+import {
+  loadConfig,
+  saveSyncToken,
+  loadSavedSyncToken,
+  formatFileSize,
+  sendDesktopNotification,
+} from "./src/config.js";
+import { MatrixApiClient } from "./src/api.js";
+import { MatrixQueue } from "./src/queue.js";
+import { MatrixProgressReporter } from "./src/progress.js";
+import { BoundedEventCache } from "./src/cache.js";
+import { handleMatrixCommand } from "./src/commands.js";
+import type { PendingTurn } from "./src/types.js";
 
 export default function (pi: ExtensionAPI) {
   const config = loadConfig();
@@ -482,534 +50,26 @@ export default function (pi: ExtensionAPI) {
   let isPolling = false;
   let abortController: AbortController | null = null;
   let lastSyncBatch: string | null = loadSavedSyncToken();
-
-  // Concurrency Queue: Each turn maintains its exact destination room and reply target
-  const pendingTurnsQueue: PendingTurn[] = [];
-  let currentActiveTurn: PendingTurn | null = null;
-
-  // Track files created or modified during the current turn to send back
-  const createdMediaFiles: string[] = [];
-
-  let typingTimer: NodeJS.Timeout | null = null;
-  let typingRoomId: string | null = null;
-  const processedEventIds = new BoundedEventCache(1000);
-
   let latestContext: ExtensionContext | null = null;
 
-  // Matrix API Helpers
-  const makeTxnId = () =>
-    `m${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const api = new MatrixApiClient(config);
+  const queue = new MatrixQueue();
+  const progressReporter = new MatrixProgressReporter(api, config);
+  const processedEventIds = new BoundedEventCache(1000);
+  const createdMediaFiles: string[] = [];
 
-  /**
-   * Uploads local file buffer to Matrix Media Repository
-   */
-  const uploadMatrixMedia = async (
-    localFilePath: string,
-  ): Promise<{
-    mxcUri: string;
-    sizeBytes: number;
-    mimeType: string;
-  } | null> => {
-    if (!fs.existsSync(localFilePath)) return null;
-    try {
-      const stats = fs.statSync(localFilePath);
-      const buffer = fs.readFileSync(localFilePath);
-      const mimeType = getMimeType(localFilePath);
-      const filename = path.basename(localFilePath);
-
-      const url = `${config.homeserver}/_matrix/media/v3/upload?filename=${encodeURIComponent(
-        filename,
-      )}`;
-
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${config.accessToken}`,
-          "Content-Type": mimeType,
-        },
-        body: buffer,
-      });
-
-      if (!res.ok) return null;
-      const data = await res.json();
-      if (data.content_uri) {
-        return {
-          mxcUri: data.content_uri,
-          sizeBytes: stats.size,
-          mimeType,
-        };
-      }
-    } catch {
-      // Ignore upload errors
-    }
-    return null;
-  };
-
-  /**
-   * Sends native Media (Image/File/Audio) to Matrix Room
-   */
-  const sendMatrixMedia = async (
-    roomId: string,
-    localFilePath: string,
-    inReplyToEventId?: string,
-  ): Promise<string | null> => {
-    try {
-      const uploadRes = await uploadMatrixMedia(localFilePath);
-      if (!uploadRes) return null;
-
-      const filename = path.basename(localFilePath);
-      const isImg = uploadRes.mimeType.startsWith("image/");
-      const isVideo = uploadRes.mimeType.startsWith("video/");
-      const isAudio = uploadRes.mimeType.startsWith("audio/");
-
-      const msgtype = isImg
-        ? "m.image"
-        : isVideo
-          ? "m.video"
-          : isAudio
-            ? "m.audio"
-            : "m.file";
-
-      const txnId = makeTxnId();
-      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
-        roomId,
-      )}/send/m.room.message/${txnId}`;
-
-      const bodyPayload: any = {
-        msgtype,
-        body: filename,
-        url: uploadRes.mxcUri,
-        info: {
-          mimetype: uploadRes.mimeType,
-          size: uploadRes.sizeBytes,
-        },
-      };
-
-      if (inReplyToEventId) {
-        bodyPayload["m.relates_to"] = {
-          "m.in_reply_to": {
-            event_id: inReplyToEventId,
-          },
-        };
-      }
-
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${config.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bodyPayload),
-      });
-
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.event_id || null;
-    } catch {
-      return null;
-    }
-  };
-
-  /**
-   * Splits long messages cleanly along newline or paragraph boundaries
-   */
-  const chunkMessage = (text: string, maxChunkSize = 4000): string[] => {
-    if (text.length <= maxChunkSize) return [text];
-    const chunks: string[] = [];
-    let remaining = text;
-
-    while (remaining.length > 0) {
-      if (remaining.length <= maxChunkSize) {
-        chunks.push(remaining);
-        break;
-      }
-
-      let splitIdx = remaining.lastIndexOf("\n\n", maxChunkSize);
-      if (splitIdx < maxChunkSize * 0.4) {
-        splitIdx = remaining.lastIndexOf("\n", maxChunkSize);
-      }
-      if (splitIdx < maxChunkSize * 0.4) {
-        splitIdx = maxChunkSize;
-      }
-
-      chunks.push(remaining.slice(0, splitIdx).trim());
-      remaining = remaining.slice(splitIdx).trim();
-    }
-
-    return chunks.filter((c) => c.length > 0);
-  };
-
-  const sendSingleMatrixMessage = async (
-    roomId: string,
-    text: string,
-    inReplyToEventId?: string,
-  ): Promise<string | null> => {
-    try {
-      const cleanText = cleanAssistantText(text);
-      if (!cleanText) return null;
-
-      const formattedHtml = markdownToMatrixHtml(cleanText);
-      const txnId = makeTxnId();
-      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
-        roomId,
-      )}/send/m.room.message/${txnId}`;
-
-      const bodyPayload: any = {
-        msgtype: "m.text",
-        body: cleanText,
-        format: "org.matrix.custom.html",
-        formatted_body: formattedHtml,
-      };
-
-      if (inReplyToEventId) {
-        bodyPayload["m.relates_to"] = {
-          "m.in_reply_to": {
-            event_id: inReplyToEventId,
-          },
-        };
-      }
-
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${config.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bodyPayload),
-      });
-
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.event_id || null;
-    } catch {
-      return null;
-    }
-  };
-
-  /**
-   * Safe message dispatcher with automated chunking for PDU limit safety
-   */
-  const sendMatrixMessage = async (
-    roomId: string,
-    text: string,
-    inReplyToEventId?: string,
-  ): Promise<string | null> => {
-    const cleanText = cleanAssistantText(text);
-    if (!cleanText) return null;
-
-    // If message is exceptionally huge (>25KB), attach as markdown file too
-    if (cleanText.length > 25000) {
-      try {
-        const tempPath = path.join(getMediaDir(), `response_${Date.now()}.md`);
-        fs.writeFileSync(tempPath, cleanText, "utf-8");
-        await sendMatrixMedia(roomId, tempPath, inReplyToEventId);
-      } catch {
-        // Fallback to chunks
-      }
-    }
-
-    const chunks = chunkMessage(cleanText, 4000);
-    let firstEventId: string | null = null;
-
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
-      const replyTarget = i === 0 ? inReplyToEventId : undefined;
-      const evId = await sendSingleMatrixMessage(roomId, chunk, replyTarget);
-      if (i === 0) firstEventId = evId;
-      if (chunks.length > 1) {
-        await new Promise((r) => setTimeout(r, 200));
-      }
-    }
-
-    return firstEventId;
-  };
-
-  const editMatrixMessage = async (
-    roomId: string,
-    originalEventId: string,
-    newText: string,
-  ): Promise<boolean> => {
-    try {
-      const cleanText = cleanAssistantText(newText);
-      if (!cleanText) return false;
-
-      const formattedHtml = markdownToMatrixHtml(cleanText);
-      const txnId = makeTxnId();
-      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
-        roomId,
-      )}/send/m.room.message/${txnId}`;
-
-      const payload = {
-        msgtype: "m.text",
-        body: `* ${cleanText}`,
-        format: "org.matrix.custom.html",
-        formatted_body: `* ${formattedHtml}`,
-        "m.new_content": {
-          msgtype: "m.text",
-          body: cleanText,
-          format: "org.matrix.custom.html",
-          formatted_body: formattedHtml,
-        },
-        "m.relates_to": {
-          rel_type: "m.replace",
-          event_id: originalEventId,
-        },
-      };
-
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${config.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      return res.ok;
-    } catch {
-      return false;
-    }
-  };
-
-  const redactMatrixMessage = async (
-    roomId: string,
-    eventId: string,
-  ): Promise<boolean> => {
-    try {
-      const txnId = makeTxnId();
-      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
-        roomId,
-      )}/redact/${encodeURIComponent(eventId)}/${txnId}`;
-
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${config.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({}),
-      });
-
-      return res.ok;
-    } catch {
-      return false;
-    }
-  };
-
-  const sendReaction = async (
-    roomId: string,
-    targetEventId: string,
-    emoji: string,
-  ): Promise<boolean> => {
-    try {
-      const txnId = makeTxnId();
-      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
-        roomId,
-      )}/send/m.reaction/${txnId}`;
-
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${config.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          "m.relates_to": {
-            rel_type: "m.annotation",
-            event_id: targetEventId,
-            key: emoji,
-          },
-        }),
-      });
-
-      return res.ok;
-    } catch {
-      return false;
-    }
-  };
-
-  const sendReadReceipt = async (
-    roomId: string,
-    eventId: string,
-  ): Promise<void> => {
-    try {
-      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
-        roomId,
-      )}/receipt/m.read/${encodeURIComponent(eventId)}`;
-      await fetch(url, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${config.accessToken}` },
-      });
-    } catch {
-      // Ignore receipt errors
-    }
-  };
-
-  const setTyping = async (roomId: string, typing: boolean): Promise<void> => {
-    try {
-      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
-        roomId,
-      )}/typing/${encodeURIComponent(config.botUserId)}`;
-      await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${config.accessToken}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ typing, timeout: typing ? 30000 : 0 }),
-      });
-    } catch {
-      // Ignore typing errors
-    }
-  };
-
-  const startTypingLoop = (roomId: string) => {
-    stopTypingLoop();
-    typingRoomId = roomId;
-    setTyping(roomId, true);
-    typingTimer = setInterval(() => {
-      if (typingRoomId) {
-        setTyping(typingRoomId, true);
-      }
-    }, 20000);
-  };
-
-  const stopTypingLoop = () => {
-    if (typingTimer) {
-      clearInterval(typingTimer);
-      typingTimer = null;
-    }
-    if (typingRoomId) {
-      const prevRoom = typingRoomId;
-      typingRoomId = null;
-      setTyping(prevRoom, false);
-    }
-  };
-
-  /**
-   * Real-time Progress Reporter with Cooldown/Debounce
-   */
-  class ProgressReporter {
-    private active = false;
-    private roomId: string | null = null;
-    private replyToEventId: string | null = null;
-    private progressMessageId: string | null = null;
-    private lastReportTime = 0;
-    private cooldownMs: number;
-    private pendingStatus: string | null = null;
-    private flushTimeout: NodeJS.Timeout | null = null;
-
-    constructor() {
-      this.cooldownMs = Math.max(2, config.progressCooldownSeconds || 5) * 1000;
-    }
-
-    start(roomId: string, replyToEventId: string) {
-      this.reset();
-      this.active = true;
-      this.roomId = roomId;
-      this.replyToEventId = replyToEventId;
-      this.lastReportTime = Date.now();
-    }
-
-    matchesMessageId(id: string): boolean {
-      return this.progressMessageId === id;
-    }
-
-    report(statusText: string) {
-      if (!this.active || !this.roomId) return;
-
-      const now = Date.now();
-      const elapsed = now - this.lastReportTime;
-
-      if (elapsed >= this.cooldownMs) {
-        this.emitStatus(statusText);
-      } else {
-        this.pendingStatus = statusText;
-        if (!this.flushTimeout) {
-          const remaining = this.cooldownMs - elapsed;
-          this.flushTimeout = setTimeout(() => {
-            this.flushTimeout = null;
-            if (this.pendingStatus && this.active) {
-              const text = this.pendingStatus;
-              this.pendingStatus = null;
-              this.emitStatus(text);
-            }
-          }, remaining);
-        }
-      }
-    }
-
-    private async emitStatus(statusText: string) {
-      if (!this.active || !this.roomId) return;
-      this.lastReportTime = Date.now();
-
-      const formatted = `⏳ **${statusText}**`;
-
-      if (config.progressMode === "edit") {
-        if (!this.progressMessageId) {
-          this.progressMessageId = await sendSingleMatrixMessage(
-            this.roomId,
-            formatted,
-            this.replyToEventId || undefined,
-          );
-        } else {
-          await editMatrixMessage(
-            this.roomId,
-            this.progressMessageId,
-            formatted,
-          );
-        }
-      } else {
-        await sendSingleMatrixMessage(
-          this.roomId,
-          formatted,
-          this.replyToEventId || undefined,
-        );
-      }
-    }
-
-    async cleanup() {
-      if (!this.active) return;
-      if (this.flushTimeout) {
-        clearTimeout(this.flushTimeout);
-        this.flushTimeout = null;
-      }
-      this.pendingStatus = null;
-
-      if (this.progressMessageId && this.roomId) {
-        await redactMatrixMessage(this.roomId, this.progressMessageId);
-      }
-
-      this.reset();
-    }
-
-    reset() {
-      this.active = false;
-      this.roomId = null;
-      this.replyToEventId = null;
-      this.progressMessageId = null;
-      this.pendingStatus = null;
-      if (this.flushTimeout) {
-        clearTimeout(this.flushTimeout);
-        this.flushTimeout = null;
-      }
-    }
-  }
-
-  const progressReporter = new ProgressReporter();
-
-  // Register internal bridge commands so Pi intercepts them without prompting LLM
-  pi.registerCommand("new_session", {
+  // Register internal bridge commands with unique names to avoid collisions
+  pi.registerCommand("matrix_new_session", {
     description: "Start a new session from Matrix bridge",
     handler: async (_args, ctx) => {
       await ctx.newSession();
     },
   });
 
-  pi.registerCommand("compact_session", {
+  pi.registerCommand("matrix_compact_session", {
     description: "Compact context from Matrix bridge",
-    handler: async (_args, ctx) => {
-      ctx.compact();
+    handler: async (args, ctx) => {
+      ctx.compact(args ? { customInstructions: args } : undefined);
     },
   });
 
@@ -1019,332 +79,6 @@ export default function (pi: ExtensionAPI) {
       await ctx.reload();
     },
   });
-
-  // Handle Slash Commands (All in English)
-  const handleMatrixCommand = async (
-    roomId: string,
-    commandText: string,
-    sender: string,
-    replyToId: string,
-  ): Promise<boolean> => {
-    const trimmed = commandText.trim();
-    if (!trimmed.startsWith("/")) return false;
-
-    const [cmdNameRaw, ...restParts] = trimmed.slice(1).split(" ");
-    const cmdName = cmdNameRaw.toLowerCase();
-    const args = restParts.join(" ").trim();
-
-    // 1. /abort, /stop, /cancel (Immediate Interruption)
-    if (cmdName === "abort" || cmdName === "stop" || cmdName === "cancel") {
-      try {
-        if (latestContext && typeof latestContext.abort === "function") {
-          latestContext.abort();
-        }
-        stopTypingLoop();
-        await progressReporter.cleanup();
-        pendingTurnsQueue.length = 0;
-        currentActiveTurn = null;
-        createdMediaFiles.length = 0;
-
-        await sendReaction(roomId, replyToId, "🛑");
-        await sendMatrixMessage(
-          roomId,
-          "🛑 **Agent execution aborted.**",
-          replyToId,
-        );
-      } catch (err: any) {
-        await sendMatrixMessage(
-          roomId,
-          `❌ Failed to abort: ${err.message || String(err)}`,
-          replyToId,
-        );
-      }
-      return true;
-    }
-
-    // 2. /sh, /bash, /run (Zero-Token Direct Shell Execution)
-    if (cmdName === "sh" || cmdName === "bash" || cmdName === "run") {
-      if (!args) {
-        await sendMatrixMessage(
-          roomId,
-          "⚠️ Usage: `/sh <command>` (Executes host command directly without LLM tokens)",
-          replyToId,
-        );
-        return true;
-      }
-
-      // Security check
-      if (
-        config.allowedUsers.length > 0 &&
-        !config.allowedUsers.includes(sender)
-      ) {
-        await sendMatrixMessage(
-          roomId,
-          "⛔ Permission denied: sender is not in allowedUsers list.",
-          replyToId,
-        );
-        return true;
-      }
-
-      await sendReaction(roomId, replyToId, "⚙️");
-
-      execFile(
-        "/bin/sh",
-        ["-c", args],
-        {
-          timeout: 30000,
-          maxBuffer: 1024 * 1024,
-          env: { ...process.env, PAGER: "cat" },
-          cwd: getHomeDir(),
-        },
-        async (error, stdout, stderr) => {
-          let output = "";
-          if (stdout) output += stdout;
-          if (stderr) output += (output ? "\n--- stderr ---\n" : "") + stderr;
-          if (error && !output) output = `Process error: ${error.message}`;
-          if (!output.trim()) output = "Command completed with no output.";
-
-          if (output.length > 6000) {
-            output = output.slice(0, 6000) + "\n... (truncated)";
-          }
-
-          const formatted = `💻 **Exec:** \`${args.slice(0, 80)}\`\n\`\`\`sh\n${output}\n\`\`\``;
-          await sendMatrixMessage(roomId, formatted, replyToId);
-          await sendReaction(roomId, replyToId, "✅");
-        },
-      );
-      return true;
-    }
-
-    // 3. /upload, /file (Send server file to Matrix)
-    if (cmdName === "upload" || cmdName === "file") {
-      if (!args) {
-        await sendMatrixMessage(
-          roomId,
-          "⚠️ Usage: `/upload <local_path>`",
-          replyToId,
-        );
-        return true;
-      }
-
-      const targetPath = path.isAbsolute(args)
-        ? args
-        : path.resolve(getHomeDir(), args);
-
-      if (!fs.existsSync(targetPath)) {
-        await sendMatrixMessage(
-          roomId,
-          `❌ File not found: \`${targetPath}\``,
-          replyToId,
-        );
-        return true;
-      }
-
-      await sendReaction(roomId, replyToId, "📤");
-      const evId = await sendMatrixMedia(roomId, targetPath, replyToId);
-      if (evId) {
-        await sendReaction(roomId, replyToId, "✅");
-      } else {
-        await sendMatrixMessage(
-          roomId,
-          `❌ Failed to upload file \`${path.basename(targetPath)}\``,
-          replyToId,
-        );
-      }
-      return true;
-    }
-
-    // 4. /new, /reset, /clear
-    if (cmdName === "new" || cmdName === "reset" || cmdName === "clear") {
-      try {
-        pi.sendUserMessage("/new_session", {
-          expandPromptTemplates: true,
-          deliverAs: "followUp",
-        });
-        await sendMatrixMessage(
-          roomId,
-          "✨ **New session started successfully.**",
-          replyToId,
-        );
-      } catch (err: any) {
-        await sendMatrixMessage(
-          roomId,
-          `❌ Failed to start new session: ${err.message || String(err)}`,
-          replyToId,
-        );
-      }
-      return true;
-    }
-
-    // 5. /status or /info or /session
-    if (cmdName === "status" || cmdName === "info" || cmdName === "session") {
-      let statsText = "";
-      try {
-        const session = (latestContext as any)?.session;
-        if (session && typeof session.getSessionStats === "function") {
-          const stats = session.getSessionStats();
-          statsText = [
-            `📊 **Session Statistics:**`,
-            `- Messages: ${stats.totalMessages} (user: ${stats.userMessages}, assistant: ${stats.assistantMessages})`,
-            `- Tool Calls: ${stats.toolCalls}`,
-            `- Tokens: ${stats.tokens?.total?.toLocaleString() || 0} total`,
-          ].join("\n");
-        }
-      } catch {}
-
-      const currentModel = latestContext?.model;
-      const currentThinking = pi.getThinkingLevel();
-
-      const msg = [
-        `📡 **Pi Matrix Bridge Status (v2.0):**`,
-        `- Connection: ${isPolling ? "🟢 Connected & Active" : "🔴 Stopped"}`,
-        `- Execution Mode: ${config.useSubagent ? `⚡ Subagent (${config.subagentRole})` : "🚀 Direct (Zero Token Bloat)"}`,
-        `- Active Model: \`${currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset"}\``,
-        `- Thinking Level: \`${currentThinking}\``,
-        `- Progress Cooldown: \`${config.progressCooldownSeconds}s\` (Mode: \`${config.progressMode}\`)`,
-        `- Pending Queue: \`${pendingTurnsQueue.length} turns\``,
-        statsText,
-      ]
-        .filter(Boolean)
-        .join("\n");
-
-      await sendMatrixMessage(roomId, msg, replyToId);
-      return true;
-    }
-
-    // 6. /model [model_id]
-    if (cmdName === "model") {
-      if (!args) {
-        const currentModel = latestContext?.model;
-        await sendMatrixMessage(
-          roomId,
-          `🤖 **Active Model:** \`${currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset"}\``,
-          replyToId,
-        );
-        return true;
-      }
-      try {
-        const available =
-          latestContext?.scopedModels && latestContext.scopedModels.length > 0
-            ? latestContext.scopedModels.map((sm) => sm.model)
-            : latestContext?.modelRegistry?.getAvailable() || [];
-
-        const match = available.find(
-          (m) =>
-            m.id.toLowerCase() === args.toLowerCase() ||
-            `${m.provider}/${m.id}`.toLowerCase() === args.toLowerCase(),
-        );
-        if (match) {
-          const success = await pi.setModel(match);
-          if (success) {
-            await sendMatrixMessage(
-              roomId,
-              `✅ Switched model to **${match.provider}/${match.id}**.`,
-              replyToId,
-            );
-          } else {
-            await sendMatrixMessage(
-              roomId,
-              `❌ Authentication failed for model ${match.provider}/${match.id}.`,
-              replyToId,
-            );
-          }
-        } else {
-          const availableList = available
-            .map((m) => `\`${m.provider}/${m.id}\``)
-            .join(", ");
-          await sendMatrixMessage(
-            roomId,
-            `⚠️ Model \`${args}\` not found.\nAvailable models:\n${availableList || "None"}`,
-            replyToId,
-          );
-        }
-      } catch (err: any) {
-        await sendMatrixMessage(
-          roomId,
-          `❌ Error switching model: ${err.message || String(err)}`,
-          replyToId,
-        );
-      }
-      return true;
-    }
-
-    // 7. /thinking [level]
-    if (cmdName === "thinking") {
-      if (!args) {
-        const currentLevel = pi.getThinkingLevel();
-        await sendMatrixMessage(
-          roomId,
-          `🧠 **Current Thinking Level:** \`${currentLevel}\``,
-          replyToId,
-        );
-        return true;
-      }
-      try {
-        const level = args.toLowerCase() as any;
-        pi.setThinkingLevel(level);
-        await sendMatrixMessage(
-          roomId,
-          `🧠 Thinking level updated to **${args}**.`,
-          replyToId,
-        );
-      } catch (err: any) {
-        await sendMatrixMessage(
-          roomId,
-          `❌ Error setting thinking level: ${err.message || String(err)}`,
-          replyToId,
-        );
-      }
-      return true;
-    }
-
-    // 8. /compact
-    if (cmdName === "compact") {
-      try {
-        await sendMatrixMessage(
-          roomId,
-          "⏳ **Context compaction in progress...**",
-          replyToId,
-        );
-        pi.sendUserMessage(
-          args ? `/compact_session ${args}` : "/compact_session",
-          {
-            expandPromptTemplates: true,
-            deliverAs: "followUp",
-          },
-        );
-      } catch (err: any) {
-        await sendMatrixMessage(
-          roomId,
-          `❌ Compaction error: ${err.message || String(err)}`,
-          replyToId,
-        );
-      }
-      return true;
-    }
-
-    // 9. /help
-    if (cmdName === "help") {
-      const helpMsg = [
-        `🛠️ **Pi Matrix Bridge Commands:**`,
-        `- \`/abort\` or \`/stop\`: Instantly cancel running agent task`,
-        `- \`/sh <cmd>\`: Direct zero-token shell execution on host`,
-        `- \`/upload <path>\`: Upload host file/image to Matrix`,
-        `- \`/new\` or \`/reset\`: Start a fresh session`,
-        `- \`/status\`: View connection status, active model, and token stats`,
-        `- \`/model [name]\`: View or switch active model`,
-        `- \`/thinking [off|low|medium|high|max]\`: Adjust reasoning level`,
-        `- \`/compact [instructions]\`: Compact chat context history`,
-        `- \`/help\`: View this guide`,
-        ``,
-        `💡 *Tip: You can also react with 🛑 to abort a running task!*`,
-      ].join("\n");
-      await sendMatrixMessage(roomId, helpMsg, replyToId);
-      return true;
-    }
-
-    return false;
-  };
 
   const handleInvites = async (invites: Record<string, any>) => {
     for (const roomId of Object.keys(invites)) {
@@ -1361,17 +95,7 @@ export default function (pi: ExtensionAPI) {
           (config.allowedUsers.length === 0 ||
             config.allowedUsers.includes(inviter))
         ) {
-          await fetch(
-            `${config.homeserver}/_matrix/client/v3/join/${encodeURIComponent(roomId)}`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${config.accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({}),
-            },
-          );
+          await api.joinRoom(roomId);
         }
       } catch {
         // Ignore join errors
@@ -1381,6 +105,8 @@ export default function (pi: ExtensionAPI) {
 
   const syncLoop = async (ctx?: ExtensionContext) => {
     if (isPolling) return;
+    if (ctx) latestContext = ctx;
+
     if (!config.homeserver || !config.accessToken) {
       if (ctx?.hasUI) {
         ctx.ui.notify(
@@ -1474,27 +200,16 @@ export default function (pi: ExtensionAPI) {
                 const key = rel.key;
                 const targetEventId = rel.event_id;
                 if (key === "🛑" || key === "⏹️") {
-                  const matchesActive =
-                    currentActiveTurn?.triggerEventId === targetEventId ||
-                    progressReporter.matchesMessageId(targetEventId) ||
-                    pendingTurnsQueue.some(
-                      (t) => t.triggerEventId === targetEventId,
-                    );
-
-                  if (matchesActive) {
-                    if (
-                      latestContext &&
-                      typeof latestContext.abort === "function"
-                    ) {
+                  if (queue.matchesTarget(targetEventId) || progressReporter.matchesMessageId(targetEventId)) {
+                    if (latestContext && typeof latestContext.abort === "function") {
                       latestContext.abort();
                     }
-                    stopTypingLoop();
+                    api.stopTypingLoop();
                     await progressReporter.cleanup();
-                    pendingTurnsQueue.length = 0;
-                    currentActiveTurn = null;
+                    queue.clear();
                     createdMediaFiles.length = 0;
 
-                    await sendMatrixMessage(
+                    await api.sendMessage(
                       roomId,
                       "🛑 **Agent task cancelled via reaction.**",
                       targetEventId,
@@ -1524,8 +239,8 @@ export default function (pi: ExtensionAPI) {
             const mediaUrl = ev.content?.url || ev.content?.file?.url;
 
             // 1. Send read receipt & react with '👀'
-            sendReadReceipt(roomId, ev.event_id);
-            sendReaction(roomId, ev.event_id, "👀");
+            api.sendReadReceipt(roomId, ev.event_id);
+            api.sendReaction(roomId, ev.event_id, "👀");
 
             // 2. Desktop notification
             const notifTitle = `Matrix: ${ev.sender}`;
@@ -1541,6 +256,13 @@ export default function (pi: ExtensionAPI) {
                 rawBody.trim(),
                 ev.sender,
                 ev.event_id,
+                latestContext,
+                pi,
+                api,
+                queue,
+                progressReporter,
+                config,
+                isPolling,
               );
               if (handled) {
                 continue;
@@ -1560,22 +282,22 @@ export default function (pi: ExtensionAPI) {
                 targetEv = nextEv;
                 i++; // Skip merged event
                 processedEventIds.add(nextEv.event_id);
-                sendReadReceipt(roomId, nextEv.event_id);
-                sendReaction(roomId, nextEv.event_id, "👀");
+                api.sendReadReceipt(roomId, nextEv.event_id);
+                api.sendReaction(roomId, nextEv.event_id, "👀");
               }
             }
 
             // 5. Enqueue Turn into Concurrency-Safe Queue
             const turn: PendingTurn = {
-              id: makeTxnId(),
+              id: api.makeTxnId(),
               roomId,
               triggerEventId: targetEv.event_id,
               sender: targetEv.sender,
               timestamp: Date.now(),
             };
-            pendingTurnsQueue.push(turn);
+            queue.enqueue(turn);
 
-            startTypingLoop(roomId);
+            api.startTypingLoop(roomId);
 
             const targetMsgType = targetEv.content?.msgtype;
             const targetMediaUrl =
@@ -1584,18 +306,12 @@ export default function (pi: ExtensionAPI) {
 
             // Handle Media Types: Images, Videos, Audio, Files
             if (targetMediaUrl) {
-              const downloaded = await downloadMatrixMedia(
-                config.homeserver,
-                config.accessToken,
+              const downloaded = await api.downloadMedia(
                 targetMediaUrl,
                 targetBody || "attachment",
               );
 
               if (downloaded) {
-                // Determine user's text prompt:
-                // An attachment body in Matrix is either:
-                // 1) The filename itself (e.g. "image.png", "1790085471690.png")
-                // 2) Or a real custom caption written by the user!
                 const trimmedBody = (targetBody || "").trim();
                 const trimmedCoalesced = (coalescedCaption || "").trim();
 
@@ -1608,12 +324,9 @@ export default function (pi: ExtensionAPI) {
                   name === "file";
 
                 let userPromptText = "";
-                // If there's a coalesced text event preceding the media
                 if (trimmedCoalesced && trimmedCoalesced !== trimmedBody) {
                   userPromptText = trimmedCoalesced;
-                }
-                // Or if the targetBody itself is a user message/caption (not just a raw filename)
-                else if (trimmedBody && !isGenericFilename(trimmedBody)) {
+                } else if (trimmedBody && !isGenericFilename(trimmedBody)) {
                   userPromptText = trimmedBody;
                 } else if (trimmedCoalesced && !isGenericFilename(trimmedCoalesced)) {
                   userPromptText = trimmedCoalesced;
@@ -1695,42 +408,46 @@ export default function (pi: ExtensionAPI) {
     }
   };
 
-  const stopSyncLoop = () => {
+  const stopSyncLoop = (ctx?: ExtensionContext) => {
     isPolling = false;
     if (abortController) {
       abortController.abort();
       abortController = null;
     }
-    stopTypingLoop();
+    api.stopTypingLoop();
     progressReporter.reset();
+    if (ctx?.hasUI) ctx.ui.notify("Matrix bridge stopped", "info");
   };
 
   // --- Pi Lifecycle Hooks ---
 
-  // Progress Reporting: Turn Start (Thinking)
-  pi.on("turn_start", async (_event: TurnStartEvent) => {
-    if (!currentActiveTurn && pendingTurnsQueue.length > 0) {
-      currentActiveTurn = pendingTurnsQueue[0];
-      progressReporter.start(
-        currentActiveTurn.roomId,
-        currentActiveTurn.triggerEventId,
-      );
+  pi.on("session_start", async (_event: SessionStartEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+    if (config.autoStart && !isPolling) {
+      syncLoop(ctx);
     }
-    if (currentActiveTurn) {
+  });
+
+  pi.on("session_shutdown", async (_event: SessionShutdownEvent, ctx: ExtensionContext) => {
+    stopSyncLoop(ctx);
+  });
+
+  pi.on("model_select", async (_event: ModelSelectEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+  });
+
+  pi.on("turn_start", async (_event: TurnStartEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+    const active = queue.getActiveTurn() || queue.next();
+    if (active) {
+      progressReporter.start(active.roomId, active.triggerEventId);
       progressReporter.report("🧠 Thinking...");
     }
   });
 
-  // Progress Reporting: Tool Execution Start
   pi.on("tool_execution_start", async (event: ToolExecutionStartEvent) => {
-    if (!currentActiveTurn && pendingTurnsQueue.length > 0) {
-      currentActiveTurn = pendingTurnsQueue[0];
-      progressReporter.start(
-        currentActiveTurn.roomId,
-        currentActiveTurn.triggerEventId,
-      );
-    }
-    if (!currentActiveTurn) return;
+    const active = queue.getActiveTurn();
+    if (!active) return;
 
     let desc = "";
     switch (event.toolName) {
@@ -1771,9 +488,8 @@ export default function (pi: ExtensionAPI) {
     progressReporter.report(desc);
   });
 
-  // Progress Reporting & Media Tracker: Tool Execution End
   pi.on("tool_execution_end", async (event: ToolExecutionEndEvent) => {
-    if (currentActiveTurn && event.isError) {
+    if (queue.getActiveTurn() && event.isError) {
       progressReporter.report(`⚠️ Error executing \`${event.toolName}\``);
     }
 
@@ -1789,13 +505,17 @@ export default function (pi: ExtensionAPI) {
     }
   });
 
-  // Final Outbound Delivery: Agent End
+  pi.on("turn_end", async (_event: TurnEndEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+  });
+
   pi.on("agent_end", async (event: AgentEndEvent, ctx: ExtensionContext) => {
-    const activeTurn = pendingTurnsQueue.shift() || currentActiveTurn;
-    currentActiveTurn = null;
+    latestContext = ctx;
+    const activeTurn = queue.getActiveTurn();
+    queue.clearActiveTurn();
 
     if (!activeTurn) {
-      stopTypingLoop();
+      api.stopTypingLoop();
       return;
     }
 
@@ -1819,24 +539,22 @@ export default function (pi: ExtensionAPI) {
         }
 
         if (text) {
-          // Send final text answer
-          const sentEventId = await sendMatrixMessage(
+          const sentEventId = await api.sendMessage(
             roomId,
             text,
             triggerEventId,
           );
 
           if (sentEventId) {
-            sendReaction(roomId, triggerEventId, "✅");
+            api.sendReaction(roomId, triggerEventId, "✅");
             await progressReporter.cleanup();
 
-            // Outbound Media Uplink: Send newly created media files
             if (createdMediaFiles.length > 0) {
               const filesToSend = [...createdMediaFiles];
               createdMediaFiles.length = 0;
               for (const filePath of filesToSend) {
                 if (fs.existsSync(filePath)) {
-                  await sendMatrixMedia(roomId, filePath, sentEventId);
+                  await api.sendMedia(roomId, filePath, sentEventId);
                 }
               }
             }
@@ -1853,35 +571,21 @@ export default function (pi: ExtensionAPI) {
         }
       }
     } finally {
-      if (pendingTurnsQueue.length === 0) {
-        stopTypingLoop();
+      if (queue.isEmpty()) {
+        api.stopTypingLoop();
       } else {
-        // Start next turn from queue
-        currentActiveTurn = pendingTurnsQueue[0];
-        progressReporter.start(
-          currentActiveTurn.roomId,
-          currentActiveTurn.triggerEventId,
-        );
-        startTypingLoop(currentActiveTurn.roomId);
+        const nextTurn = queue.next();
+        if (nextTurn) {
+          progressReporter.start(nextTurn.roomId, nextTurn.triggerEventId);
+          api.startTypingLoop(nextTurn.roomId);
+        }
       }
     }
   });
 
-  pi.on("session_start", async (_event, ctx) => {
-    latestContext = ctx;
-    if (config.autoStart && !isPolling) {
-      syncLoop(ctx);
-    }
-  });
-
-  pi.on("session_shutdown", async () => {
-    stopSyncLoop();
-  });
-
   // TUI Command: /matrix
   pi.registerCommand("matrix", {
-    description:
-      "Manage Matrix Bridge (/matrix [start|stop|send <msg>|status])",
+    description: "Manage Matrix Bridge (/matrix [start|stop|send <msg>|status])",
     handler: async (args, ctx) => {
       const trimmed = args?.trim() || "";
       const [cmd, ...rest] = trimmed.split(" ");
@@ -1895,19 +599,18 @@ export default function (pi: ExtensionAPI) {
           ctx.ui.notify("Matrix bridge listener started", "info");
         }
       } else if (cmd === "stop" || cmd === "off") {
-        stopSyncLoop();
-        ctx.ui.notify("Matrix bridge stopped", "info");
+        stopSyncLoop(ctx);
       } else if (cmd === "send") {
         if (!subarg) {
           ctx.ui.notify("Usage: /matrix send <message>", "warning");
           return;
         }
-        const targetRoom = currentActiveTurn?.roomId;
+        const targetRoom = queue.getActiveTurn()?.roomId;
         if (!targetRoom) {
           ctx.ui.notify("No active Matrix room set", "error");
           return;
         }
-        const ok = await sendMatrixMessage(targetRoom, subarg);
+        const ok = await api.sendMessage(targetRoom, subarg);
         if (ok) {
           ctx.ui.notify("Message sent to Matrix room", "info");
         } else {
@@ -1919,7 +622,7 @@ export default function (pi: ExtensionAPI) {
           `🚀 Mode: ${config.useSubagent ? `Subagent (${config.subagentRole})` : "Direct (Zero Token Bloat)"}`,
           `🏠 Homeserver: ${config.homeserver || "Not configured"}`,
           `🤖 Bot User: ${config.botUserId || "Not configured"}`,
-          `💬 Active Queue: ${pendingTurnsQueue.length} turns`,
+          `💬 Active Queue: ${queue.length} turns`,
           `⏱️ Progress Cooldown: ${config.progressCooldownSeconds}s (${config.progressMode})`,
           `👥 Allowed Users: ${config.allowedUsers.join(", ") || "All"}`,
         ].join("\n");
@@ -1927,4 +630,13 @@ export default function (pi: ExtensionAPI) {
       }
     },
   });
+
+  // Auto-start fallback
+  if (config.autoStart) {
+    setTimeout(() => {
+      if (!isPolling && latestContext) {
+        syncLoop(latestContext);
+      }
+    }, 1000);
+  }
 }

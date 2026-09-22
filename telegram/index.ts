@@ -62,14 +62,14 @@ export default function (pi: ExtensionAPI) {
   const createdMediaFiles: string[] = [];
 
   // Register internal bridge commands so Pi handles newSession and compact without prompting LLM
-  pi.registerCommand("new_session", {
+  pi.registerCommand("telegram_new_session", {
     description: "Start a new session from Telegram bridge",
     handler: async (_args, ctx) => {
       await ctx.newSession();
     },
   });
 
-  pi.registerCommand("compact_session", {
+  pi.registerCommand("telegram_compact_session", {
     description: "Compact context from Telegram bridge",
     handler: async (args, ctx) => {
       ctx.compact(args ? { customInstructions: args } : undefined);

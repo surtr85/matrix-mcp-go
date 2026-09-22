@@ -57,7 +57,7 @@ export async function handleSlashCommand(
       if (ctx && typeof (ctx as any).newSession === "function") {
         await (ctx as any).newSession();
       } else {
-        pi.sendUserMessage("/new_session", {
+        pi.sendUserMessage("/telegram_new_session", {
           expandPromptTemplates: true,
           deliverAs: "followUp",
         });
@@ -75,7 +75,7 @@ export async function handleSlashCommand(
         ctx.compact(args ? { customInstructions: args } : undefined);
       } else {
         pi.sendUserMessage(
-          args ? `/compact_session ${args}` : "/compact_session",
+          args ? `/telegram_compact_session ${args}` : "/telegram_compact_session",
           {
             expandPromptTemplates: true,
             deliverAs: "followUp",

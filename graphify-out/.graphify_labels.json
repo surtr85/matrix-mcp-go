@@ -1,13 +1,12 @@
 {
   "0": "package.json",
   "1": "index.ts",
-  "2": "ProgressReporter",
+  "2": "MatrixApiClient",
   "3": "TelegramApiClient",
-  "4": "api.ts",
-  "5": "handleSlashCommand",
+  "4": "telegram/index.ts",
+  "5": "MatrixProgressReporter",
   "6": "pi-matrix",
-  "7": "telegram/index.ts",
-  "8": "TelegramQueue",
+  "7": "MatrixQueue",
   "9": "telegram.ts",
   "10": "flake.nix"
 }
