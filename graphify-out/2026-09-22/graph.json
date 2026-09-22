@@ -4,6 +4,45 @@
   "graph": {},
   "nodes": [
     {
+      "id": "integrations_pi_matrix_bridge_boundedeventcache",
+      "label": "BoundedEventCache",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "boundedeventcache",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L213"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_matrixconfig",
+      "label": "MatrixConfig",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "matrixconfig",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L29"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_progressreporter",
+      "label": "ProgressReporter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "progressreporter",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L439"
+    },
+    {
       "id": "scripts_matrix_agent_listener_ask_pi",
       "label": "ask_pi()",
       "_callable": true,
@@ -88,6 +127,294 @@
       "source_location": "L49"
     },
     {
+      "id": "integrations_pi_matrix_bridge_boundedeventcache_add",
+      "label": ".add()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".add()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L222"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_boundedeventcache_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L216"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_boundedeventcache_has",
+      "label": ".has()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".has()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L218"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_cleanassistanttext",
+      "label": "cleanAssistantText()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "cleanassistanttext()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L104"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_downloadmatrixmedia",
+      "label": "downloadMatrixMedia()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "downloadmatrixmedia()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L186"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_escapehtml",
+      "label": "escapeHtml()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "escapehtml()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L110"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_gethomedir",
+      "label": "getHomeDir()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "gethomedir()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L53"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_getsynctokenpath",
+      "label": "getSyncTokenPath()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "getsynctokenpath()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L57"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_ispersian",
+      "label": "isPersian()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "ispersian()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L119"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_loadconfig",
+      "label": "loadConfig()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "loadconfig()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L61"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_loadsavedsynctoken",
+      "label": "loadSavedSyncToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "loadsavedsynctoken()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L74"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_markdowntomatrixhtml",
+      "label": "markdownToMatrixHtml()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "markdowntomatrixhtml()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L135"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_progressreporter_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L449"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_progressreporter_emitstatus",
+      "label": ".emitStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".emitstatus()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L485"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_progressreporter_finish",
+      "label": ".finish()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".finish()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L515"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_progressreporter_report",
+      "label": ".report()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".report()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L461"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_progressreporter_reset",
+      "label": ".reset()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".reset()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L535"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_progressreporter_start",
+      "label": ".start()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": ".start()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L453"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_savesynctoken",
+      "label": "saveSyncToken()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "savesynctoken()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L87"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_senddesktopnotification",
+      "label": "sendDesktopNotification()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "senddesktopnotification()",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L96"
+    },
+    {
+      "id": "scripts_antigravity_bridge_call_tool",
+      "label": "call_tool()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "antigravity_bridge.py",
+      "file_type": "code",
+      "norm_label": "call_tool()",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L41"
+    },
+    {
+      "id": "scripts_antigravity_bridge_create_mcp_process",
+      "label": "create_mcp_process()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "antigravity_bridge.py",
+      "file_type": "code",
+      "norm_label": "create_mcp_process()",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L10"
+    },
+    {
+      "id": "scripts_antigravity_bridge_init_mcp",
+      "label": "init_mcp()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "antigravity_bridge.py",
+      "file_type": "code",
+      "norm_label": "init_mcp()",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L19"
+    },
+    {
+      "id": "scripts_antigravity_bridge_main",
+      "label": "main()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "antigravity_bridge.py",
+      "file_type": "code",
+      "norm_label": "main()",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L55"
+    },
+    {
       "id": "client_client_listjoinedrooms",
       "label": ".ListJoinedRooms()",
       "_origin": "ast",
@@ -96,7 +423,7 @@
       "file_type": "code",
       "norm_label": ".listjoinedrooms()",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L60"
+      "source_location": "L62"
     },
     {
       "id": "client_client_sendmessage",
@@ -118,7 +445,7 @@
       "file_type": "code",
       "norm_label": ".sendreaction()",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L41"
+      "source_location": "L43"
     },
     {
       "id": "client_client_setoffline",
@@ -140,7 +467,7 @@
       "file_type": "code",
       "norm_label": ".settyping()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285"
+      "source_location": "L293"
     },
     {
       "id": "client_client_uploadmedia",
@@ -151,7 +478,7 @@
       "file_type": "code",
       "norm_label": ".uploadmedia()",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L46"
+      "source_location": "L48"
     },
     {
       "id": "client_client_waitforhumanreply",
@@ -162,7 +489,7 @@
       "file_type": "code",
       "norm_label": ".waitforhumanreply()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291"
+      "source_location": "L299"
     },
     {
       "id": "client_client_waitforincomingmessage",
@@ -173,7 +500,7 @@
       "file_type": "code",
       "norm_label": ".waitforincomingmessage()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329"
+      "source_location": "L337"
     },
     {
       "id": "client_incomingqueue_register",
@@ -185,6 +512,17 @@
       "norm_label": ".register()",
       "source_file": "internal/matrix/client/incoming_queue.go",
       "source_location": "L41"
+    },
+    {
+      "id": "client_incomingwaiter",
+      "label": "incomingWaiter",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "context.Context",
+      "file_type": "code",
+      "norm_label": "incomingwaiter",
+      "source_file": "internal/matrix/client/incoming_queue.go",
+      "source_location": "L11"
     },
     {
       "id": "client_replyregistry_dispatch",
@@ -550,17 +888,6 @@
       "source_location": "L78"
     },
     {
-      "id": "client_client_close",
-      "label": ".Close()",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "testing.T",
-      "file_type": "code",
-      "norm_label": ".close()",
-      "source_file": "internal/matrix/client/client.go",
-      "source_location": "L438"
-    },
-    {
       "id": "cmd_matrix_mcp_go_main",
       "label": "main.go",
       "_origin": "ast",
@@ -590,6 +917,17 @@
       "community_name": "testing.T",
       "file_type": "code",
       "norm_label": "io.writer",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "go_type_log_slog_logger",
+      "label": "log/slog.Logger",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "testing.T",
+      "file_type": "code",
+      "norm_label": "log/slog.logger",
       "source_file": "",
       "source_location": ""
     },
@@ -858,6 +1196,17 @@
       "source_location": "L162"
     },
     {
+      "id": "internal_mcp_server",
+      "label": "server.go",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "testing.T",
+      "file_type": "code",
+      "norm_label": "server.go",
+      "source_file": "internal/mcp/server.go",
+      "source_location": "L1"
+    },
+    {
       "id": "internal_mcp_server_newserver",
       "label": "NewServer()",
       "_origin": "ast",
@@ -1023,6 +1372,28 @@
       "source_location": "L95"
     },
     {
+      "id": "mcp_matrixoperations",
+      "label": "MatrixOperations",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "testing.T",
+      "file_type": "code",
+      "norm_label": "matrixoperations",
+      "source_file": "internal/mcp/interface.go",
+      "source_location": "L41"
+    },
+    {
+      "id": "mcp_server_registerresources",
+      "label": ".registerResources()",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "testing.T",
+      "file_type": "code",
+      "norm_label": ".registerresources()",
+      "source_file": "internal/mcp/server.go",
+      "source_location": "L241"
+    },
+    {
       "id": "flake",
       "label": "flake.nix",
       "_origin": "ast",
@@ -1113,6 +1484,39 @@
       "source_location": "L1"
     },
     {
+      "id": "integrations_pi_matrix_bridge",
+      "label": "matrix-bridge.ts",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "matrix-bridge.ts",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "integrations_pi_matrix_bridge_default_config",
+      "label": "DEFAULT_CONFIG",
+      "_origin": "ast",
+      "community": 15,
+      "community_name": "matrix-bridge.ts",
+      "file_type": "code",
+      "norm_label": "default_config",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L41"
+    },
+    {
+      "id": "scripts_antigravity_bridge",
+      "label": "antigravity_bridge.py",
+      "_origin": "ast",
+      "community": 16,
+      "community_name": "antigravity_bridge.py",
+      "file_type": "code",
+      "norm_label": "antigravity_bridge.py",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L1"
+    },
+    {
       "id": "go_type_github_com_mark3labs_mcp_go_mcp_calltoolrequest",
       "label": "github.com/mark3labs/mcp-go/mcp.CallToolRequest",
       "_origin": "ast",
@@ -1190,17 +1594,6 @@
       "source_location": ""
     },
     {
-      "id": "internal_mcp_server",
-      "label": "server.go",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "Server",
-      "file_type": "code",
-      "norm_label": "server.go",
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L1"
-    },
-    {
       "id": "internal_metrics_metrics",
       "label": "metrics.go",
       "_origin": "ast",
@@ -1243,17 +1636,6 @@
       "norm_label": "recordtoolcall()",
       "source_file": "internal/metrics/metrics.go",
       "source_location": "L48"
-    },
-    {
-      "id": "mcp_matrixoperations",
-      "label": "MatrixOperations",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "Server",
-      "file_type": "code",
-      "norm_label": "matrixoperations",
-      "source_file": "internal/mcp/interface.go",
-      "source_location": "L41"
     },
     {
       "id": "mcp_server",
@@ -1366,17 +1748,6 @@
       "source_location": "L74"
     },
     {
-      "id": "mcp_server_registerresources",
-      "label": ".registerResources()",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "Server",
-      "file_type": "code",
-      "norm_label": ".registerresources()",
-      "source_file": "internal/mcp/server.go",
-      "source_location": "L241"
-    },
-    {
       "id": "mcp_server_registertools",
       "label": ".registerTools()",
       "_origin": "ast",
@@ -1432,28 +1803,6 @@
       "source_location": "L111"
     },
     {
-      "id": "format_bidiasttransformer",
-      "label": "bidiASTTransformer",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "bidiasttransformer",
-      "source_file": "internal/format/format.go",
-      "source_location": "L26"
-    },
-    {
-      "id": "format_bidiasttransformer_transform",
-      "label": ".Transform()",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": ".transform()",
-      "source_file": "internal/format/format.go",
-      "source_location": "L28"
-    },
-    {
       "id": "format_direction",
       "label": "Direction",
       "_origin": "ast",
@@ -1463,83 +1812,6 @@
       "norm_label": "direction",
       "source_file": "internal/format/bidi.go",
       "source_location": "L8"
-    },
-    {
-      "id": "format_formatter",
-      "label": "Formatter",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "formatter",
-      "source_file": "internal/format/format.go",
-      "source_location": "L226"
-    },
-    {
-      "id": "format_formatter_format",
-      "label": ".Format()",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": ".format()",
-      "source_file": "internal/format/format.go",
-      "source_location": "L263"
-    },
-    {
-      "id": "go_type_github_com_yuin_goldmark_ast_document",
-      "label": "github.com/yuin/goldmark/ast.Document",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "github.com/yuin/goldmark/ast.document",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "go_type_github_com_yuin_goldmark_markdown",
-      "label": "github.com/yuin/goldmark.Markdown",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "github.com/yuin/goldmark.markdown",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "go_type_github_com_yuin_goldmark_parser_context",
-      "label": "github.com/yuin/goldmark/parser.Context",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "github.com/yuin/goldmark/parser.context",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "go_type_github_com_yuin_goldmark_renderer_noderenderer",
-      "label": "github.com/yuin/goldmark/renderer.NodeRenderer",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "github.com/yuin/goldmark/renderer.noderenderer",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "go_type_github_com_yuin_goldmark_text_reader",
-      "label": "github.com/yuin/goldmark/text.Reader",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "github.com/yuin/goldmark/text.reader",
-      "source_file": "",
-      "source_location": ""
     },
     {
       "id": "go_type_testing_b",
@@ -1586,28 +1858,6 @@
       "source_location": "L16"
     },
     {
-      "id": "internal_format_format",
-      "label": "format.go",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "format.go",
-      "source_file": "internal/format/format.go",
-      "source_location": "L1"
-    },
-    {
-      "id": "internal_format_format_extracttext",
-      "label": "extractText()",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "extracttext()",
-      "source_file": "internal/format/format.go",
-      "source_location": "L70"
-    },
-    {
       "id": "internal_format_format_formatmessage",
       "label": "FormatMessage()",
       "_origin": "ast",
@@ -1617,28 +1867,6 @@
       "norm_label": "formatmessage()",
       "source_file": "internal/format/format.go",
       "source_location": "L258"
-    },
-    {
-      "id": "internal_format_format_new",
-      "label": "New()",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "new()",
-      "source_file": "internal/format/format.go",
-      "source_location": "L231"
-    },
-    {
-      "id": "internal_format_format_newmatrixhtmlrenderer",
-      "label": "newMatrixHTMLRenderer()",
-      "_origin": "ast",
-      "community": 3,
-      "community_name": "FormatMessage",
-      "file_type": "code",
-      "norm_label": "newmatrixhtmlrenderer()",
-      "source_file": "internal/format/format.go",
-      "source_location": "L100"
     },
     {
       "id": "internal_format_format_test",
@@ -1971,6 +2199,17 @@
       "source_location": "L105"
     },
     {
+      "id": "client_client_close",
+      "label": ".Close()",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "Client",
+      "file_type": "code",
+      "norm_label": ".close()",
+      "source_file": "internal/matrix/client/client.go",
+      "source_location": "L446"
+    },
+    {
       "id": "client_client_dispatchincomingevent",
       "label": ".dispatchIncomingEvent()",
       "_origin": "ast",
@@ -1990,7 +2229,7 @@
       "file_type": "code",
       "norm_label": ".dispatchmessage()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278"
+      "source_location": "L286"
     },
     {
       "id": "client_client_incomingqueue",
@@ -2001,7 +2240,7 @@
       "file_type": "code",
       "norm_label": ".incomingqueue()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L468"
+      "source_location": "L476"
     },
     {
       "id": "client_client_initcrypto",
@@ -2012,7 +2251,7 @@
       "file_type": "code",
       "norm_label": ".initcrypto()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L177"
+      "source_location": "L185"
     },
     {
       "id": "client_client_login",
@@ -2023,7 +2262,7 @@
       "file_type": "code",
       "norm_label": ".login()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L205"
+      "source_location": "L213"
     },
     {
       "id": "client_client_onmessage",
@@ -2034,7 +2273,7 @@
       "file_type": "code",
       "norm_label": ".onmessage()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L272"
+      "source_location": "L280"
     },
     {
       "id": "client_client_replyregistry",
@@ -2045,7 +2284,7 @@
       "file_type": "code",
       "norm_label": ".replyregistry()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L463"
+      "source_location": "L471"
     },
     {
       "id": "client_client_syncer",
@@ -2056,7 +2295,7 @@
       "file_type": "code",
       "norm_label": ".syncer()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L473"
+      "source_location": "L481"
     },
     {
       "id": "client_client_syncloop",
@@ -2067,7 +2306,7 @@
       "file_type": "code",
       "norm_label": ".syncloop()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L369"
+      "source_location": "L377"
     },
     {
       "id": "client_client_underlyingclient",
@@ -2078,7 +2317,7 @@
       "file_type": "code",
       "norm_label": ".underlyingclient()",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L458"
+      "source_location": "L466"
     },
     {
       "id": "client_incomingqueue",
@@ -2101,17 +2340,6 @@
       "norm_label": ".dispatch()",
       "source_file": "internal/matrix/client/incoming_queue.go",
       "source_location": "L65"
-    },
-    {
-      "id": "client_incomingwaiter",
-      "label": "incomingWaiter",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": "incomingwaiter",
-      "source_file": "internal/matrix/client/incoming_queue.go",
-      "source_location": "L11"
     },
     {
       "id": "client_messagehandler",
@@ -2145,17 +2373,6 @@
       "norm_label": "replywaiter",
       "source_file": "internal/matrix/client/reply_registry.go",
       "source_location": "L11"
-    },
-    {
-      "id": "go_type_log_slog_logger",
-      "label": "log/slog.Logger",
-      "_origin": "ast",
-      "community": 5,
-      "community_name": "Client",
-      "file_type": "code",
-      "norm_label": "log/slog.logger",
-      "source_file": "",
-      "source_location": ""
     },
     {
       "id": "go_type_maunium_net_go_mautrix_client",
@@ -2279,6 +2496,78 @@
       "source_location": "L24"
     },
     {
+      "id": "integrations_pi_readme",
+      "label": "pi/README.md",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "pi/readme.md",
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "integrations_pi_readme_declarative_nixos_home_manager",
+      "label": "Declarative (NixOS / Home-Manager)",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "declarative (nixos / home-manager)",
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "integrations_pi_readme_highlights",
+      "label": "Highlights",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "highlights",
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "integrations_pi_readme_installation",
+      "label": "Installation",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "installation",
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "integrations_pi_readme_manual_installation",
+      "label": "Manual Installation",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "manual installation",
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "integrations_pi_readme_pi_coding_agent_matrix_extension",
+      "label": "Pi Coding Agent Matrix Extension",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "pi coding agent matrix extension",
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L1"
+    },
+    {
       "id": "readme",
       "label": "README.md",
       "_origin": "ast",
@@ -2289,6 +2578,42 @@
       "norm_label": "readme.md",
       "source_file": "README.md",
       "source_location": "L1"
+    },
+    {
+      "id": "readme_1_pi_coding_agent_native_extension_integrations_pi",
+      "label": "1. Pi Coding Agent Native Extension (`integrations/pi/`)",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "1. pi coding agent native extension (`integrations/pi/`)",
+      "source_file": "README.md",
+      "source_location": "L290"
+    },
+    {
+      "id": "readme_2_standalone_agent_polling_daemon_scripts_matrix_agent_listener_py",
+      "label": "2. Standalone Agent Polling Daemon (`scripts/matrix_agent_listener.py`)",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "2. standalone agent polling daemon (`scripts/matrix_agent_listener.py`)",
+      "source_file": "README.md",
+      "source_location": "L299"
+    },
+    {
+      "id": "readme_agent_integrations_bridges",
+      "label": "\ud83e\udd16 Agent Integrations & Bridges",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "README.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83e\udd16 agent integrations & bridges",
+      "source_file": "README.md",
+      "source_location": "L286"
     },
     {
       "id": "readme_ai_agent_integration",
@@ -2420,7 +2745,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udcc4 license",
       "source_file": "README.md",
-      "source_location": "L301"
+      "source_location": "L319"
     },
     {
       "id": "readme_option_1_nix_flake_recommended",
@@ -2492,7 +2817,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83e\uddea testing & verification",
       "source_file": "README.md",
-      "source_location": "L286"
+      "source_location": "L304"
     },
     {
       "id": "readme_universal_autonomous_agent_loop_pattern_matrix_wait_message",
@@ -2505,6 +2830,50 @@
       "norm_label": "universal autonomous agent loop pattern (`matrix_wait_message`)",
       "source_file": "README.md",
       "source_location": "L237"
+    },
+    {
+      "id": "format_bidiasttransformer",
+      "label": "bidiASTTransformer",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "bidiasttransformer",
+      "source_file": "internal/format/format.go",
+      "source_location": "L26"
+    },
+    {
+      "id": "format_bidiasttransformer_transform",
+      "label": ".Transform()",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": ".transform()",
+      "source_file": "internal/format/format.go",
+      "source_location": "L28"
+    },
+    {
+      "id": "format_formatter",
+      "label": "Formatter",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "formatter",
+      "source_file": "internal/format/format.go",
+      "source_location": "L226"
+    },
+    {
+      "id": "format_formatter_format",
+      "label": ".Format()",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": ".format()",
+      "source_file": "internal/format/format.go",
+      "source_location": "L263"
     },
     {
       "id": "format_matrixhtmlrenderer",
@@ -2606,6 +2975,17 @@
       "source_location": "L191"
     },
     {
+      "id": "go_type_github_com_yuin_goldmark_ast_document",
+      "label": "github.com/yuin/goldmark/ast.Document",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "github.com/yuin/goldmark/ast.document",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "go_type_github_com_yuin_goldmark_ast_node",
       "label": "github.com/yuin/goldmark/ast.Node",
       "_origin": "ast",
@@ -2628,6 +3008,28 @@
       "source_location": ""
     },
     {
+      "id": "go_type_github_com_yuin_goldmark_markdown",
+      "label": "github.com/yuin/goldmark.Markdown",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "github.com/yuin/goldmark.markdown",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "go_type_github_com_yuin_goldmark_parser_context",
+      "label": "github.com/yuin/goldmark/parser.Context",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "github.com/yuin/goldmark/parser.context",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "go_type_github_com_yuin_goldmark_renderer_html_config",
       "label": "github.com/yuin/goldmark/renderer/html.Config",
       "_origin": "ast",
@@ -2635,6 +3037,17 @@
       "community_name": "matrixHTMLRenderer",
       "file_type": "code",
       "norm_label": "github.com/yuin/goldmark/renderer/html.config",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "go_type_github_com_yuin_goldmark_renderer_noderenderer",
+      "label": "github.com/yuin/goldmark/renderer.NodeRenderer",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "github.com/yuin/goldmark/renderer.noderenderer",
       "source_file": "",
       "source_location": ""
     },
@@ -2650,6 +3063,17 @@
       "source_location": ""
     },
     {
+      "id": "go_type_github_com_yuin_goldmark_text_reader",
+      "label": "github.com/yuin/goldmark/text.Reader",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "github.com/yuin/goldmark/text.reader",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "go_type_github_com_yuin_goldmark_util_bufwriter",
       "label": "github.com/yuin/goldmark/util.BufWriter",
       "_origin": "ast",
@@ -2661,6 +3085,28 @@
       "source_location": ""
     },
     {
+      "id": "internal_format_format",
+      "label": "format.go",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "format.go",
+      "source_file": "internal/format/format.go",
+      "source_location": "L1"
+    },
+    {
+      "id": "internal_format_format_extracttext",
+      "label": "extractText()",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "extracttext()",
+      "source_file": "internal/format/format.go",
+      "source_location": "L70"
+    },
+    {
       "id": "internal_format_format_getdirectionattr",
       "label": "getDirectionAttr()",
       "_origin": "ast",
@@ -2670,6 +3116,28 @@
       "norm_label": "getdirectionattr()",
       "source_file": "internal/format/format.go",
       "source_location": "L213"
+    },
+    {
+      "id": "internal_format_format_new",
+      "label": "New()",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "new()",
+      "source_file": "internal/format/format.go",
+      "source_location": "L231"
+    },
+    {
+      "id": "internal_format_format_newmatrixhtmlrenderer",
+      "label": "newMatrixHTMLRenderer()",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "matrixHTMLRenderer",
+      "file_type": "code",
+      "norm_label": "newmatrixhtmlrenderer()",
+      "source_file": "internal/format/format.go",
+      "source_location": "L100"
     },
     {
       "id": "config_config",
@@ -2826,6 +3294,17 @@
       "source_location": "L11"
     },
     {
+      "id": "matrixconfig",
+      "label": "MatrixConfig",
+      "_origin": "ast",
+      "community": 8,
+      "community_name": "Config",
+      "file_type": "code",
+      "norm_label": "matrixconfig",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "plan",
       "label": "Plan.md",
       "_origin": "ast",
@@ -2944,7 +3423,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L173",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -2968,7 +3447,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L300",
+      "source_location": "L308",
       "weight": 1.0
     },
     {
@@ -2980,7 +3459,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L357",
+      "source_location": "L365",
       "weight": 1.0
     },
     {
@@ -3125,6 +3604,114 @@
       "context": "call",
       "source_file": "internal/format/format.go",
       "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_getsynctokenpath",
+      "target": "integrations_pi_matrix_bridge_gethomedir",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_loadconfig",
+      "target": "integrations_pi_matrix_bridge_gethomedir",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_loadsavedsynctoken",
+      "target": "integrations_pi_matrix_bridge_getsynctokenpath",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_markdowntomatrixhtml",
+      "target": "integrations_pi_matrix_bridge_escapehtml",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_markdowntomatrixhtml",
+      "target": "integrations_pi_matrix_bridge_ispersian",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter_finish",
+      "target": "integrations_pi_matrix_bridge_progressreporter_reset",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L532",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter_report",
+      "target": "integrations_pi_matrix_bridge_progressreporter_emitstatus",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L468",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter_start",
+      "target": "integrations_pi_matrix_bridge_progressreporter_reset",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L454",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_savesynctoken",
+      "target": "integrations_pi_matrix_bridge_getsynctokenpath",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L89",
       "weight": 1.0
     },
     {
@@ -4016,6 +4603,42 @@
       "weight": 1.0
     },
     {
+      "source": "scripts_antigravity_bridge_main",
+      "target": "scripts_antigravity_bridge_create_mcp_process",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_antigravity_bridge_main",
+      "target": "scripts_antigravity_bridge_init_mcp",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_antigravity_bridge_main",
+      "target": "scripts_antigravity_bridge_call_tool",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
       "source": "scripts_matrix_agent_listener_main",
       "target": "scripts_matrix_agent_listener_load_config",
       "relation": "calls",
@@ -4257,7 +4880,7 @@
     },
     {
       "source": "config_config",
-      "target": "internal_config_config_go_config_matrixconfig",
+      "target": "matrixconfig",
       "relation": "references",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -4732,7 +5355,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278",
+      "source_location": "L286",
       "weight": 1.0
     },
     {
@@ -4744,7 +5367,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278",
+      "source_location": "L286",
       "weight": 1.0
     },
     {
@@ -4756,7 +5379,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L177",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -4768,7 +5391,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -4780,7 +5403,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L205",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -4792,7 +5415,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L272",
+      "source_location": "L280",
       "weight": 1.0
     },
     {
@@ -4840,7 +5463,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -4852,7 +5475,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -4864,7 +5487,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -4888,7 +5511,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L293",
       "weight": 1.0
     },
     {
@@ -4900,7 +5523,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L293",
       "weight": 1.0
     },
     {
@@ -4912,7 +5535,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L293",
       "weight": 1.0
     },
     {
@@ -4924,7 +5547,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L369",
+      "source_location": "L377",
       "weight": 1.0
     },
     {
@@ -4936,7 +5559,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -4948,7 +5571,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -4960,7 +5583,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -4972,7 +5595,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -4984,7 +5607,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -4996,7 +5619,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -5008,7 +5631,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -5020,7 +5643,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -5032,7 +5655,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -5044,7 +5667,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -6760,7 +7383,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L468",
+      "source_location": "L476",
       "weight": 1.0
     },
     {
@@ -6772,7 +7395,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -6784,7 +7407,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L463",
+      "source_location": "L471",
       "weight": 1.0
     },
     {
@@ -6808,7 +7431,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -6820,7 +7443,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L473",
+      "source_location": "L481",
       "weight": 1.0
     },
     {
@@ -6832,7 +7455,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L458",
+      "source_location": "L466",
       "weight": 1.0
     },
     {
@@ -6844,7 +7467,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -6856,7 +7479,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -6868,7 +7491,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -7384,6 +8007,226 @@
       "confidence_score": 1.0,
       "source_file": "cmd/matrix-mcp-go/main.go",
       "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_cleanassistanttext",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_escapehtml",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_ispersian",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_markdowntomatrixhtml",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_downloadmatrixmedia",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L186",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_boundedeventcache",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_matrixconfig",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_default_config",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_progressreporter",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L439",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_gethomedir",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_getsynctokenpath",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_loadconfig",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_loadsavedsynctoken",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_savesynctoken",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge",
+      "target": "integrations_pi_matrix_bridge_senddesktopnotification",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_readme",
+      "target": "integrations_pi_readme_pi_coding_agent_matrix_extension",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_readme_installation",
+      "target": "integrations_pi_readme_declarative_nixos_home_manager",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_readme_installation",
+      "target": "integrations_pi_readme_manual_installation",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_readme_pi_coding_agent_matrix_extension",
+      "target": "integrations_pi_readme_installation",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_readme_pi_coding_agent_matrix_extension",
+      "target": "integrations_pi_readme_highlights",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/README.md",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -8389,7 +9232,7 @@
     },
     {
       "source": "readme",
-      "target": "readme_testing_verification",
+      "target": "readme_agent_integrations_bridges",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -8400,13 +9243,24 @@
     },
     {
       "source": "readme",
+      "target": "readme_testing_verification",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "readme",
       "target": "readme_license",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L301",
+      "source_location": "L319",
       "weight": 1.0
     },
     {
@@ -8429,6 +9283,28 @@
       "confidence_score": 1.0,
       "source_file": "README.md",
       "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_agent_integrations_bridges",
+      "target": "readme_1_pi_coding_agent_native_extension_integrations_pi",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L290",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_agent_integrations_bridges",
+      "target": "readme_2_standalone_agent_polling_daemon_scripts_matrix_agent_listener_py",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -8539,6 +9415,50 @@
       "confidence_score": 1.0,
       "source_file": "README.md",
       "source_location": "L258",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_antigravity_bridge",
+      "target": "scripts_antigravity_bridge_create_mcp_process",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_antigravity_bridge",
+      "target": "scripts_antigravity_bridge_init_mcp",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_antigravity_bridge",
+      "target": "scripts_antigravity_bridge_call_tool",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "scripts_antigravity_bridge",
+      "target": "scripts_antigravity_bridge_main",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "scripts/antigravity_bridge.py",
+      "source_location": "L55",
       "weight": 1.0
     },
     {
@@ -8850,6 +9770,105 @@
       "weight": 1.0
     },
     {
+      "source": "integrations_pi_matrix_bridge_boundedeventcache",
+      "target": "integrations_pi_matrix_bridge_boundedeventcache_constructor",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L216",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_boundedeventcache",
+      "target": "integrations_pi_matrix_bridge_boundedeventcache_has",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_boundedeventcache",
+      "target": "integrations_pi_matrix_bridge_boundedeventcache_add",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter",
+      "target": "integrations_pi_matrix_bridge_progressreporter_constructor",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L449",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter",
+      "target": "integrations_pi_matrix_bridge_progressreporter_start",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L453",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter",
+      "target": "integrations_pi_matrix_bridge_progressreporter_report",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L461",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter",
+      "target": "integrations_pi_matrix_bridge_progressreporter_emitstatus",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L485",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter",
+      "target": "integrations_pi_matrix_bridge_progressreporter_finish",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L515",
+      "weight": 1.0
+    },
+    {
+      "source": "integrations_pi_matrix_bridge_progressreporter",
+      "target": "integrations_pi_matrix_bridge_progressreporter_reset",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "integrations/pi/matrix-bridge.ts",
+      "source_location": "L535",
+      "weight": 1.0
+    },
+    {
       "source": "internal_matrix_client_client_go_client_client",
       "target": "client_client_initcrypto",
       "relation": "method",
@@ -8857,7 +9876,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L177",
+      "source_location": "L185",
       "weight": 1.0
     },
     {
@@ -8868,7 +9887,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L205",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -8879,7 +9898,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L272",
+      "source_location": "L280",
       "weight": 1.0
     },
     {
@@ -8890,7 +9909,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L278",
+      "source_location": "L286",
       "weight": 1.0
     },
     {
@@ -8901,7 +9920,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L285",
+      "source_location": "L293",
       "weight": 1.0
     },
     {
@@ -8912,7 +9931,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L291",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -8923,7 +9942,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L329",
+      "source_location": "L337",
       "weight": 1.0
     },
     {
@@ -8934,7 +9953,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L369",
+      "source_location": "L377",
       "weight": 1.0
     },
     {
@@ -8945,7 +9964,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L438",
+      "source_location": "L446",
       "weight": 1.0
     },
     {
@@ -8956,7 +9975,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L458",
+      "source_location": "L466",
       "weight": 1.0
     },
     {
@@ -8967,7 +9986,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L463",
+      "source_location": "L471",
       "weight": 1.0
     },
     {
@@ -8978,7 +9997,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L468",
+      "source_location": "L476",
       "weight": 1.0
     },
     {
@@ -8989,7 +10008,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/client.go",
-      "source_location": "L473",
+      "source_location": "L481",
       "weight": 1.0
     },
     {
@@ -9022,7 +10041,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -9033,7 +10052,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L46",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -9044,7 +10063,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "internal/matrix/client/operations.go",
-      "source_location": "L60",
+      "source_location": "L62",
       "weight": 1.0
     },
     {
@@ -9477,6 +10496,17 @@
       "weight": 1.0
     },
     {
+      "source": "readme",
+      "target": "integrations_pi_readme",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L297",
+      "weight": 1.0
+    },
+    {
       "source": "format_bidiasttransformer_transform",
       "target": "internal_format_bidi_detectdirection",
       "relation": "calls",
@@ -9562,5 +10592,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "2bc31ce6465043f5d1f45082f032f59c027e73ef"
+  "built_at_commit": "e55c3a6b529e3301b95699f6d1e8b48dc8c55c6c"
 }

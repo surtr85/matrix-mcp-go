@@ -13,5 +13,7 @@
   "11": "operations.go",
   "12": "presence.go",
   "13": "github.com/amadeus/matrix-mcp-go",
-  "14": "matrix_agent_listener.py"
+  "14": "matrix_agent_listener.py",
+  "15": "matrix-bridge.ts",
+  "16": "antigravity_bridge.py"
 }

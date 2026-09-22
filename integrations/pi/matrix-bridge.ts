@@ -5,11 +5,11 @@
  * - Direct session injection via `pi.sendUserMessage()` with zero subagent token bloat.
  * - Long-polling Matrix sync with persistent disk-backed sync tokens (~/.pi/agent/matrix_sync_token).
  * - Real-time progress reporter with debounced cooldown for tool calls (`bash`, `read`, `write`, `edit`) & thinking.
- * - In-place Matrix live status updates via `m.replace` (MSC2676) to avoid room spam.
+ * - In-place Matrix live status updates via `m.replace` (MSC2676) and automatic cleanup on completion.
  * - Immediate read receipts (`m.read`) and receipt reaction (`👀`).
  * - Multimodal support: automatically downloads `mxc://` media and attaches native ImageContent.
  * - Matrix control commands: `/new`, `/status`, `/model`, `/thinking`, `/compact`, `/help`.
- * - Clean Markdown-to-HTML converter with Persian BiDi (RTL for Persian, LTR for code blocks).
+ * - Clean Markdown-to-HTML converter with Persian BiDi (RTL for Persian text, LTR for code blocks).
  * - Automatic thinking tag `<think>...</think>` sanitization.
  * - Task completion reaction (`✅`) and secure desktop notifications via `execFile`.
  */
@@ -157,7 +157,7 @@ function markdownToMatrixHtml(md: string): string {
 
   workingText = escapeHtml(workingText);
 
-  // Markdown formats
+  // Markdown formatting
   workingText = workingText.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   workingText = workingText.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
 
@@ -246,8 +246,7 @@ export default function (pi: ExtensionAPI) {
   let latestContext: ExtensionContext | null = null;
 
   // Matrix API Helpers
-  const makeTxnId = () =>
-    `m${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const makeTxnId = () => `m${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
   const sendMatrixMessage = async (
     roomId: string,
@@ -343,6 +342,31 @@ export default function (pi: ExtensionAPI) {
     }
   };
 
+  const redactMatrixMessage = async (
+    roomId: string,
+    eventId: string,
+  ): Promise<boolean> => {
+    try {
+      const txnId = makeTxnId();
+      const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
+        roomId,
+      )}/redact/${encodeURIComponent(eventId)}/${txnId}`;
+
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${config.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      });
+
+      return res.ok;
+    } catch {
+      return false;
+    }
+  };
+
   const sendReaction = async (
     roomId: string,
     targetEventId: string,
@@ -375,10 +399,7 @@ export default function (pi: ExtensionAPI) {
     }
   };
 
-  const sendReadReceipt = async (
-    roomId: string,
-    eventId: string,
-  ): Promise<void> => {
+  const sendReadReceipt = async (roomId: string, eventId: string): Promise<void> => {
     try {
       const url = `${config.homeserver}/_matrix/client/v3/rooms/${encodeURIComponent(
         roomId,
@@ -455,7 +476,8 @@ export default function (pi: ExtensionAPI) {
       this.active = true;
       this.roomId = roomId;
       this.replyToEventId = replyToEventId;
-      this.lastReportTime = 0;
+      // Start cooldown clock from user message arrival so fast responses don't produce an extra status message
+      this.lastReportTime = Date.now();
     }
 
     report(statusText: string) {
@@ -496,23 +518,14 @@ export default function (pi: ExtensionAPI) {
             this.replyToEventId || undefined,
           );
         } else {
-          await editMatrixMessage(
-            this.roomId,
-            this.progressMessageId,
-            formatted,
-          );
+          await editMatrixMessage(this.roomId, this.progressMessageId, formatted);
         }
       } else {
-        // Message mode: post fresh message if cooldown elapsed
-        await sendMatrixMessage(
-          this.roomId,
-          formatted,
-          this.replyToEventId || undefined,
-        );
+        await sendMatrixMessage(this.roomId, formatted, this.replyToEventId || undefined);
       }
     }
 
-    async finish(completedMessage?: string) {
+    async cleanup() {
       if (!this.active) return;
       if (this.flushTimeout) {
         clearTimeout(this.flushTimeout);
@@ -520,13 +533,9 @@ export default function (pi: ExtensionAPI) {
       }
       this.pendingStatus = null;
 
-      if (
-        this.progressMessageId &&
-        config.progressMode === "edit" &&
-        this.roomId
-      ) {
-        const text = completedMessage || "✅ **پردازش به اتمام رسید.**";
-        await editMatrixMessage(this.roomId, this.progressMessageId, text);
+      // Automatically redact (delete) the temporary progress message on completion
+      if (this.progressMessageId && this.roomId) {
+        await redactMatrixMessage(this.roomId, this.progressMessageId);
       }
 
       this.reset();
@@ -547,7 +556,7 @@ export default function (pi: ExtensionAPI) {
 
   const progressReporter = new ProgressReporter();
 
-  // Handle Slash Commands
+  // Handle Slash Commands (All in English)
   const handleMatrixCommand = async (
     roomId: string,
     commandText: string,
@@ -567,13 +576,13 @@ export default function (pi: ExtensionAPI) {
         pi.sendUserMessage("/new_session", { expandPromptTemplates: true });
         await sendMatrixMessage(
           roomId,
-          "✨ **جلسه جدید با موفقیت آغاز شد.** (New session started)",
+          "✨ **New session started successfully.**",
           replyToId,
         );
       } catch (err: any) {
         await sendMatrixMessage(
           roomId,
-          `❌ خطا در ایجاد جلسه جدید: ${err.message || String(err)}`,
+          `❌ Failed to start new session: ${err.message || String(err)}`,
           replyToId,
         );
       }
@@ -588,10 +597,10 @@ export default function (pi: ExtensionAPI) {
         if (session && typeof session.getSessionStats === "function") {
           const stats = session.getSessionStats();
           statsText = [
-            `📊 **آمار نشست:**`,
-            `- پیام‌ها: ${stats.totalMessages} (کاربر: ${stats.userMessages}, پاسخ: ${stats.assistantMessages})`,
-            `- ابزارها: ${stats.toolCalls} فراخوانی`,
-            `- توکن‌ها: مجموعاً ${stats.tokens?.total?.toLocaleString() || 0}`,
+            `📊 **Session Statistics:**`,
+            `- Messages: ${stats.totalMessages} (user: ${stats.userMessages}, assistant: ${stats.assistantMessages})`,
+            `- Tool Calls: ${stats.toolCalls}`,
+            `- Tokens: ${stats.tokens?.total?.toLocaleString() || 0} total`,
           ].join("\n");
         }
       } catch {}
@@ -600,12 +609,12 @@ export default function (pi: ExtensionAPI) {
       const currentThinking = pi.getThinkingLevel();
 
       const msg = [
-        `📡 **وضعیت ماتریکس بریج اختصاصی Pi:**`,
-        `- اتصال: ${isPolling ? "🟢 متصل و فعال" : "🔴 متوقف"}`,
-        `- حالت اجرا: ${config.useSubagent ? `⚡ ساب‌ایجنت (${config.subagentRole})` : "🚀 مستقیم و سبک (Direct)"}`,
-        `- مدل جاری: \`${currentModel ? `${currentModel.provider}/${currentModel.id}` : "تنظیم‌نشده"}\``,
-        `- سطح تفکر (Thinking): \`${currentThinking}\``,
-        `- کول‌داون پیشرفت: \`${config.progressCooldownSeconds}s\` (حالت: \`${config.progressMode}\`)`,
+        `📡 **Pi Matrix Bridge Status:**`,
+        `- Connection: ${isPolling ? "🟢 Connected & Active" : "🔴 Stopped"}`,
+        `- Execution Mode: ${config.useSubagent ? `⚡ Subagent (${config.subagentRole})` : "🚀 Direct (Zero Token Bloat)"}`,
+        `- Active Model: \`${currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset"}\``,
+        `- Thinking Level: \`${currentThinking}\``,
+        `- Progress Cooldown: \`${config.progressCooldownSeconds}s\` (Mode: \`${config.progressMode}\`)`,
         statsText,
       ]
         .filter(Boolean)
@@ -621,7 +630,7 @@ export default function (pi: ExtensionAPI) {
         const currentModel = latestContext?.model;
         await sendMatrixMessage(
           roomId,
-          `🤖 **مدل فعلی:** \`${currentModel ? `${currentModel.provider}/${currentModel.id}` : "تنظیم‌نشده"}\``,
+          `🤖 **Active Model:** \`${currentModel ? `${currentModel.provider}/${currentModel.id}` : "Unset"}\``,
           replyToId,
         );
         return true;
@@ -642,13 +651,13 @@ export default function (pi: ExtensionAPI) {
           if (success) {
             await sendMatrixMessage(
               roomId,
-              `✅ مدل به **${match.provider}/${match.id}** تغییر یافت.`,
+              `✅ Switched model to **${match.provider}/${match.id}**.`,
               replyToId,
             );
           } else {
             await sendMatrixMessage(
               roomId,
-              `❌ احراز هویت برای مدل ${match.provider}/${match.id} ناموفق بود.`,
+              `❌ Authentication failed for model ${match.provider}/${match.id}.`,
               replyToId,
             );
           }
@@ -658,14 +667,14 @@ export default function (pi: ExtensionAPI) {
             .join(", ");
           await sendMatrixMessage(
             roomId,
-            `⚠️ مدل \`${args}\` یافت نشد.\nمدل‌های در دسترس:\n${availableList || "موردی یافت نشد"}`,
+            `⚠️ Model \`${args}\` not found.\nAvailable models:\n${availableList || "None"}`,
             replyToId,
           );
         }
       } catch (err: any) {
         await sendMatrixMessage(
           roomId,
-          `❌ خطا در تغییر مدل: ${err.message || String(err)}`,
+          `❌ Error switching model: ${err.message || String(err)}`,
           replyToId,
         );
       }
@@ -678,7 +687,7 @@ export default function (pi: ExtensionAPI) {
         const currentLevel = pi.getThinkingLevel();
         await sendMatrixMessage(
           roomId,
-          `🧠 **سطح تفکر فعلی:** \`${currentLevel}\``,
+          `🧠 **Current Thinking Level:** \`${currentLevel}\``,
           replyToId,
         );
         return true;
@@ -688,13 +697,13 @@ export default function (pi: ExtensionAPI) {
         pi.setThinkingLevel(level);
         await sendMatrixMessage(
           roomId,
-          `🧠 سطح تفکر به **${args}** تغییر یافت.`,
+          `🧠 Thinking level updated to **${args}**.`,
           replyToId,
         );
       } catch (err: any) {
         await sendMatrixMessage(
           roomId,
-          `❌ خطا در تنظیم سطح تفکر: ${err.message || String(err)}`,
+          `❌ Error setting thinking level: ${err.message || String(err)}`,
           replyToId,
         );
       }
@@ -706,7 +715,7 @@ export default function (pi: ExtensionAPI) {
       try {
         await sendMatrixMessage(
           roomId,
-          "⏳ **فرآیند خلاصه‌سازی کانتکست (Compact) آغاز شد...**",
+          "⏳ **Context compaction in progress...**",
           replyToId,
         );
         pi.sendUserMessage(args ? `/compact ${args}` : "/compact", {
@@ -715,7 +724,7 @@ export default function (pi: ExtensionAPI) {
       } catch (err: any) {
         await sendMatrixMessage(
           roomId,
-          `❌ خطا در فشرده‌سازی: ${err.message || String(err)}`,
+          `❌ Compaction error: ${err.message || String(err)}`,
           replyToId,
         );
       }
@@ -725,13 +734,13 @@ export default function (pi: ExtensionAPI) {
     // 6. /help
     if (cmdName === "help") {
       const helpMsg = [
-        `🛠️ **دستورات کنترلی ماتریکس برای Pi:**`,
-        `- \`/new\` یا \`/reset\`: شروع یک جلسه تازه`,
-        `- \`/status\`: وضعیت اتصال، مدل و آمار توکن‌ها`,
-        `- \`/model [نام]\`: مشاهده یا تغییر مدل جاری`,
-        `- \`/thinking [off|low|medium|high|max]\`: تنظیم سطح تفکر`,
-        `- \`/compact [دستور]\`: خلاصه‌سازی تاریخچه چت`,
-        `- \`/help\`: مشاهده این راهنما`,
+        `🛠️ **Matrix Bridge Commands for Pi:**`,
+        `- \`/new\` or \`/reset\`: Start a fresh session`,
+        `- \`/status\`: View connection status, active model, and token stats`,
+        `- \`/model [name]\`: View or switch active model`,
+        `- \`/thinking [off|low|medium|high|max]\`: Adjust reasoning/thinking level`,
+        `- \`/compact [instructions]\`: Compact chat context history`,
+        `- \`/help\`: View this guide`,
       ].join("\n");
       await sendMatrixMessage(roomId, helpMsg, replyToId);
       return true;
@@ -883,10 +892,7 @@ export default function (pi: ExtensionAPI) {
               );
 
               // 4. Handle commands
-              if (
-                typeof rawBody === "string" &&
-                rawBody.trim().startsWith("/")
-              ) {
+              if (typeof rawBody === "string" && rawBody.trim().startsWith("/")) {
                 stopTypingLoop();
                 pendingResponse = false;
                 const handled = await handleMatrixCommand(
@@ -914,12 +920,7 @@ export default function (pi: ExtensionAPI) {
                 );
                 if (media) {
                   pi.sendUserMessage([
-                    {
-                      type: "text",
-                      text: rawBody
-                        ? `[Matrix Image: ${rawBody}]`
-                        : "[Matrix Image]",
-                    },
+                    { type: "text", text: rawBody ? `[Matrix Image: ${rawBody}]` : "[Matrix Image]" },
                     {
                       type: "image",
                       data: media.data,
@@ -964,12 +965,12 @@ export default function (pi: ExtensionAPI) {
     progressReporter.reset();
   };
 
-  // --- Pi Lifecycle Hooks ---
+  // --- Pi Lifecycle Hooks (All in English) ---
 
   // Progress Reporting: Turn Start (Thinking)
   pi.on("turn_start", async (_event: TurnStartEvent) => {
     if (pendingResponse && activeRoomId) {
-      progressReporter.report("🧠 در حال بررسی و پردازش درخواست...");
+      progressReporter.report("🧠 Thinking...");
     }
   });
 
@@ -980,35 +981,29 @@ export default function (pi: ExtensionAPI) {
     let desc = "";
     switch (event.toolName) {
       case "bash": {
-        const cmd = event.args?.command
-          ? ` \`${event.args.command.slice(0, 60)}\``
-          : "";
-        desc = `⚙️ اجرای دستور شل:${cmd}`;
+        const cmd = event.args?.command ? ` \`${event.args.command.slice(0, 60)}\`` : "";
+        desc = `⚙️ Running bash:${cmd}`;
         break;
       }
       case "read": {
-        const p = event.args?.path
-          ? ` \`${path.basename(event.args.path)}\``
-          : "";
-        desc = `📖 خواندن فایل${p}`;
+        const p = event.args?.path ? ` \`${path.basename(event.args.path)}\`` : "";
+        desc = `📖 Reading${p}`;
         break;
       }
       case "edit":
       case "write": {
-        const p = event.args?.path
-          ? ` \`${path.basename(event.args.path)}\``
-          : "";
-        desc = `✏️ ویرایش فایل${p}`;
+        const p = event.args?.path ? ` \`${path.basename(event.args.path)}\`` : "";
+        desc = `✏️ Editing${p}`;
         break;
       }
       case "grep":
       case "find":
       case "ls": {
-        desc = `🔍 جستجو و بازرسی در مسیرها (${event.toolName})`;
+        desc = `🔍 Searching paths (${event.toolName})`;
         break;
       }
       default: {
-        desc = `🔧 اجرای ابزار \`${event.toolName}\``;
+        desc = `🔧 Executing tool \`${event.toolName}\``;
         break;
       }
     }
@@ -1019,9 +1014,7 @@ export default function (pi: ExtensionAPI) {
   // Progress Reporting: Tool Execution End (Error flag)
   pi.on("tool_execution_end", async (event: ToolExecutionEndEvent) => {
     if (pendingResponse && activeRoomId && event.isError) {
-      progressReporter.report(
-        `⚠️ بروز خطا در اجرای ابزار \`${event.toolName}\``,
-      );
+      progressReporter.report(`⚠️ Error executing \`${event.toolName}\``);
     }
   });
 
@@ -1050,7 +1043,7 @@ export default function (pi: ExtensionAPI) {
         }
 
         if (text) {
-          // Send final answer as in_reply_to
+          // Send final answer as standard in_reply_to
           const sentEventId = await sendMatrixMessage(
             targetRoomId,
             text,
@@ -1058,16 +1051,16 @@ export default function (pi: ExtensionAPI) {
           );
 
           if (sentEventId) {
-            // Mark original message with ✅
+            // Mark original message with checkmark ✅
             sendReaction(targetRoomId, targetTriggerId, "✅");
 
-            // Finalize progress message
-            await progressReporter.finish("✅ **پاسخ آماده و ارسال شد.**");
+            // Clean up / delete the temporary progress message so chat remains clean
+            await progressReporter.cleanup();
 
-            // Safe desktop notification
+            // Desktop notification
             sendDesktopNotification(
               "Matrix Bridge",
-              "پاسخ دستیار Pi به ماتریکس ارسال شد 🚀",
+              "Pi response delivered to Matrix 🚀",
             );
 
             if (ctx.hasUI) {
