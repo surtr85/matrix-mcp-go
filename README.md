@@ -1,14 +1,15 @@
 <div align="center">
 
-![pi-matrix Banner](assets/banner.jpg)
+![pi-bridges Banner](assets/banner.jpg)
 
-# pi-matrix
+# pi-matrix & pi-telegram
 
-**Native, high-performance, zero-token-overhead Matrix bridge extension for [Pi Coding Agent](https://github.com/earendil-works/pi-coding-agent).**
+**Native, high-performance, zero-token-overhead Matrix and Telegram bridge extensions for [Pi Coding Agent](https://github.com/earendil-works/pi-coding-agent).**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Pi Coding Agent](https://img.shields.io/badge/Agent-Pi%20Coding%20Agent-00d2ff.svg)](https://github.com/earendil-works/pi-coding-agent)
 [![Matrix Protocol](https://img.shields.io/badge/Protocol-Matrix%20v1.11-0ebd8f.svg)](https://matrix.org)
+[![Telegram Bot API](https://img.shields.io/badge/Protocol-Telegram%20Bot%20API-24A1DE.svg)](https://core.telegram.org/bots/api)
 [![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178c6.svg)](https://www.typescriptlang.org/)
 
 </div>
@@ -17,120 +18,84 @@
 
 ## ⚡ Overview
 
-`pi-matrix` is a dedicated bridge extension engineered specifically for **Pi Coding Agent**. Unlike traditional bots that spin up separate API sessions or wrap messages in hundreds of tokens of subagent instructions, `pi-matrix` directly injects messages into your active Pi TUI session, giving you full access to your agent, its workspaces, tools, and subscriptions seamlessly over Matrix.
+This repository provides dedicated, modular bridge extensions engineered specifically for **Pi Coding Agent**:
 
-```mermaid
-flowchart LR
-    User([User on Matrix / Element])
-    subgraph pi-matrix [pi-matrix Extension]
-        Sync[Long-Polling Sync & Coalesce]
-        Queue[Concurrency Turn Queue]
-        MediaIn[Media Downloader & Disk Cache]
-        MediaOut[Outbound Media Uplink]
-        Reporter[Progress Reporter / m.replace]
-        Commands[Command & Abort Interceptor]
-    end
-    subgraph PiRuntime [Pi Coding Agent Runtime]
-        Session[(Active Interactive Session)]
-        Tools[Coding Tools: bash, edit, read, write]
-        Vision[Multimodal Vision Model]
-    end
+1. **`matrix/`** (`pi-matrix`): High-performance Matrix chat bridge. Injects messages directly into your active Pi TUI session, handles multimodal media, MSC2676 live progress edits, outbound media uplinks, and remote slash commands.
+2. **`telegram/`** (`pi-telegram`): Direct Telegram Bot API bridge. Provides interactive inline quick actions, native photo/document uplinks, IPv4 DNS prioritization, and zero-token remote execution.
 
-    User -- "Prompt / Image / Video / File" --> Sync
-    Sync --> Queue --> MediaIn --> Session
-    Sync -- "/abort, 🛑 Reaction" --> Commands --> Session
-    Sync -- "/sh, /upload, /new" --> Commands
-    Session -- "tool_execution_start" --> Reporter -- "⏳ Status (m.replace)" --> User
-    Session -- "write (plot/svg/image)" --> MediaOut -- "m.image / m.file" --> User
-    Session -- "agent_end" --> Reporter -- "Delete status & Send final answer" --> User
+Unlike traditional chat wrappers that spin up disconnected subagent processes or bloat context with boilerplate prompts, these extensions directly bind into Pi's event lifecycle via `pi.sendUserMessage()` with `{ deliverAs: "followUp" }`.
+
+---
+
+## 📁 Repository Structure
+
+```text
+pi-matrix/
+├── index.ts               # Root entrypoint (re-exports matrix bridge)
+├── package.json           # Extension metadata & dependencies
+├── flake.nix              # Nix flake dev environment
+├── flake.lock
+├── assets/                # Visual assets & banners
+│   ├── banner.jpg
+│   └── banner.png
+├── matrix/                # Matrix Bridge Extension
+│   ├── index.ts           # Matrix bridge entrypoint
+│   └── src/
+│       ├── api.ts         # Matrix client (CS-API sync, messages, uploads, reactions)
+│       ├── cache.ts       # Bounded event & message deduplication cache
+│       ├── commands.ts    # Slash commands (/abort, /sh, /model, /thinking, etc.)
+│       ├── config.ts      # Matrix configuration & sync token loader
+│       ├── formatter.ts   # Markdown & Persian BiDi formatting
+│       ├── progress.ts    # Debounced live progress reporter (m.replace)
+│       ├── queue.ts       # Concurrency-safe FIFO turn queue
+│       └── types.ts       # Matrix bridge type definitions
+└── telegram/              # Telegram Bridge Extension
+    ├── index.ts           # Telegram bridge entrypoint
+    └── src/
+        ├── api.ts         # Telegram Bot API client (polling, sendPhoto, inline keyboards)
+        ├── cache.ts       # Message deduplication cache
+        ├── commands.ts    # Slash commands & inline buttons
+        ├── config.ts      # Telegram configuration & offset persistence
+        ├── formatter.ts   # Telegram MarkdownV2 / HTML formatter
+        ├── progress.ts    # Live status updater
+        ├── queue.ts       # Multi-turn FIFO queue
+        └── types.ts       # Telegram bridge type definitions
 ```
 
 ---
 
 ## ✨ Features
 
-- **🚀 Direct Session Injection (Zero Token Bloat)**: Messages are dispatched directly via `pi.sendUserMessage()` with `{ deliverAs: "followUp" }`. No system-prompt wrapping, no wasted context tokens, and no concurrency crashes.
-- **🛡️ Concurrency-Safe Turn Queue (FIFO)**: Intelligent multi-turn queue keeps track of every request's exact originating room and message event ID, ensuring answers and acknowledgments always route to the right message even during rapid typing.
-- **📤 Outbound Media Uplink**: Automatically uploads newly created plots, diagrams (`.png`, `.jpg`, `.svg`), PDFs, and generated files produced by Pi tools directly to Matrix via `/_matrix/media/v3/upload`!
-- **🛑 Interactive Instant Abort**: Interrupt runaway agent loops or long compilation jobs immediately by typing `/abort` or simply reacting with 🛑 to the message.
-- **💻 Zero-Token Shell Commands (`/sh`)**: Execute system commands (`/sh git status`, `/sh df -h`, etc.) directly on your host machine from Matrix without invoking the LLM or burning tokens.
-- **⏱️ Live Progress Reporter with Cooldown**: Hooks into Pi lifecycle events (`turn_start`, `tool_execution_start`, `tool_execution_end`) to report what the agent is doing (`⚙️ Running bash: ...`, `📖 Reading ...`, `✏️ Editing ...`, `🔍 Searching ...`) with a debounced cooldown (default: `5s`).
-- **🧹 In-Place Updates (`m.replace`) & Auto-Cleanup**: Status updates are edited in-place inside a single Matrix message (MSC2676) so chat rooms never get spammed. When Pi finishes, the temporary progress message is automatically redacted (deleted), leaving only your prompt and the final response.
-- **🖼️ Comprehensive Multimodal Media**:
-  - **Images (`m.image`)**: Downloads media, passes Base64 directly into Pi's multimodal vision model, and saves the file locally in `~/.pi/agent/media/`.
-  - **Videos (`m.video`)**: Downloads to local disk, extracts metadata, and notifies Pi of the local path for tool analysis.
-  - **Audio (`m.audio`)**: Downloads and caches audio files locally for agent inspection.
-  - **Files / Documents (`m.file`)**: Saves documents/code to disk and generates syntax-highlighted code previews for text files under 64KB.
-- **📦 Matrix PDU Protection & Chunking**: Splits large responses (>4000 characters) cleanly into sequential chunks, and automatically attaches massive responses (>25KB) as markdown files to prevent Matrix `M_TOO_LARGE` errors.
-- **🔗 Intelligent Batch Coalescing**: Automatically merges rapid-fire text captions and media events from Matrix clients into a single multimodal turn.
-- **💾 Disk-Backed Sync Token**: Automatically saves `next_batch` to `~/.pi/agent/matrix_sync_token` so restarts never replay past messages.
-- **🛠️ Remote Control Slash Commands**:
-  - `/abort` or `/stop`: Instantly cancels active agent execution.
-  - `/sh <cmd>`: Runs a host shell command directly without LLM tokens.
-  - `/upload <path>`: Uploads a local server file to the Matrix chat.
-  - `/new` or `/reset`: Instantly resets the session via `ctx.newSession()`.
-  - `/status`: Displays connection state, active model, thinking budget, and token metrics.
-  - `/model [name]`: Inspects available models or dynamically switches models.
-  - `/thinking [level]`: Adjusts reasoning depth (`off`, `low`, `medium`, `high`, `max`).
-  - `/compact`: Triggers context compaction.
-  - `/help`: Lists available commands.
-- **🌐 Persian & Bilingual BiDi Formatting**: Automatically wraps Persian text lines in right-to-left (`dir="rtl"`) tags, code blocks in left-to-right (`dir="ltr"`), and supports markdown links, headers, blockquotes, and lists.
-- **🧠 Clean Output**: Strips `<think>...</think>` tags automatically before delivering replies.
-- **👀 Fast Reactions**: Immediate acknowledgment reaction (`👀`) and task completion checkmark (`✅`).
-- **🔔 Hardened Notifications**: Desktop notifications via `execFile("notify-send", ...)` with zero shell-interpolation risks.
+### 🟢 Matrix Bridge (`matrix/`)
+- **🚀 Direct Session Injection**: Dispatched directly via `pi.sendUserMessage()` with zero token bloat.
+- **🛡️ Concurrency-Safe Turn Queue**: Strict FIFO queue mapping turns to exact room ID and event ID.
+- **📤 Outbound Media Uplink**: Automatically uploads generated media (`.png`, `.jpg`, `.svg`, `.pdf`) produced by Pi tools to Matrix.
+- **🛑 Interactive Instant Abort**: Interrupt running jobs via `/abort` or by reacting with 🛑.
+- **💻 Zero-Token Shell Commands (`/sh`)**: Execute system commands on the host directly from Matrix.
+- **🧹 In-Place Updates (`m.replace`)**: Progress edits cleanly in-place and redacts upon completion.
+- **📦 PDU Chunking Protection**: Splits messages over 4,000 chars cleanly to prevent `M_TOO_LARGE`.
+- **🌐 Persian & BiDi Formatting**: Intelligent RTL wrapping for Persian text and LTR for code blocks.
+
+### 🔵 Telegram Bridge (`telegram/`)
+- **⚡ Zero-Token Quick Actions**: Interactive inline buttons for `/new`, `/status`, `/compact`, and `/abort`.
+- **👀 Fast Reactive Feedback**: Acknowledges incoming prompts with `👀` and marks completion with `✅`.
+- **📸 Auto-Adaptive Media Uplink**: Auto-routes images as `sendPhoto` and files/logs as `sendDocument`.
+- **🌐 Network Resilience**: Uses IPv4 DNS order to prevent IPv6 timeouts on Node 24+.
+- **🔒 Granular RBAC**: Restrict bot access by numerical user ID and usernames.
 
 ---
 
-## 📦 Installation
+## ⚙️ Configuration Reference
 
-### 1. Declarative (NixOS & Home-Manager)
-
-Add the extension and declarative configuration into your Home-Manager setup:
-
-```nix
-# modules/home/ai/pi/default.nix
-{ pkgs, ... }:
-let
-  piAgentDir = ".pi/agent";
-in
-{
-  home.file."${piAgentDir}/extensions/pi-matrix.ts".source =
-    builtins.fetchurl {
-      url = "https://raw.githubusercontent.com/surtr85/pi-matrix/main/index.ts";
-    };
-
-  home.file."${piAgentDir}/matrix.json".text = builtins.toJSON {
-    homeserver = "https://matrix.example.com";
-    accessToken = "YOUR_MATRIX_ACCESS_TOKEN";
-    botUserId = "@pi_bot:matrix.example.com";
-    allowedUsers = [ "@you:matrix.example.com" ];
-    autoStart = true;
-    useSubagent = false;
-    progressCooldownSeconds = 5;
-    progressMode = "edit";
-  };
-}
-```
-
-### 2. Manual Installation
-
-Clone or copy `index.ts` into your local Pi extensions directory:
-
-```bash
-mkdir -p ~/.pi/agent/extensions
-curl -fsSL https://raw.githubusercontent.com/surtr85/pi-matrix/main/index.ts \
-  -o ~/.pi/agent/extensions/pi-matrix.ts
-```
-
-Create your configuration file at `~/.pi/agent/matrix.json`:
+### Matrix Configuration (`~/.pi/agent/matrix.json`)
 
 ```json
 {
   "homeserver": "https://matrix.example.com",
   "accessToken": "syt_xxxxxxxxxxxxxxxxxxxx",
-  "botUserId": "@bot:matrix.example.com",
+  "botUserId": "@pi_bot:matrix.example.com",
   "allowedUsers": [
-    "@your_username:matrix.example.com"
+    "@you:matrix.example.com"
   ],
   "autoStart": true,
   "progressCooldownSeconds": 5,
@@ -138,61 +103,74 @@ Create your configuration file at `~/.pi/agent/matrix.json`:
 }
 ```
 
-Start Pi in your terminal:
+*Note: You can omit `accessToken` from `matrix.json` and provide `$MATRIX_ACCESS_TOKEN` in your environment.*
 
-```bash
-pi
+### Telegram Configuration (`~/.config/telegram/config.json`)
+
+```json
+{
+  "botTokenPath": "/home/amadeus/.config/telegram/token",
+  "allowedUsers": [ 7273048535 ],
+  "allowedUsernames": [ "amad3us" ],
+  "autoStart": true,
+  "progressMode": "edit",
+  "progressCooldownSeconds": 3
+}
 ```
 
-You will see:
-```text
-Matrix Bridge connected (Direct Mode)
-```
+*Note: You can also specify `TELEGRAM_BOT_TOKEN` in your environment or `botToken` in `config.json`.*
 
 ---
 
-## ⚙️ Configuration Reference (`matrix.json`)
+## 📦 Declarative Installation (NixOS / Home-Manager)
 
-| Option | Type | Default | Description |
-| :--- | :---: | :---: | :--- |
-| `homeserver` | `string` | `""` | Matrix homeserver base URL (e.g. `https://matrix.example.com`). |
-| `accessToken` | `string` | `""` | Bot account access token. |
-| `botUserId` | `string` | `""` | The bot user ID (e.g. `@miku:matrix.example.com`). |
-| `allowedUsers` | `string[]` | `[]` | Allowlist of user IDs permitted to interact with the bot. Leave empty for open access. |
-| `autoStart` | `boolean` | `true` | Whether to automatically start listening when Pi opens. |
-| `progressCooldownSeconds`| `number` | `5` | Minimum seconds between progress updates to avoid notification spam. |
-| `progressMode` | `"edit" \| "message"` | `"edit"` | `"edit"` updates the progress in-place via MSC2676; `"message"` sends new messages. |
-| `useSubagent` | `boolean` | `false` | When `false`, messages execute directly in Pi for minimum token consumption. |
+Link the extension directories declaratively in your Home-Manager configuration:
+
+```nix
+# flake.nix input:
+inputs.pi-matrix.url = "github:surtr85/pi-matrix";
+inputs.pi-matrix.flake = false;
+
+# In your home-manager module (e.g. modules/home/ai/pi/default.nix):
+let
+  piAgentDir = ".pi/agent";
+in
+{
+  # Link Matrix bridge extension directory
+  home.file."${piAgentDir}/extensions/matrix".source = "${inputs.pi-matrix}/matrix";
+
+  # Link Telegram bridge extension directory
+  home.file."${piAgentDir}/extensions/telegram".source = "${inputs.pi-matrix}/telegram";
+
+  # Declarative configuration
+  home.file."${piAgentDir}/matrix.json".text = builtins.toJSON {
+    homeserver = "https://matrix.example.com";
+    botUserId = "@pi_bot:matrix.example.com";
+    allowedUsers = [ "@you:matrix.example.com" ];
+    autoStart = true;
+    progressCooldownSeconds = 5;
+    progressMode = "edit";
+  };
+}
+```
 
 ---
 
 ## 🎮 Interactive Slash Commands
 
-Control your agent remotely from any Matrix client:
+Both bridges provide remote control over your Pi session:
 
 | Command | Description |
 | :--- | :--- |
 | `/abort` or `/stop` | Instantly interrupts and cancels active agent execution. |
 | `/sh <command>` | Runs a host shell command directly without burning LLM tokens. |
-| `/upload <path>` | Uploads a file or image from the host machine directly into Matrix. |
+| `/upload <path>` | Uploads a file or image from the host machine directly into the chat. |
 | `/new` or `/reset` | Resets the conversation and starts a new session immediately. |
 | `/status` | Shows connection status, active model, thinking level, and token metrics. |
 | `/model [id]` | Shows the active model or switches to another available model. |
 | `/thinking [level]`| Sets thinking/reasoning depth (`off`, `low`, `medium`, `high`, `max`). |
 | `/compact [prompt]`| Triggers context compaction with optional instructions. |
 | `/help` | Shows the command cheat sheet. |
-
-> **Pro Tip**: React to any in-flight message with 🛑 to abort the task immediately!
-
----
-
-## 📁 Media Storage
-
-All received media (images, videos, voice notes, PDFs, code archives) are securely saved to:
-```text
-~/.pi/agent/media/<timestamp>_<filename>
-```
-Pi is automatically informed of the file's exact location, allowing it to inspect or process files locally using its command-line tools (`read`, `bash`, Python scripts, ImageMagick, etc.).
 
 ---
 

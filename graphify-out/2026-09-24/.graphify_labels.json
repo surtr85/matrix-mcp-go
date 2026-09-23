@@ -1,11 +1,12 @@
 {
   "0": "package.json",
-  "1": "matrix/index.ts",
+  "1": "index.ts",
   "2": "MatrixApiClient",
   "3": "TelegramApiClient",
   "4": "telegram/index.ts",
   "5": "MatrixProgressReporter",
-  "6": "pi-matrix & pi-telegram",
+  "6": "pi-matrix",
+  "7": "BoundedEventCache",
   "8": "BoundedEventCache",
   "10": "flake.nix"
 }

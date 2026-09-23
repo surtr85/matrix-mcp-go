@@ -1,39 +1,25 @@
-# Binaries
-bin/
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-matrix-mcp-go
+# Dependencies & Runtime
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Test artifacts
-*.test
-*.out
-coverage.html
-
-# Go workspace & vendor
-go.work
-go.work.sum
-
-# Environments & IDEs
-config.yaml
-*.local.yaml
-!config.example.yaml
+# Environment & Secrets
 .env
 .env.*
 !.env.example
+*.local
+
+# IDEs & System
 .idea/
 .vscode/
 *.swp
 *~
+.DS_Store
 
-# Data & SQLite databases
-*.db
-*.db-shm
-*.db-wal
-data/
-
-# Result symlink for nix build
+# Data & Cache
+*.log
+graphify-out/cache/
 result
 result-*

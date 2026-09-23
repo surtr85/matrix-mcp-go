@@ -22,7 +22,7 @@
           packages = with pkgs; [
             nodejs_22
             typescript
-            nodePackages.prettier
+            prettier
           ];
         };
       }
