@@ -136,7 +136,7 @@ export function markdownToMatrixHtml(md: string): string {
           lang ? ` class="language-${lang}"` : ""
         }>${escapedCode}</code></pre></div>`,
       );
-      return `@@CODE_BLOCK_${idx}@@`;
+      return `\uE000CB${idx}\uE001`;
     },
   );
 
@@ -144,7 +144,7 @@ export function markdownToMatrixHtml(md: string): string {
   workingText = workingText.replace(/`([^`]+)`/g, (_match, code) => {
     const idx = inlineCodes.length;
     inlineCodes.push(`<code dir="ltr">${escapeHtml(code)}</code>`);
-    return `@@INLINE_CODE_${idx}@@`;
+    return `\uE000IC${idx}\uE001`;
   });
 
   workingText = escapeHtml(workingText);
@@ -192,13 +192,18 @@ export function markdownToMatrixHtml(md: string): string {
   flushTable();
 
   // Apply inline markdown formatting to lines (links, bold, italic, strikethrough)
+  const links: string[] = [];
   const formattedBlocks = processedBlocks.map((line) => {
     if (line.startsWith("<div") || line.startsWith("<table")) return line;
     let l = line;
-    // Markdown links: [title](url)
+    // Markdown links: [title](url) (extract and protect first before italic/underscore rules)
     l = l.replace(
-      /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-      '<a href="$2">$1</a>',
+      /\[([^\]]+)\]\(((?:https?|file):\/\/[^\s)]+)\)/g,
+      (_match, title, url) => {
+        const idx = links.length;
+        links.push(`<a href="${url}">${title}</a>`);
+        return `\uE000LK${idx}\uE001`;
+      },
     );
     // Bold: **text**
     l = l.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
@@ -213,7 +218,7 @@ export function markdownToMatrixHtml(md: string): string {
   const processedLines = formattedBlocks.map((line) => {
     if (!line.trim()) return "<br/>";
     if (
-      line.includes("@@CODE_BLOCK_") ||
+      line.includes("\uE000CB") ||
       line.startsWith("<h2>") ||
       line.startsWith("<h3>") ||
       line.startsWith("<h4>") ||
@@ -235,11 +240,14 @@ export function markdownToMatrixHtml(md: string): string {
   // Wrap consecutive list items in <ul>
   html = html.replace(/(<li>.*?<\/li>)+/g, (match) => `<ul>${match}</ul>`);
 
+  links.forEach((link, idx) => {
+    html = html.replace(`\uE000LK${idx}\uE001`, link);
+  });
   inlineCodes.forEach((code, idx) => {
-    html = html.replace(`@@INLINE_CODE_${idx}@@`, code);
+    html = html.replace(`\uE000IC${idx}\uE001`, code);
   });
   codeBlocks.forEach((block, idx) => {
-    html = html.replace(`@@CODE_BLOCK_${idx}@@`, block);
+    html = html.replace(`\uE000CB${idx}\uE001`, block);
   });
 
   return html;
