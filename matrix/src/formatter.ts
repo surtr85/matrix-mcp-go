@@ -149,16 +149,6 @@ export function markdownToMatrixHtml(md: string): string {
 
   workingText = escapeHtml(workingText);
 
-  // Markdown links: [title](url)
-  workingText = workingText.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    '<a href="$2">$1</a>',
-  );
-
-  // Markdown formatting
-  workingText = workingText.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  workingText = workingText.replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
-
   // Headers: ###, ##, #
   workingText = workingText.replace(/^### (.*)$/gm, "<h4>$1</h4>");
   workingText = workingText.replace(/^## (.*)$/gm, "<h3>$1</h3>");
@@ -170,7 +160,7 @@ export function markdownToMatrixHtml(md: string): string {
     "<blockquote>$1</blockquote>",
   );
 
-  // Handle Markdown Tables
+  // Markdown Tables & Bullet Lists: process line-by-line first so lists aren't mangled by italic regex
   const rawLines = workingText.split("\n");
   const processedBlocks: string[] = [];
   let currentTableLines: string[] = [];
@@ -192,18 +182,35 @@ export function markdownToMatrixHtml(md: string): string {
       currentTableLines.push(trimmed);
     } else {
       flushTable();
-      processedBlocks.push(line);
+      if (/^[*-]\s+(.*)$/.test(trimmed)) {
+        processedBlocks.push(trimmed.replace(/^[*-]\s+(.*)$/, "<li>$1</li>"));
+      } else {
+        processedBlocks.push(line);
+      }
     }
   }
   flushTable();
 
-  // Bullet items: - item or * item
-  const linesWithLists = processedBlocks.map((line) => {
+  // Apply inline markdown formatting to lines (links, bold, italic, strikethrough)
+  const formattedBlocks = processedBlocks.map((line) => {
     if (line.startsWith("<div") || line.startsWith("<table")) return line;
-    return line.replace(/^[*-] (.*)$/, "<li>$1</li>");
+    let l = line;
+    // Markdown links: [title](url)
+    l = l.replace(
+      /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+      '<a href="$2">$1</a>',
+    );
+    // Bold: **text**
+    l = l.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
+    // Italic: *text* or _text_ (single-line only, not crossing lines)
+    l = l.replace(/(^|[^*])\*([^*\n\r]+)\*(?!\*)/g, "$1<em>$2</em>");
+    l = l.replace(/(^|[^_])_([^_\n\r]+)_(?!_)/g, "$1<em>$2</em>");
+    // Strikethrough: ~~text~~
+    l = l.replace(/~~([^~\n]+)~~/g, "<del>$1</del>");
+    return l;
   });
 
-  const processedLines = linesWithLists.map((line) => {
+  const processedLines = formattedBlocks.map((line) => {
     if (!line.trim()) return "<br/>";
     if (
       line.includes("@@CODE_BLOCK_") ||

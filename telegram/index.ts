@@ -353,15 +353,12 @@ export default function (pi: ExtensionAPI) {
   pi.on("agent_end", async (event: AgentEndEvent, ctx: ExtensionContext) => {
     latestContext = ctx;
     const activeTurn = queue.getActiveTurn();
-    queue.clearActiveTurn();
 
     if (!activeTurn) {
-      api.stopTypingLoop();
-      await progressReporter.cleanup();
       return;
     }
 
-    const { chatId, triggerMessageId } = activeTurn;
+    const { chatId, triggerMessageId, id: turnId } = activeTurn;
 
     try {
       const assistantMessages = event.messages.filter((m) => m.role === "assistant");
@@ -411,14 +408,11 @@ export default function (pi: ExtensionAPI) {
         }
       }
     } finally {
+      await progressReporter.cleanup();
+      queue.removeTurn(turnId);
+      queue.clearActiveTurn();
       if (queue.isEmpty()) {
         api.stopTypingLoop();
-      } else {
-        const nextTurn = queue.next();
-        if (nextTurn) {
-          progressReporter.start(nextTurn.chatId, nextTurn.triggerMessageId);
-          api.startTypingLoop(nextTurn.chatId);
-        }
       }
     }
   });
@@ -466,7 +460,7 @@ export default function (pi: ExtensionAPI) {
     description: "Check Telegram Bridge status",
     handler: async (_args, ctx) => {
       ctx.ui.notify(
-        `Telegram Bridge: ${isRunning ? "RUNNING" : "STOPPED"} (Bot: @pi_miku_bot)`,
+        `Telegram Bridge: ${isRunning ? "RUNNING" : "STOPPED"}${config.botToken ? " (Token configured)" : " (No token configured)"}`,
         isRunning ? "info" : "warning",
       );
     },

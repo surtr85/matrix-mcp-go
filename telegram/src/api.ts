@@ -75,6 +75,14 @@ export class TelegramApiClient {
     }
   }
 
+  async getMe(): Promise<{ id: number; username?: string; first_name?: string } | null> {
+    try {
+      return await this.callApi("getMe");
+    } catch {
+      return null;
+    }
+  }
+
   async acknowledgeOffset(offset: number): Promise<void> {
     try {
       await this.callApi("getUpdates", { offset, limit: 1, timeout: 0 });

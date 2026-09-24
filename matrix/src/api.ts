@@ -63,6 +63,7 @@ export class MatrixApiClient {
     roomId: string,
     localFilePath: string,
     inReplyToEventId?: string,
+    threadId?: string,
   ): Promise<string | null> {
     try {
       const uploadRes = await this.uploadMedia(localFilePath);
@@ -96,7 +97,16 @@ export class MatrixApiClient {
         },
       };
 
-      if (inReplyToEventId) {
+      if (threadId) {
+        bodyPayload["m.relates_to"] = {
+          rel_type: "m.thread",
+          event_id: threadId,
+          is_falling_back: true,
+          "m.in_reply_to": {
+            event_id: inReplyToEventId || threadId,
+          },
+        };
+      } else if (inReplyToEventId) {
         bodyPayload["m.relates_to"] = {
           "m.in_reply_to": {
             event_id: inReplyToEventId,
@@ -151,6 +161,7 @@ export class MatrixApiClient {
     roomId: string,
     text: string,
     inReplyToEventId?: string,
+    threadId?: string,
   ): Promise<string | null> {
     try {
       const cleanText = cleanAssistantText(text);
@@ -169,7 +180,16 @@ export class MatrixApiClient {
         formatted_body: formattedHtml,
       };
 
-      if (inReplyToEventId) {
+      if (threadId) {
+        bodyPayload["m.relates_to"] = {
+          rel_type: "m.thread",
+          event_id: threadId,
+          is_falling_back: true,
+          "m.in_reply_to": {
+            event_id: inReplyToEventId || threadId,
+          },
+        };
+      } else if (inReplyToEventId) {
         bodyPayload["m.relates_to"] = {
           "m.in_reply_to": {
             event_id: inReplyToEventId,
@@ -198,6 +218,7 @@ export class MatrixApiClient {
     roomId: string,
     text: string,
     inReplyToEventId?: string,
+    threadId?: string,
   ): Promise<string | null> {
     const cleanText = cleanAssistantText(text);
     if (!cleanText) return null;
@@ -206,7 +227,7 @@ export class MatrixApiClient {
       try {
         const tempPath = path.join(getMediaDir(), `response_${Date.now()}.md`);
         fs.writeFileSync(tempPath, cleanText, "utf-8");
-        await this.sendMedia(roomId, tempPath, inReplyToEventId);
+        await this.sendMedia(roomId, tempPath, inReplyToEventId, threadId);
       } catch {
         // Fallback to chunks
       }
@@ -218,7 +239,7 @@ export class MatrixApiClient {
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
       const replyTarget = i === 0 ? inReplyToEventId : undefined;
-      const evId = await this.sendSingleMessage(roomId, chunk, replyTarget);
+      const evId = await this.sendSingleMessage(roomId, chunk, replyTarget, threadId);
       if (i === 0) firstEventId = evId;
       if (chunks.length > 1) {
         await new Promise((r) => setTimeout(r, 200));

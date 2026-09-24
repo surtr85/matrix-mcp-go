@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import * as os from "node:os";
 import * as dns from "node:dns";
 import type { TelegramConfig } from "./types.js";
 
@@ -10,19 +11,27 @@ try {
   // Ignore on unsupported runtime versions
 }
 
+export function getHomeDir(): string {
+  return process.env.HOME || os.homedir();
+}
+
 export const DEFAULT_CONFIG: TelegramConfig = {
   botToken: process.env.TELEGRAM_BOT_TOKEN || "",
-  botTokenPath: path.join(process.env.HOME || "/home/amadeus", ".config/telegram/token"),
-  allowedUsers: [7273048535], // Amadeus (@amad3us)
-  allowedUsernames: ["amad3us"],
+  botTokenPath: path.join(getHomeDir(), ".config/telegram/token"),
+  allowedUsers: process.env.TELEGRAM_ALLOWED_USERS
+    ? process.env.TELEGRAM_ALLOWED_USERS.split(",")
+        .map((u) => parseInt(u.trim(), 10))
+        .filter(Number.isFinite)
+    : [],
+  allowedUsernames: process.env.TELEGRAM_ALLOWED_USERNAMES
+    ? process.env.TELEGRAM_ALLOWED_USERNAMES.split(",").map((u) =>
+        u.trim().replace(/^@/, ""),
+      )
+    : [],
   autoStart: true,
   progressMode: "edit",
   progressCooldownSeconds: 3,
 };
-
-export function getHomeDir(): string {
-  return process.env.HOME || "/home/amadeus";
-}
 
 export function getMediaDir(): string {
   const dir = path.join(getHomeDir(), ".pi/agent/media/telegram");
@@ -63,7 +72,10 @@ export function saveOffset(offset: number): void {
 }
 
 export function loadConfig(): TelegramConfig {
-  const configPath = path.join(getHomeDir(), ".config/telegram/config.json");
+  const primaryPath = path.join(getHomeDir(), ".pi/agent/telegram.json");
+  const fallbackPath = path.join(getHomeDir(), ".config/telegram/config.json");
+  const configPath = fs.existsSync(primaryPath) ? primaryPath : fallbackPath;
+
   let cfg = { ...DEFAULT_CONFIG };
 
   if (fs.existsSync(configPath)) {
@@ -75,13 +87,37 @@ export function loadConfig(): TelegramConfig {
     }
   }
 
-  // Load token from path if not explicitly provided
-  if (!cfg.botToken && cfg.botTokenPath && fs.existsSync(cfg.botTokenPath)) {
-    try {
-      cfg.botToken = fs.readFileSync(cfg.botTokenPath, "utf-8").trim();
-    } catch {
-      // ignore
+  if (!cfg.botToken && process.env.TELEGRAM_BOT_TOKEN) {
+    cfg.botToken = process.env.TELEGRAM_BOT_TOKEN;
+  }
+
+  // Check common secret paths
+  const candidateTokenPaths = [
+    cfg.botTokenPath,
+    path.join(getHomeDir(), ".config/telegram/token"),
+    path.join(getHomeDir(), ".config/sops-nix/secrets/telegram-bot-token"),
+    "/run/secrets/telegram-bot-token",
+  ].filter(Boolean) as string[];
+
+  if (!cfg.botToken) {
+    for (const p of candidateTokenPaths) {
+      if (fs.existsSync(p)) {
+        try {
+          const val = fs.readFileSync(p, "utf-8").trim();
+          if (val) {
+            cfg.botToken = val;
+            break;
+          }
+        } catch {
+          // ignore
+        }
+      }
     }
+  }
+
+  // If no bot token is configured at all, do not autoStart to prevent error notifications
+  if (!cfg.botToken) {
+    cfg.autoStart = false;
   }
 
   return cfg;

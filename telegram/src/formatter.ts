@@ -100,9 +100,10 @@ export function markdownToTelegramHtml(input: string): string {
   );
 
   // 11. Markdown bold, italic, strikethrough
-  text = text.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
-  text = text.replace(/(^|[^*])\*([^*]+)\*/g, "$1<i>$2</i>");
-  text = text.replace(/~~([^~]+)~~/g, "<s>$1</s>");
+  text = text.replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>");
+  text = text.replace(/(^|[^*])\*([^*\n\r]+)\*(?!\*)/g, "$1<i>$2</i>");
+  text = text.replace(/(^|[^_])_([^_\n\r]+)_(?!_)/g, "$1<i>$2</i>");
+  text = text.replace(/~~([^~\n]+)~~/g, "<s>$1</s>");
 
   // 12. Markdown Table fallback for Telegram: Format tables cleanly as monospace preformatted blocks
   const rawLines = text.split("\n");

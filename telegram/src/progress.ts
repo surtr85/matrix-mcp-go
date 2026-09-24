@@ -8,6 +8,7 @@ export class TelegramProgressReporter {
   private lastUpdate = 0;
   private timer: NodeJS.Timeout | null = null;
   private pendingText = "";
+  private isFlushing = false;
 
   constructor(api: TelegramApiClient, cooldownSeconds = 3) {
     this.api = api;
@@ -47,6 +48,9 @@ export class TelegramProgressReporter {
 
   private async flush(): Promise<void> {
     if (!this.currentChatId || !this.pendingText) return;
+    if (this.isFlushing) return;
+
+    this.isFlushing = true;
     this.lastUpdate = Date.now();
 
     try {
@@ -56,7 +60,9 @@ export class TelegramProgressReporter {
           text: this.pendingText,
           parse_mode: "HTML",
         });
-        this.statusMessageId = res.message_id;
+        if (res?.message_id) {
+          this.statusMessageId = res.message_id;
+        }
       } else {
         await this.api.callApi("editMessageText", {
           chat_id: this.currentChatId,
@@ -67,6 +73,8 @@ export class TelegramProgressReporter {
       }
     } catch {
       // ignore
+    } finally {
+      this.isFlushing = false;
     }
   }
 
@@ -75,6 +83,14 @@ export class TelegramProgressReporter {
       clearTimeout(this.timer);
       this.timer = null;
     }
+    this.pendingText = "";
+
+    let waits = 0;
+    while (this.isFlushing && waits < 10) {
+      await new Promise((r) => setTimeout(r, 50));
+      waits++;
+    }
+
     if (this.currentChatId && this.statusMessageId) {
       try {
         await this.api.callApi("deleteMessage", {

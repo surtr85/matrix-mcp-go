@@ -17,32 +17,6 @@
       "source_location": "L1"
     },
     {
-      "id": "matrix_src_queue_matrixqueue",
-      "label": "MatrixQueue",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": "matrixqueue",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L3"
-    },
-    {
-      "id": "matrix_src_types_pendingturn",
-      "label": "PendingTurn",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": "pendingturn",
-      "source_file": "matrix/src/types.ts",
-      "source_location": "L13"
-    },
-    {
       "id": "matrix_src_api_matrixapiclient",
       "label": "MatrixApiClient",
       "_callable": true,
@@ -56,6 +30,19 @@
       "source_location": "L12"
     },
     {
+      "id": "matrix_src_progress_matrixprogressreporter",
+      "label": "MatrixProgressReporter",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": "matrixprogressreporter",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L4"
+    },
+    {
       "id": "matrix_src_types_downloadedmedia",
       "label": "DownloadedMedia",
       "_callable": true,
@@ -66,7 +53,20 @@
       "file_type": "code",
       "norm_label": "downloadedmedia",
       "source_file": "matrix/src/types.ts",
-      "source_location": "L21"
+      "source_location": "L22"
+    },
+    {
+      "id": "matrix_src_types_matrixconfig",
+      "label": "MatrixConfig",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": "matrixconfig",
+      "source_file": "matrix/src/types.ts",
+      "source_location": "L1"
     },
     {
       "id": "matrix_src_types_uploadmediaresult",
@@ -79,7 +79,7 @@
       "file_type": "code",
       "norm_label": "uploadmediaresult",
       "source_file": "matrix/src/types.ts",
-      "source_location": "L30"
+      "source_location": "L31"
     },
     {
       "id": "telegram_src_api_telegramapiclient",
@@ -186,30 +186,30 @@
       "source_location": "L11"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter",
-      "label": "MatrixProgressReporter",
+      "id": "matrix_src_queue_matrixqueue",
+      "label": "MatrixQueue",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": "matrixprogressreporter",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L4"
+      "norm_label": "matrixqueue",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L3"
     },
     {
-      "id": "matrix_src_types_matrixconfig",
-      "label": "MatrixConfig",
+      "id": "matrix_src_types_pendingturn",
+      "label": "PendingTurn",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": "matrixconfig",
+      "norm_label": "pendingturn",
       "source_file": "matrix/src/types.ts",
-      "source_location": "L1"
+      "source_location": "L13"
     },
     {
       "id": "telegram_src_cache_boundedeventcache",
@@ -261,18 +261,6 @@
       "source_location": "L7"
     },
     {
-      "id": "matrix_src_commands_handlematrixcommand",
-      "label": "handleMatrixCommand()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": "handlematrixcommand()",
-      "source_file": "matrix/src/commands.ts",
-      "source_location": "L11"
-    },
-    {
       "id": "matrix_src_config_formatfilesize",
       "label": "formatFileSize()",
       "_callable": true,
@@ -282,7 +270,7 @@
       "file_type": "code",
       "norm_label": "formatfilesize()",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L71"
+      "source_location": "L83"
     },
     {
       "id": "matrix_src_config_gethomedir",
@@ -294,7 +282,19 @@
       "file_type": "code",
       "norm_label": "gethomedir()",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L20"
+      "source_location": "L21"
+    },
+    {
+      "id": "matrix_src_config_getmediadir",
+      "label": "getMediaDir()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "matrix/index.ts",
+      "file_type": "code",
+      "norm_label": "getmediadir()",
+      "source_file": "matrix/src/config.ts",
+      "source_location": "L29"
     },
     {
       "id": "matrix_src_config_getsynctokenpath",
@@ -306,7 +306,7 @@
       "file_type": "code",
       "norm_label": "getsynctokenpath()",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L24"
+      "source_location": "L25"
     },
     {
       "id": "matrix_src_config_loadconfig",
@@ -318,7 +318,7 @@
       "file_type": "code",
       "norm_label": "loadconfig()",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L36"
+      "source_location": "L37"
     },
     {
       "id": "matrix_src_config_loadsavedsynctoken",
@@ -330,7 +330,7 @@
       "file_type": "code",
       "norm_label": "loadsavedsynctoken()",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L49"
+      "source_location": "L60"
     },
     {
       "id": "matrix_src_config_savesynctoken",
@@ -342,7 +342,7 @@
       "file_type": "code",
       "norm_label": "savesynctoken()",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L62"
+      "source_location": "L73"
     },
     {
       "id": "matrix_src_config_senddesktopnotification",
@@ -354,103 +354,7 @@
       "file_type": "code",
       "norm_label": "senddesktopnotification()",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L77"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_clear",
-      "label": ".clear()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".clear()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L32"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_clearactiveturn",
-      "label": ".clearActiveTurn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".clearactiveturn()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L28"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_enqueue",
-      "label": ".enqueue()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".enqueue()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L15"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_getactiveturn",
-      "label": ".getActiveTurn()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".getactiveturn()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L24"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_isempty",
-      "label": ".isEmpty()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".isempty()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L11"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_length",
-      "label": ".length()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".length()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L7"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_matchestarget",
-      "label": ".matchesTarget()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".matchestarget()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L37"
-    },
-    {
-      "id": "matrix_src_queue_matrixqueue_next",
-      "label": ".next()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": ".next()",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L19"
+      "source_location": "L89"
     },
     {
       "id": "matrix_src_api_matrixapiclient_chunkmessage",
@@ -462,7 +366,19 @@
       "file_type": "code",
       "norm_label": ".chunkmessage()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L124"
+      "source_location": "L134"
+    },
+    {
+      "id": "matrix_src_api_matrixapiclient_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "matrix/src/api.ts",
+      "source_location": "L16"
     },
     {
       "id": "matrix_src_api_matrixapiclient_downloadmedia",
@@ -474,7 +390,7 @@
       "file_type": "code",
       "norm_label": ".downloadmedia()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L387"
+      "source_location": "L408"
     },
     {
       "id": "matrix_src_api_matrixapiclient_editmessage",
@@ -486,7 +402,7 @@
       "file_type": "code",
       "norm_label": ".editmessage()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L231"
+      "source_location": "L252"
     },
     {
       "id": "matrix_src_api_matrixapiclient_joinroom",
@@ -498,7 +414,7 @@
       "file_type": "code",
       "norm_label": ".joinroom()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L466"
+      "source_location": "L487"
     },
     {
       "id": "matrix_src_api_matrixapiclient_maketxnid",
@@ -522,7 +438,7 @@
       "file_type": "code",
       "norm_label": ".redactmessage()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L278"
+      "source_location": "L299"
     },
     {
       "id": "matrix_src_api_matrixapiclient_sendmedia",
@@ -546,7 +462,7 @@
       "file_type": "code",
       "norm_label": ".sendmessage()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L197"
+      "source_location": "L217"
     },
     {
       "id": "matrix_src_api_matrixapiclient_sendreaction",
@@ -558,7 +474,7 @@
       "file_type": "code",
       "norm_label": ".sendreaction()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L300"
+      "source_location": "L321"
     },
     {
       "id": "matrix_src_api_matrixapiclient_sendreadreceipt",
@@ -570,7 +486,7 @@
       "file_type": "code",
       "norm_label": ".sendreadreceipt()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L332"
+      "source_location": "L353"
     },
     {
       "id": "matrix_src_api_matrixapiclient_sendsinglemessage",
@@ -582,7 +498,7 @@
       "file_type": "code",
       "norm_label": ".sendsinglemessage()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L150"
+      "source_location": "L160"
     },
     {
       "id": "matrix_src_api_matrixapiclient_settyping",
@@ -594,7 +510,7 @@
       "file_type": "code",
       "norm_label": ".settyping()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L346"
+      "source_location": "L367"
     },
     {
       "id": "matrix_src_api_matrixapiclient_starttypingloop",
@@ -606,7 +522,7 @@
       "file_type": "code",
       "norm_label": ".starttypingloop()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L364"
+      "source_location": "L385"
     },
     {
       "id": "matrix_src_api_matrixapiclient_stoptypingloop",
@@ -618,7 +534,19 @@
       "file_type": "code",
       "norm_label": ".stoptypingloop()",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L375"
+      "source_location": "L396"
+    },
+    {
+      "id": "matrix_src_api_matrixapiclient_updateconfig",
+      "label": ".updateConfig()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".updateconfig()",
+      "source_file": "matrix/src/api.ts",
+      "source_location": "L18"
     },
     {
       "id": "matrix_src_api_matrixapiclient_uploadmedia",
@@ -633,16 +561,16 @@
       "source_location": "L26"
     },
     {
-      "id": "matrix_src_config_getmediadir",
-      "label": "getMediaDir()",
+      "id": "matrix_src_commands_handlematrixcommand",
+      "label": "handleMatrixCommand()",
       "_callable": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "MatrixApiClient",
       "file_type": "code",
-      "norm_label": "getmediadir()",
-      "source_file": "matrix/src/config.ts",
-      "source_location": "L28"
+      "norm_label": "handlematrixcommand()",
+      "source_file": "matrix/src/commands.ts",
+      "source_location": "L11"
     },
     {
       "id": "matrix_src_formatter_cleanassistanttext",
@@ -717,6 +645,114 @@
       "source_location": "L71"
     },
     {
+      "id": "matrix_src_progress_matrixprogressreporter_cleanup",
+      "label": ".cleanup()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".cleanup()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L111"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_emitstatus",
+      "label": ".emitStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".emitstatus()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L67"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_matchesmessageid",
+      "label": ".matchesMessageId()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".matchesmessageid()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L39"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_report",
+      "label": ".report()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".report()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_reset",
+      "label": ".reset()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".reset()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L131"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_setcooldown",
+      "label": ".setCooldown()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".setcooldown()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L22"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_start",
+      "label": ".start()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".start()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L31"
+    },
+    {
+      "id": "matrix_src_progress_matrixprogressreporter_updateconfig",
+      "label": ".updateConfig()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": ".updateconfig()",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L26"
+    },
+    {
       "id": "telegram_src_api_telegramapiclient_acknowledgeoffset",
       "label": ".acknowledgeOffset()",
       "_callable": true,
@@ -726,7 +762,7 @@
       "file_type": "code",
       "norm_label": ".acknowledgeoffset()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L78"
+      "source_location": "L86"
     },
     {
       "id": "telegram_src_api_telegramapiclient_answercallbackquery",
@@ -762,7 +798,7 @@
       "file_type": "code",
       "norm_label": ".chunktext()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L109"
+      "source_location": "L117"
     },
     {
       "id": "telegram_src_api_telegramapiclient_constructor",
@@ -786,7 +822,19 @@
       "file_type": "code",
       "norm_label": ".downloadfile()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L243"
+      "source_location": "L251"
+    },
+    {
+      "id": "telegram_src_api_telegramapiclient_getme",
+      "label": ".getMe()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "TelegramApiClient",
+      "file_type": "code",
+      "norm_label": ".getme()",
+      "source_file": "telegram/src/api.ts",
+      "source_location": "L78"
     },
     {
       "id": "telegram_src_api_telegramapiclient_sendchataction",
@@ -798,7 +846,7 @@
       "file_type": "code",
       "norm_label": ".sendchataction()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L86"
+      "source_location": "L94"
     },
     {
       "id": "telegram_src_api_telegramapiclient_senddocument",
@@ -810,7 +858,7 @@
       "file_type": "code",
       "norm_label": ".senddocument()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L200"
+      "source_location": "L208"
     },
     {
       "id": "telegram_src_api_telegramapiclient_sendmediaauto",
@@ -822,7 +870,7 @@
       "file_type": "code",
       "norm_label": ".sendmediaauto()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L229"
+      "source_location": "L237"
     },
     {
       "id": "telegram_src_api_telegramapiclient_sendmessage",
@@ -834,7 +882,7 @@
       "file_type": "code",
       "norm_label": ".sendmessage()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L125"
+      "source_location": "L133"
     },
     {
       "id": "telegram_src_api_telegramapiclient_sendphoto",
@@ -846,7 +894,7 @@
       "file_type": "code",
       "norm_label": ".sendphoto()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L171"
+      "source_location": "L179"
     },
     {
       "id": "telegram_src_api_telegramapiclient_setmessagereaction",
@@ -870,7 +918,7 @@
       "file_type": "code",
       "norm_label": ".starttypingloop()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L94"
+      "source_location": "L102"
     },
     {
       "id": "telegram_src_api_telegramapiclient_stoptypingloop",
@@ -882,7 +930,7 @@
       "file_type": "code",
       "norm_label": ".stoptypingloop()",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L102"
+      "source_location": "L110"
     },
     {
       "id": "telegram_src_api_telegramapiclient_updateconfig",
@@ -906,7 +954,7 @@
       "file_type": "code",
       "norm_label": ".cleanup()",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L73"
+      "source_location": "L81"
     },
     {
       "id": "telegram_src_progress_telegramprogressreporter_constructor",
@@ -918,7 +966,7 @@
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L12"
+      "source_location": "L13"
     },
     {
       "id": "telegram_src_progress_telegramprogressreporter_flush",
@@ -930,7 +978,7 @@
       "file_type": "code",
       "norm_label": ".flush()",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L48"
+      "source_location": "L49"
     },
     {
       "id": "telegram_src_progress_telegramprogressreporter_setcooldown",
@@ -942,7 +990,7 @@
       "file_type": "code",
       "norm_label": ".setcooldown()",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "telegram_src_progress_telegramprogressreporter_start",
@@ -954,7 +1002,7 @@
       "file_type": "code",
       "norm_label": ".start()",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L21"
+      "source_location": "L22"
     },
     {
       "id": "telegram_src_progress_telegramprogressreporter_update",
@@ -966,7 +1014,7 @@
       "file_type": "code",
       "norm_label": ".update()",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L28"
+      "source_location": "L29"
     },
     {
       "id": "telegram_index_senddesktopnotification",
@@ -1014,7 +1062,7 @@
       "file_type": "code",
       "norm_label": "formatfilesize()",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L90"
+      "source_location": "L126"
     },
     {
       "id": "telegram_src_config_gethomedir",
@@ -1026,7 +1074,7 @@
       "file_type": "code",
       "norm_label": "gethomedir()",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L23"
+      "source_location": "L14"
     },
     {
       "id": "telegram_src_config_getmediadir",
@@ -1038,7 +1086,7 @@
       "file_type": "code",
       "norm_label": "getmediadir()",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L27"
+      "source_location": "L36"
     },
     {
       "id": "telegram_src_config_getoffsetpath",
@@ -1050,7 +1098,7 @@
       "file_type": "code",
       "norm_label": "getoffsetpath()",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L35"
+      "source_location": "L44"
     },
     {
       "id": "telegram_src_config_loadconfig",
@@ -1062,7 +1110,7 @@
       "file_type": "code",
       "norm_label": "loadconfig()",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L65"
+      "source_location": "L74"
     },
     {
       "id": "telegram_src_config_loadsavedoffset",
@@ -1074,7 +1122,7 @@
       "file_type": "code",
       "norm_label": "loadsavedoffset()",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L39"
+      "source_location": "L48"
     },
     {
       "id": "telegram_src_config_saveoffset",
@@ -1086,7 +1134,7 @@
       "file_type": "code",
       "norm_label": "saveoffset()",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L52"
+      "source_location": "L61"
     },
     {
       "id": "telegram_src_formatter_cleanassistanttext",
@@ -1158,7 +1206,7 @@
       "file_type": "code",
       "norm_label": ".clearactiveturn()",
       "source_file": "telegram/src/queue.ts",
-      "source_location": "L24"
+      "source_location": "L43"
     },
     {
       "id": "telegram_src_queue_telegramqueue_enqueue",
@@ -1185,6 +1233,18 @@
       "source_location": "L20"
     },
     {
+      "id": "telegram_src_queue_telegramqueue_getbyid",
+      "label": ".getById()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 4,
+      "community_name": "telegram/index.ts",
+      "file_type": "code",
+      "norm_label": ".getbyid()",
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L28"
+    },
+    {
       "id": "telegram_src_queue_telegramqueue_isempty",
       "label": ".isEmpty()",
       "_callable": true,
@@ -1194,7 +1254,7 @@
       "file_type": "code",
       "norm_label": ".isempty()",
       "source_file": "telegram/src/queue.ts",
-      "source_location": "L32"
+      "source_location": "L51"
     },
     {
       "id": "telegram_src_queue_telegramqueue_length",
@@ -1206,7 +1266,7 @@
       "file_type": "code",
       "norm_label": ".length()",
       "source_file": "telegram/src/queue.ts",
-      "source_location": "L28"
+      "source_location": "L47"
     },
     {
       "id": "telegram_src_queue_telegramqueue_maketxnid",
@@ -1233,136 +1293,160 @@
       "source_location": "L15"
     },
     {
-      "id": "matrix_src_api_matrixapiclient_constructor",
-      "label": ".constructor()",
+      "id": "telegram_src_queue_telegramqueue_removeturn",
+      "label": ".removeTurn()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 4,
+      "community_name": "telegram/index.ts",
       "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "matrix/src/api.ts",
-      "source_location": "L16"
+      "norm_label": ".removeturn()",
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L33"
     },
     {
-      "id": "matrix_src_api_matrixapiclient_updateconfig",
-      "label": ".updateConfig()",
+      "id": "telegram_src_queue_telegramqueue_setactiveturn",
+      "label": ".setActiveTurn()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 4,
+      "community_name": "telegram/index.ts",
       "file_type": "code",
-      "norm_label": ".updateconfig()",
-      "source_file": "matrix/src/api.ts",
-      "source_location": "L18"
+      "norm_label": ".setactiveturn()",
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L24"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_cleanup",
-      "label": ".cleanup()",
+      "id": "matrix_src_queue_matrixqueue_clear",
+      "label": ".clear()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".cleanup()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L95"
+      "norm_label": ".clear()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L51"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_constructor",
-      "label": ".constructor()",
+      "id": "matrix_src_queue_matrixqueue_clearactiveturn",
+      "label": ".clearActiveTurn()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".constructor()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L14"
+      "norm_label": ".clearactiveturn()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L47"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_emitstatus",
-      "label": ".emitStatus()",
+      "id": "matrix_src_queue_matrixqueue_enqueue",
+      "label": ".enqueue()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".emitstatus()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L66"
+      "norm_label": ".enqueue()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L15"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_matchesmessageid",
-      "label": ".matchesMessageId()",
+      "id": "matrix_src_queue_matrixqueue_getactiveturn",
+      "label": ".getActiveTurn()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".matchesmessageid()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L38"
+      "norm_label": ".getactiveturn()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L24"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_report",
-      "label": ".report()",
+      "id": "matrix_src_queue_matrixqueue_getbyid",
+      "label": ".getById()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".report()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L42"
+      "norm_label": ".getbyid()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L32"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_reset",
-      "label": ".reset()",
+      "id": "matrix_src_queue_matrixqueue_isempty",
+      "label": ".isEmpty()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".reset()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L110"
+      "norm_label": ".isempty()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L11"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_setcooldown",
-      "label": ".setCooldown()",
+      "id": "matrix_src_queue_matrixqueue_length",
+      "label": ".length()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".setcooldown()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L21"
+      "norm_label": ".length()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L7"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_start",
-      "label": ".start()",
+      "id": "matrix_src_queue_matrixqueue_matchestarget",
+      "label": ".matchesTarget()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".start()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L30"
+      "norm_label": ".matchestarget()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L56"
     },
     {
-      "id": "matrix_src_progress_matrixprogressreporter_updateconfig",
-      "label": ".updateConfig()",
+      "id": "matrix_src_queue_matrixqueue_next",
+      "label": ".next()",
       "_callable": true,
       "_origin": "ast",
-      "community": 5,
-      "community_name": "MatrixProgressReporter",
+      "community": 7,
+      "community_name": "MatrixQueue",
       "file_type": "code",
-      "norm_label": ".updateconfig()",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L25"
+      "norm_label": ".next()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "matrix_src_queue_matrixqueue_removeturn",
+      "label": ".removeTurn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "MatrixQueue",
+      "file_type": "code",
+      "norm_label": ".removeturn()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L37"
+    },
+    {
+      "id": "matrix_src_queue_matrixqueue_setactiveturn",
+      "label": ".setActiveTurn()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "MatrixQueue",
+      "file_type": "code",
+      "norm_label": ".setactiveturn()",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L28"
     },
     {
       "id": "telegram_src_cache_boundedeventcache_add",
@@ -1420,7 +1504,7 @@
       "file_type": "code",
       "norm_label": "author",
       "source_file": "package.json",
-      "source_location": "L13"
+      "source_location": "L15"
     },
     {
       "id": "package_bugs",
@@ -1431,7 +1515,7 @@
       "file_type": "code",
       "norm_label": "bugs",
       "source_file": "package.json",
-      "source_location": "L20"
+      "source_location": "L22"
     },
     {
       "id": "package_bugs_url",
@@ -1442,7 +1526,7 @@
       "file_type": "code",
       "norm_label": "url",
       "source_file": "package.json",
-      "source_location": "L21"
+      "source_location": "L23"
     },
     {
       "id": "package_description",
@@ -1454,6 +1538,39 @@
       "norm_label": "description",
       "source_file": "package.json",
       "source_location": "L4"
+    },
+    {
+      "id": "package_devdependencies",
+      "label": "devDependencies",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "devdependencies",
+      "source_file": "package.json",
+      "source_location": "L36"
+    },
+    {
+      "id": "package_devdependencies_types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "@types/node",
+      "source_file": "package.json",
+      "source_location": "L37"
+    },
+    {
+      "id": "package_devdependencies_typescript",
+      "label": "typescript",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "package.json",
+      "file_type": "code",
+      "norm_label": "typescript",
+      "source_file": "package.json",
+      "source_location": "L38"
     },
     {
       "id": "package_files",
@@ -1475,7 +1592,7 @@
       "file_type": "code",
       "norm_label": "homepage",
       "source_file": "package.json",
-      "source_location": "L15"
+      "source_location": "L17"
     },
     {
       "id": "package_keywords",
@@ -1486,7 +1603,7 @@
       "file_type": "code",
       "norm_label": "keywords",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "package_license",
@@ -1497,7 +1614,7 @@
       "file_type": "code",
       "norm_label": "license",
       "source_file": "package.json",
-      "source_location": "L14"
+      "source_location": "L16"
     },
     {
       "id": "package_main",
@@ -1530,7 +1647,7 @@
       "file_type": "code",
       "norm_label": "peerdependencies",
       "source_file": "package.json",
-      "source_location": "L31"
+      "source_location": "L33"
     },
     {
       "id": "package_peerdependencies_earendil_works_pi_coding_agent",
@@ -1541,7 +1658,7 @@
       "file_type": "code",
       "norm_label": "@earendil-works/pi-coding-agent",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L34"
     },
     {
       "id": "package_repository",
@@ -1552,7 +1669,7 @@
       "file_type": "code",
       "norm_label": "repository",
       "source_file": "package.json",
-      "source_location": "L16"
+      "source_location": "L18"
     },
     {
       "id": "package_repository_type",
@@ -1563,7 +1680,7 @@
       "file_type": "code",
       "norm_label": "type",
       "source_file": "package.json",
-      "source_location": "L17"
+      "source_location": "L19"
     },
     {
       "id": "package_repository_url",
@@ -1574,7 +1691,7 @@
       "file_type": "code",
       "norm_label": "url",
       "source_file": "package.json",
-      "source_location": "L18"
+      "source_location": "L20"
     },
     {
       "id": "package_types",
@@ -1607,7 +1724,18 @@
       "file_type": "concept",
       "norm_label": "@earendil-works/pi-coding-agent",
       "source_file": "package.json",
-      "source_location": "L32"
+      "source_location": "L34"
+    },
+    {
+      "id": "package_json_ref_index_ts",
+      "label": "index.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "package.json",
+      "file_type": "concept",
+      "norm_label": "index.ts",
+      "source_file": "package.json",
+      "source_location": "L7"
     },
     {
       "id": "ref_ai_agent",
@@ -1618,7 +1746,7 @@
       "file_type": "concept",
       "norm_label": "ai-agent",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "ref_assets",
@@ -1640,18 +1768,7 @@
       "file_type": "concept",
       "norm_label": "coding-agent",
       "source_file": "package.json",
-      "source_location": "L23"
-    },
-    {
-      "id": "ref_index_ts",
-      "label": "index.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "package.json",
-      "file_type": "concept",
-      "norm_label": "index.ts",
-      "source_file": "package.json",
-      "source_location": "L7"
+      "source_location": "L25"
     },
     {
       "id": "ref_license",
@@ -1673,7 +1790,7 @@
       "file_type": "concept",
       "norm_label": "matrix",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L7"
     },
     {
       "id": "ref_matrix_bridge",
@@ -1684,7 +1801,7 @@
       "file_type": "concept",
       "norm_label": "matrix-bridge",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "ref_pi_coding_agent",
@@ -1695,7 +1812,7 @@
       "file_type": "concept",
       "norm_label": "pi-coding-agent",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "ref_pi_extension",
@@ -1706,7 +1823,7 @@
       "file_type": "concept",
       "norm_label": "pi-extension",
       "source_file": "package.json",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "ref_readme_md",
@@ -1718,6 +1835,39 @@
       "norm_label": "readme.md",
       "source_file": "package.json",
       "source_location": "L7"
+    },
+    {
+      "id": "ref_telegram",
+      "label": "telegram",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "package.json",
+      "file_type": "concept",
+      "norm_label": "telegram",
+      "source_file": "package.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "types_node",
+      "label": "@types/node",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "package.json",
+      "file_type": "concept",
+      "norm_label": "@types/node",
+      "source_file": "package.json",
+      "source_location": "L37"
+    },
+    {
+      "id": "typescript",
+      "label": "typescript",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "package.json",
+      "file_type": "concept",
+      "norm_label": "typescript",
+      "source_file": "package.json",
+      "source_location": "L38"
     },
     {
       "id": "index",
@@ -1753,17 +1903,6 @@
       "source_location": "L1"
     },
     {
-      "id": "matrix_src_commands",
-      "label": "matrix/src/commands.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": "matrix/src/commands.ts",
-      "source_file": "matrix/src/commands.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "matrix_src_config",
       "label": "matrix/src/config.ts",
       "_origin": "ast",
@@ -1783,40 +1922,7 @@
       "file_type": "code",
       "norm_label": "default_config",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L6"
-    },
-    {
-      "id": "matrix_src_progress",
-      "label": "matrix/src/progress.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": "matrix/src/progress.ts",
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "matrix_src_queue",
-      "label": "matrix/src/queue.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": "matrix/src/queue.ts",
-      "source_file": "matrix/src/queue.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "matrix_src_types",
-      "label": "matrix/src/types.ts",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "matrix/index.ts",
-      "file_type": "code",
-      "norm_label": "matrix/src/types.ts",
-      "source_file": "matrix/src/types.ts",
-      "source_location": "L1"
+      "source_location": "L7"
     },
     {
       "id": "flake",
@@ -1830,6 +1936,39 @@
       "source_location": null
     },
     {
+      "id": "home_amadeus_projects_workspace_pi_matrix_matrix_nix",
+      "label": "matrix.nix",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "flake.nix",
+      "file_type": "code",
+      "norm_label": "matrix.nix",
+      "source_file": "flake.nix",
+      "source_location": "L25"
+    },
+    {
+      "id": "home_amadeus_projects_workspace_pi_matrix_nix",
+      "label": "pi-matrix.nix",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "flake.nix",
+      "file_type": "code",
+      "norm_label": "pi-matrix.nix",
+      "source_file": "flake.nix",
+      "source_location": "L45"
+    },
+    {
+      "id": "home_amadeus_projects_workspace_pi_matrix_telegram_nix",
+      "label": "telegram.nix",
+      "_origin": "ast",
+      "community": 10,
+      "community_name": "flake.nix",
+      "file_type": "code",
+      "norm_label": "telegram.nix",
+      "source_file": "flake.nix",
+      "source_location": "L35"
+    },
+    {
       "id": "pkg_mkshell",
       "label": "pkgs.mkShell",
       "_origin": "ast",
@@ -1838,7 +1977,7 @@
       "file_type": "code",
       "norm_label": "pkgs.mkshell",
       "source_file": "flake.nix",
-      "source_location": "L21"
+      "source_location": "L53"
     },
     {
       "id": "matrix_src_api",
@@ -1852,6 +1991,17 @@
       "source_location": "L1"
     },
     {
+      "id": "matrix_src_commands",
+      "label": "matrix/src/commands.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": "matrix/src/commands.ts",
+      "source_file": "matrix/src/commands.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "matrix_src_formatter",
       "label": "matrix/src/formatter.ts",
       "_origin": "ast",
@@ -1860,6 +2010,39 @@
       "file_type": "code",
       "norm_label": "matrix/src/formatter.ts",
       "source_file": "matrix/src/formatter.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "matrix_src_progress",
+      "label": "matrix/src/progress.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": "matrix/src/progress.ts",
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "matrix_src_types",
+      "label": "matrix/src/types.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "MatrixApiClient",
+      "file_type": "code",
+      "norm_label": "matrix/src/types.ts",
+      "source_file": "matrix/src/types.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "telegram_src_progress",
+      "label": "telegram/src/progress.ts",
+      "_origin": "ast",
+      "community": 3,
+      "community_name": "TelegramApiClient",
+      "file_type": "code",
+      "norm_label": "telegram/src/progress.ts",
+      "source_file": "telegram/src/progress.ts",
       "source_location": "L1"
     },
     {
@@ -1915,7 +2098,7 @@
       "file_type": "code",
       "norm_label": "default_config",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L13"
+      "source_location": "L18"
     },
     {
       "id": "telegram_src_formatter",
@@ -1926,17 +2109,6 @@
       "file_type": "code",
       "norm_label": "telegram/src/formatter.ts",
       "source_file": "telegram/src/formatter.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "telegram_src_progress",
-      "label": "telegram/src/progress.ts",
-      "_origin": "ast",
-      "community": 4,
-      "community_name": "telegram/index.ts",
-      "file_type": "code",
-      "norm_label": "telegram/src/progress.ts",
-      "source_file": "telegram/src/progress.ts",
       "source_location": "L1"
     },
     {
@@ -1962,6 +2134,215 @@
       "source_location": "L1"
     },
     {
+      "id": "tsconfig",
+      "label": "tsconfig.json",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "tsconfig.json",
+      "source_file": "tsconfig.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "compileroptions",
+      "source_file": "tsconfig.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "tsconfig_compileroptions_allowsyntheticdefaultimports",
+      "label": "allowSyntheticDefaultImports",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "allowsyntheticdefaultimports",
+      "source_file": "tsconfig.json",
+      "source_location": "L10"
+    },
+    {
+      "id": "tsconfig_compileroptions_esmoduleinterop",
+      "label": "esModuleInterop",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "esmoduleinterop",
+      "source_file": "tsconfig.json",
+      "source_location": "L9"
+    },
+    {
+      "id": "tsconfig_compileroptions_lib",
+      "label": "lib",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "lib",
+      "source_file": "tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "tsconfig_compileroptions_module",
+      "label": "module",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "module",
+      "source_file": "tsconfig.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "tsconfig_compileroptions_moduleresolution",
+      "label": "moduleResolution",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "moduleresolution",
+      "source_file": "tsconfig.json",
+      "source_location": "L5"
+    },
+    {
+      "id": "tsconfig_compileroptions_noemit",
+      "label": "noEmit",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "noemit",
+      "source_file": "tsconfig.json",
+      "source_location": "L12"
+    },
+    {
+      "id": "tsconfig_compileroptions_resolvejsonmodule",
+      "label": "resolveJsonModule",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "resolvejsonmodule",
+      "source_file": "tsconfig.json",
+      "source_location": "L11"
+    },
+    {
+      "id": "tsconfig_compileroptions_skiplibcheck",
+      "label": "skipLibCheck",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "skiplibcheck",
+      "source_file": "tsconfig.json",
+      "source_location": "L8"
+    },
+    {
+      "id": "tsconfig_compileroptions_strict",
+      "label": "strict",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "strict",
+      "source_file": "tsconfig.json",
+      "source_location": "L7"
+    },
+    {
+      "id": "tsconfig_compileroptions_target",
+      "label": "target",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "target",
+      "source_file": "tsconfig.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "tsconfig_include",
+      "label": "include",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "include",
+      "source_file": "tsconfig.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "ref_dom",
+      "label": "DOM",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "concept",
+      "norm_label": "dom",
+      "source_file": "tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "ref_dom_iterable",
+      "label": "DOM.Iterable",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "concept",
+      "norm_label": "dom.iterable",
+      "source_file": "tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "ref_es2022",
+      "label": "ES2022",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "concept",
+      "norm_label": "es2022",
+      "source_file": "tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "ref_matrix_ts",
+      "label": "matrix/**/*.ts",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "concept",
+      "norm_label": "matrix/**/*.ts",
+      "source_file": "tsconfig.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "ref_telegram_ts",
+      "label": "telegram/**/*.ts",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "concept",
+      "norm_label": "telegram/**/*.ts",
+      "source_file": "tsconfig.json",
+      "source_location": "L14"
+    },
+    {
+      "id": "tsconfig_json_ref_index_ts",
+      "label": "index.ts",
+      "_origin": "ast",
+      "community": 5,
+      "community_name": "compilerOptions",
+      "file_type": "concept",
+      "norm_label": "index.ts",
+      "source_file": "tsconfig.json",
+      "source_location": "L14"
+    },
+    {
       "id": "readme",
       "label": "README.md",
       "_origin": "ast",
@@ -1983,7 +2364,7 @@
       "node_kind": "heading",
       "norm_label": "\u2699\ufe0f configuration reference",
       "source_file": "README.md",
-      "source_location": "L88"
+      "source_location": "L91"
     },
     {
       "id": "readme_declarative_installation_nixos_home_manager",
@@ -1995,7 +2376,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udce6 declarative installation (nixos / home-manager)",
       "source_file": "README.md",
-      "source_location": "L125"
+      "source_location": "L128"
     },
     {
       "id": "readme_features",
@@ -2007,7 +2388,7 @@
       "node_kind": "heading",
       "norm_label": "\u2728 features",
       "source_file": "README.md",
-      "source_location": "L67"
+      "source_location": "L68"
     },
     {
       "id": "readme_interactive_slash_commands",
@@ -2019,7 +2400,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83c\udfae interactive slash commands",
       "source_file": "README.md",
-      "source_location": "L159"
+      "source_location": "L174"
     },
     {
       "id": "readme_license",
@@ -2031,7 +2412,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udcc4 license",
       "source_file": "README.md",
-      "source_location": "L177"
+      "source_location": "L192"
     },
     {
       "id": "readme_matrix_bridge_matrix",
@@ -2043,7 +2424,7 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udfe2 matrix bridge (`matrix/`)",
       "source_file": "README.md",
-      "source_location": "L69"
+      "source_location": "L70"
     },
     {
       "id": "readme_matrix_configuration_pi_agent_matrix_json",
@@ -2055,7 +2436,31 @@
       "node_kind": "heading",
       "norm_label": "matrix configuration (`~/.pi/agent/matrix.json`)",
       "source_file": "README.md",
-      "source_location": "L90"
+      "source_location": "L93"
+    },
+    {
+      "id": "readme_option_a_using_flake_packages_recommended",
+      "label": "Option A: Using Flake Packages (Recommended)",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "pi-matrix & pi-telegram",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "option a: using flake packages (recommended)",
+      "source_file": "README.md",
+      "source_location": "L132"
+    },
+    {
+      "id": "readme_option_b_using_direct_directory_links",
+      "label": "Option B: Using Direct Directory Links",
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "pi-matrix & pi-telegram",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "option b: using direct directory links",
+      "source_file": "README.md",
+      "source_location": "L161"
     },
     {
       "id": "readme_overview",
@@ -2103,19 +2508,30 @@
       "node_kind": "heading",
       "norm_label": "\ud83d\udd35 telegram bridge (`telegram/`)",
       "source_file": "README.md",
-      "source_location": "L79"
+      "source_location": "L81"
     },
     {
-      "id": "readme_telegram_configuration_config_telegram_config_json",
-      "label": "Telegram Configuration (`~/.config/telegram/config.json`)",
+      "id": "readme_telegram_configuration_pi_agent_telegram_json",
+      "label": "Telegram Configuration (`~/.pi/agent/telegram.json`)",
       "_origin": "ast",
       "community": 6,
       "community_name": "pi-matrix & pi-telegram",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "telegram configuration (`~/.config/telegram/config.json`)",
+      "norm_label": "telegram configuration (`~/.pi/agent/telegram.json`)",
       "source_file": "README.md",
-      "source_location": "L108"
+      "source_location": "L111"
+    },
+    {
+      "id": "matrix_src_queue",
+      "label": "matrix/src/queue.ts",
+      "_origin": "ast",
+      "community": 7,
+      "community_name": "MatrixQueue",
+      "file_type": "code",
+      "norm_label": "matrix/src/queue.ts",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L1"
     },
     {
       "id": "telegram_src_cache",
@@ -2139,7 +2555,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L417",
+      "source_location": "L438",
       "weight": 1.0
     },
     {
@@ -2151,7 +2567,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L237",
+      "source_location": "L258",
       "weight": 1.0
     },
     {
@@ -2163,7 +2579,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L240",
+      "source_location": "L261",
       "weight": 1.0
     },
     {
@@ -2175,7 +2591,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L241",
+      "source_location": "L262",
       "weight": 1.0
     },
     {
@@ -2187,7 +2603,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L280",
+      "source_location": "L301",
       "weight": 1.0
     },
     {
@@ -2199,7 +2615,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L68",
+      "source_location": "L69",
       "weight": 1.0
     },
     {
@@ -2211,7 +2627,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L84",
+      "source_location": "L85",
       "weight": 1.0
     },
     {
@@ -2223,7 +2639,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L202",
+      "source_location": "L223",
       "weight": 1.0
     },
     {
@@ -2235,7 +2651,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L207",
+      "source_location": "L228",
       "weight": 1.0
     },
     {
@@ -2247,7 +2663,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L209",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
@@ -2259,7 +2675,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L215",
+      "source_location": "L236",
       "weight": 1.0
     },
     {
@@ -2271,7 +2687,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L221",
+      "source_location": "L242",
       "weight": 1.0
     },
     {
@@ -2283,7 +2699,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L306",
+      "source_location": "L327",
       "weight": 1.0
     },
     {
@@ -2295,7 +2711,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L156",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -2307,7 +2723,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L159",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -2319,7 +2735,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L160",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -2331,7 +2747,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L365",
+      "source_location": "L386",
       "weight": 1.0
     },
     {
@@ -2343,7 +2759,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L367",
+      "source_location": "L388",
       "weight": 1.0
     },
     {
@@ -2355,7 +2771,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L383",
+      "source_location": "L404",
       "weight": 1.0
     },
     {
@@ -2391,7 +2807,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -2403,7 +2819,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -2415,7 +2831,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -2427,7 +2843,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L50",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -2439,7 +2855,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L64",
+      "source_location": "L76",
       "weight": 1.0
     },
     {
@@ -2463,7 +2879,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/formatter.ts",
-      "source_location": "L181",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -2475,7 +2891,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/formatter.ts",
-      "source_location": "L220",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
@@ -2499,7 +2915,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L107",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -2511,7 +2927,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -2523,7 +2939,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -2535,7 +2951,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L27",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -2547,7 +2963,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L80",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -2571,7 +2987,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L248",
+      "source_location": "L256",
       "weight": 1.0
     },
     {
@@ -2583,7 +2999,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L260",
+      "source_location": "L268",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_api_telegramapiclient_getme",
+      "target": "telegram_src_api_telegramapiclient_callapi",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "telegram/src/api.ts",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -2595,7 +3023,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L88",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -2607,7 +3035,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L237",
+      "source_location": "L245",
       "weight": 1.0
     },
     {
@@ -2619,7 +3047,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L240",
+      "source_location": "L248",
       "weight": 1.0
     },
     {
@@ -2631,7 +3059,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L131",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -2643,7 +3071,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L137",
+      "source_location": "L145",
       "weight": 1.0
     },
     {
@@ -2655,7 +3083,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L140",
+      "source_location": "L148",
       "weight": 1.0
     },
     {
@@ -2667,7 +3095,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L152",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -2691,7 +3119,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L95",
+      "source_location": "L103",
       "weight": 1.0
     },
     {
@@ -2703,7 +3131,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L96",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
@@ -2763,7 +3191,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L28",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -2775,7 +3203,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L36",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -2787,7 +3215,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L66",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -2799,7 +3227,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L40",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -2811,7 +3239,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L54",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -2847,7 +3275,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -2919,7 +3347,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "matrix/src/api.ts",
-      "source_location": "L387",
+      "source_location": "L408",
       "weight": 1.0
     },
     {
@@ -2943,12 +3371,12 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L243",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
       "source": "package_files",
-      "target": "ref_assets",
+      "target": "package_json_ref_index_ts",
       "relation": "extends",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -2960,7 +3388,7 @@
     },
     {
       "source": "package_files",
-      "target": "ref_index_ts",
+      "target": "ref_assets",
       "relation": "extends",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -2984,7 +3412,31 @@
     },
     {
       "source": "package_files",
+      "target": "ref_matrix",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "package_files",
       "target": "ref_readme_md",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "package_files",
+      "target": "ref_telegram",
       "relation": "extends",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -3003,7 +3455,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -3015,7 +3467,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -3027,7 +3479,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -3039,7 +3491,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -3051,7 +3503,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -3063,7 +3515,79 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions_lib",
+      "target": "ref_dom",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions_lib",
+      "target": "ref_dom_iterable",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions_lib",
+      "target": "ref_es2022",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_include",
+      "target": "ref_matrix_ts",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_include",
+      "target": "ref_telegram_ts",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_include",
+      "target": "tsconfig_json_ref_index_ts",
+      "relation": "extends",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -3075,7 +3599,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -3087,7 +3611,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -3099,7 +3623,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -3111,7 +3635,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -3123,7 +3647,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -3135,7 +3659,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L40",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -3147,7 +3671,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -3159,7 +3683,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -3171,7 +3695,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L43",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -3183,7 +3707,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L44",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -3195,7 +3719,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -3363,7 +3887,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -3403,6 +3927,30 @@
       "weight": 1.0
     },
     {
+      "source": "package_devdependencies_types_node",
+      "target": "types_node",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "package.json",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "package_devdependencies_typescript",
+      "target": "typescript",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "package.json",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
       "source": "package_peerdependencies_earendil_works_pi_coding_agent",
       "target": "earendil_works_pi_coding_agent",
       "relation": "imports",
@@ -3411,7 +3959,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -3735,7 +4283,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -3771,7 +4319,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0
     },
     {
@@ -3783,7 +4331,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L40",
+      "source_location": "L42",
       "weight": 1.0
     },
     {
@@ -3795,7 +4343,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L41",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -3807,7 +4355,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -3819,7 +4367,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L43",
+      "source_location": "L45",
       "weight": 1.0
     },
     {
@@ -3831,7 +4379,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L44",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -3843,7 +4391,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/index.ts",
-      "source_location": "L45",
+      "source_location": "L47",
       "weight": 1.0
     },
     {
@@ -3951,7 +4499,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "matrix/src/config.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -4191,7 +4739,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "telegram/src/config.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -4251,7 +4799,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -4263,7 +4811,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -4275,7 +4823,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -4288,6 +4836,18 @@
       "context": "parameter_type",
       "source_file": "matrix/src/queue.ts",
       "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "matrix_src_queue_matrixqueue_setactiveturn",
+      "target": "matrix_src_types_pendingturn",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "parameter_type",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -4311,7 +4871,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "telegram/src/api.ts",
-      "source_location": "L125",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -4335,7 +4895,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -4351,6 +4911,18 @@
       "weight": 1.0
     },
     {
+      "source": "telegram_src_queue_telegramqueue_setactiveturn",
+      "target": "telegram_src_types_pendingtelegramturn",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "parameter_type",
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
       "source": "matrix_src_queue_matrixqueue_getactiveturn",
       "target": "matrix_src_types_pendingturn",
       "relation": "references",
@@ -4360,6 +4932,18 @@
       "context": "return_type",
       "source_file": "matrix/src/queue.ts",
       "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "matrix_src_queue_matrixqueue_getbyid",
+      "target": "matrix_src_types_pendingturn",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "return_type",
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -4384,6 +4968,18 @@
       "context": "return_type",
       "source_file": "telegram/src/queue.ts",
       "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_queue_telegramqueue_getbyid",
+      "target": "telegram_src_types_pendingtelegramturn",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "return_type",
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -4439,7 +5035,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -4450,7 +5046,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L24",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -4461,7 +5057,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -4472,7 +5068,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0
     },
     {
@@ -4483,7 +5079,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L49",
+      "source_location": "L60",
       "weight": 1.0
     },
     {
@@ -4494,7 +5090,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L6",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -4505,7 +5101,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L62",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -4516,7 +5112,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L71",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -4527,7 +5123,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/config.ts",
-      "source_location": "L77",
+      "source_location": "L89",
       "weight": 1.0
     },
     {
@@ -4648,7 +5244,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/types.ts",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -4659,7 +5255,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/types.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -4670,7 +5266,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L13",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -4681,7 +5277,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L14",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -4692,7 +5288,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -4703,7 +5299,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -4725,7 +5321,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L20",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -4736,7 +5332,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -4758,7 +5354,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L31",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "package",
+      "target": "package_devdependencies",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "package.json",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -4813,7 +5420,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L21",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_types_node",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "package.json",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_typescript",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "package.json",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -4824,7 +5453,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L34",
       "weight": 1.0
     },
     {
@@ -4835,7 +5464,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -4846,7 +5475,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "package.json",
-      "source_location": "L18",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -4862,13 +5491,13 @@
     },
     {
       "source": "readme_configuration_reference",
-      "target": "readme_telegram_configuration_config_telegram_config_json",
+      "target": "readme_telegram_configuration_pi_agent_telegram_json",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L108",
+      "source_location": "L111",
       "weight": 1.0
     },
     {
@@ -4879,7 +5508,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L90",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_declarative_installation_nixos_home_manager",
+      "target": "readme_option_a_using_flake_packages_recommended",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_declarative_installation_nixos_home_manager",
+      "target": "readme_option_b_using_direct_directory_links",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L161",
       "weight": 1.0
     },
     {
@@ -4890,7 +5541,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L69",
+      "source_location": "L70",
       "weight": 1.0
     },
     {
@@ -4901,7 +5552,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L79",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -4912,7 +5563,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L125",
+      "source_location": "L128",
       "weight": 1.0
     },
     {
@@ -4923,18 +5574,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L159",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_pi_matrix_pi_telegram",
-      "target": "readme_license",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L177",
+      "source_location": "L174",
       "weight": 1.0
     },
     {
@@ -4946,6 +5586,17 @@
       "confidence_score": 1.0,
       "source_file": "README.md",
       "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_pi_matrix_pi_telegram",
+      "target": "readme_license",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L192",
       "weight": 1.0
     },
     {
@@ -4967,7 +5618,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L67",
+      "source_location": "L68",
       "weight": 1.0
     },
     {
@@ -4978,7 +5629,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L88",
+      "source_location": "L91",
       "weight": 1.0
     },
     {
@@ -5038,13 +5689,13 @@
     },
     {
       "source": "telegram_src_config",
-      "target": "telegram_src_config_default_config",
+      "target": "telegram_src_config_formatfilesize",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/config.ts",
-      "source_location": "L13",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
@@ -5055,7 +5706,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/config.ts",
-      "source_location": "L23",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_config",
+      "target": "telegram_src_config_default_config",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "telegram/src/config.ts",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -5066,7 +5728,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/config.ts",
-      "source_location": "L27",
+      "source_location": "L36",
       "weight": 1.0
     },
     {
@@ -5077,7 +5739,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/config.ts",
-      "source_location": "L35",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -5088,7 +5750,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/config.ts",
-      "source_location": "L39",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -5099,7 +5761,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/config.ts",
-      "source_location": "L52",
+      "source_location": "L61",
       "weight": 1.0
     },
     {
@@ -5110,18 +5772,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/config.ts",
-      "source_location": "L65",
-      "weight": 1.0
-    },
-    {
-      "source": "telegram_src_config",
-      "target": "telegram_src_config_formatfilesize",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "telegram/src/config.ts",
-      "source_location": "L90",
+      "source_location": "L74",
       "weight": 1.0
     },
     {
@@ -5257,6 +5908,171 @@
       "weight": 1.0
     },
     {
+      "source": "tsconfig",
+      "target": "tsconfig_include",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig",
+      "target": "tsconfig_compileroptions",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_allowsyntheticdefaultimports",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_resolvejsonmodule",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_noemit",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_target",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_module",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_moduleresolution",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_lib",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_strict",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_skiplibcheck",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_esmoduleinterop",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "flake",
+      "target": "home_amadeus_projects_workspace_pi_matrix_matrix_nix",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "flake.nix",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "flake",
+      "target": "home_amadeus_projects_workspace_pi_matrix_telegram_nix",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "flake.nix",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "flake",
+      "target": "home_amadeus_projects_workspace_pi_matrix_nix",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "flake.nix",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
       "source": "flake",
       "target": "pkg_mkshell",
       "relation": "installs",
@@ -5264,7 +6080,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "flake.nix",
-      "source_location": "L21",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
@@ -5275,18 +6091,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L124",
-      "weight": 1.0
-    },
-    {
-      "source": "matrix_src_api_matrixapiclient",
-      "target": "matrix_src_api_matrixapiclient_sendsinglemessage",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "matrix/src/api.ts",
-      "source_location": "L150",
+      "source_location": "L134",
       "weight": 1.0
     },
     {
@@ -5298,6 +6103,17 @@
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
       "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "matrix_src_api_matrixapiclient",
+      "target": "matrix_src_api_matrixapiclient_sendsinglemessage",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "matrix/src/api.ts",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
@@ -5319,7 +6135,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L197",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -5341,7 +6157,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L231",
+      "source_location": "L252",
       "weight": 1.0
     },
     {
@@ -5363,7 +6179,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L278",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -5374,7 +6190,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L300",
+      "source_location": "L321",
       "weight": 1.0
     },
     {
@@ -5385,7 +6201,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L332",
+      "source_location": "L353",
       "weight": 1.0
     },
     {
@@ -5396,7 +6212,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L346",
+      "source_location": "L367",
       "weight": 1.0
     },
     {
@@ -5407,7 +6223,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L364",
+      "source_location": "L385",
       "weight": 1.0
     },
     {
@@ -5418,7 +6234,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L375",
+      "source_location": "L396",
       "weight": 1.0
     },
     {
@@ -5429,7 +6245,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L387",
+      "source_location": "L408",
       "weight": 1.0
     },
     {
@@ -5440,7 +6256,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/api.ts",
-      "source_location": "L466",
+      "source_location": "L487",
       "weight": 1.0
     },
     {
@@ -5489,13 +6305,24 @@
     },
     {
       "source": "matrix_src_progress_matrixprogressreporter",
+      "target": "matrix_src_progress_matrixprogressreporter_cleanup",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "matrix/src/progress.ts",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "matrix_src_progress_matrixprogressreporter",
       "target": "matrix_src_progress_matrixprogressreporter_reset",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L110",
+      "source_location": "L131",
       "weight": 1.0
     },
     {
@@ -5506,7 +6333,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -5517,7 +6344,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -5528,7 +6355,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0
     },
     {
@@ -5539,7 +6366,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -5550,7 +6377,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0
     },
     {
@@ -5561,7 +6388,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L42",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -5572,18 +6399,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L66",
-      "weight": 1.0
-    },
-    {
-      "source": "matrix_src_progress_matrixprogressreporter",
-      "target": "matrix_src_progress_matrixprogressreporter_cleanup",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "matrix/src/progress.ts",
-      "source_location": "L95",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -5632,7 +6448,7 @@
     },
     {
       "source": "matrix_src_queue_matrixqueue",
-      "target": "matrix_src_queue_matrixqueue_clearactiveturn",
+      "target": "matrix_src_queue_matrixqueue_setactiveturn",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5643,7 +6459,7 @@
     },
     {
       "source": "matrix_src_queue_matrixqueue",
-      "target": "matrix_src_queue_matrixqueue_clear",
+      "target": "matrix_src_queue_matrixqueue_getbyid",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5654,13 +6470,46 @@
     },
     {
       "source": "matrix_src_queue_matrixqueue",
-      "target": "matrix_src_queue_matrixqueue_matchestarget",
+      "target": "matrix_src_queue_matrixqueue_removeturn",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "matrix/src/queue.ts",
       "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "matrix_src_queue_matrixqueue",
+      "target": "matrix_src_queue_matrixqueue_clearactiveturn",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "matrix_src_queue_matrixqueue",
+      "target": "matrix_src_queue_matrixqueue_clear",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "matrix_src_queue_matrixqueue",
+      "target": "matrix_src_queue_matrixqueue_matchestarget",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "matrix/src/queue.ts",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -5676,24 +6525,13 @@
     },
     {
       "source": "telegram_src_api_telegramapiclient",
-      "target": "telegram_src_api_telegramapiclient_stoptypingloop",
+      "target": "telegram_src_api_telegramapiclient_starttypingloop",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/api.ts",
       "source_location": "L102",
-      "weight": 1.0
-    },
-    {
-      "source": "telegram_src_api_telegramapiclient",
-      "target": "telegram_src_api_telegramapiclient_chunktext",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "telegram/src/api.ts",
-      "source_location": "L109",
       "weight": 1.0
     },
     {
@@ -5709,13 +6547,35 @@
     },
     {
       "source": "telegram_src_api_telegramapiclient",
+      "target": "telegram_src_api_telegramapiclient_stoptypingloop",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "telegram/src/api.ts",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_api_telegramapiclient",
+      "target": "telegram_src_api_telegramapiclient_chunktext",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "telegram/src/api.ts",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_api_telegramapiclient",
       "target": "telegram_src_api_telegramapiclient_sendmessage",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/api.ts",
-      "source_location": "L125",
+      "source_location": "L133",
       "weight": 1.0
     },
     {
@@ -5737,7 +6597,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/api.ts",
-      "source_location": "L171",
+      "source_location": "L179",
       "weight": 1.0
     },
     {
@@ -5759,7 +6619,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/api.ts",
-      "source_location": "L200",
+      "source_location": "L208",
       "weight": 1.0
     },
     {
@@ -5770,7 +6630,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/api.ts",
-      "source_location": "L229",
+      "source_location": "L237",
       "weight": 1.0
     },
     {
@@ -5781,7 +6641,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/api.ts",
-      "source_location": "L243",
+      "source_location": "L251",
       "weight": 1.0
     },
     {
@@ -5808,7 +6668,7 @@
     },
     {
       "source": "telegram_src_api_telegramapiclient",
-      "target": "telegram_src_api_telegramapiclient_acknowledgeoffset",
+      "target": "telegram_src_api_telegramapiclient_getme",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5819,7 +6679,7 @@
     },
     {
       "source": "telegram_src_api_telegramapiclient",
-      "target": "telegram_src_api_telegramapiclient_sendchataction",
+      "target": "telegram_src_api_telegramapiclient_acknowledgeoffset",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5830,7 +6690,7 @@
     },
     {
       "source": "telegram_src_api_telegramapiclient",
-      "target": "telegram_src_api_telegramapiclient_starttypingloop",
+      "target": "telegram_src_api_telegramapiclient_sendchataction",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5880,7 +6740,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -5891,7 +6751,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -5902,7 +6762,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -5913,7 +6773,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L28",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -5924,7 +6784,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -5935,7 +6795,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L73",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -5973,7 +6833,7 @@
     },
     {
       "source": "telegram_src_queue_telegramqueue",
-      "target": "telegram_src_queue_telegramqueue_clearactiveturn",
+      "target": "telegram_src_queue_telegramqueue_setactiveturn",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5984,7 +6844,7 @@
     },
     {
       "source": "telegram_src_queue_telegramqueue",
-      "target": "telegram_src_queue_telegramqueue_length",
+      "target": "telegram_src_queue_telegramqueue_getbyid",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -5995,13 +6855,46 @@
     },
     {
       "source": "telegram_src_queue_telegramqueue",
+      "target": "telegram_src_queue_telegramqueue_removeturn",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L33",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_queue_telegramqueue",
+      "target": "telegram_src_queue_telegramqueue_clearactiveturn",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_queue_telegramqueue",
+      "target": "telegram_src_queue_telegramqueue_length",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "telegram/src/queue.ts",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "telegram_src_queue_telegramqueue",
       "target": "telegram_src_queue_telegramqueue_isempty",
       "relation": "method",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "telegram/src/queue.ts",
-      "source_location": "L32",
+      "source_location": "L51",
       "weight": 1.0
     },
     {
@@ -6024,7 +6917,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "matrix/src/commands.ts",
-      "source_location": "L132",
+      "source_location": "L141",
       "weight": 1.0
     },
     {
@@ -6096,7 +6989,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L104",
+      "source_location": "L125",
       "weight": 1.0
     },
     {
@@ -6108,7 +7001,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L74",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -6120,7 +7013,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "matrix/src/progress.ts",
-      "source_location": "L80",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -6192,7 +7085,7 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L80",
+      "source_location": "L96",
       "weight": 1.0
     },
     {
@@ -6204,10 +7097,10 @@
       "confidence_score": 0.8,
       "context": "call",
       "source_file": "telegram/src/progress.ts",
-      "source_location": "L54",
+      "source_location": "L58",
       "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "878fecd559dd64495a92d8f534064af134395610"
+  "built_at_commit": "9b092013fe10399ca78c1f3d6e1d714d350db600"
 }

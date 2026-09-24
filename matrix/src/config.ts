@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import * as os from "node:os";
 import { execFile } from "node:child_process";
 import type { MatrixConfig } from "./types.js";
 
@@ -18,7 +19,7 @@ export const DEFAULT_CONFIG: MatrixConfig = {
 };
 
 export function getHomeDir(): string {
-  return process.env.HOME || "/home/amadeus";
+  return process.env.HOME || os.homedir();
 }
 
 export function getSyncTokenPath(): string {
@@ -35,15 +36,25 @@ export function getMediaDir(): string {
 
 export function loadConfig(): MatrixConfig {
   const configPath = path.join(getHomeDir(), ".pi/agent/matrix.json");
+  let cfg = { ...DEFAULT_CONFIG };
   if (fs.existsSync(configPath)) {
     try {
       const data = JSON.parse(fs.readFileSync(configPath, "utf-8"));
-      return { ...DEFAULT_CONFIG, ...data };
+      cfg = { ...cfg, ...data };
     } catch {
       // Fallback to defaults
     }
   }
-  return DEFAULT_CONFIG;
+  if (!cfg.accessToken && process.env.MATRIX_ACCESS_TOKEN) {
+    cfg.accessToken = process.env.MATRIX_ACCESS_TOKEN;
+  }
+  if (!cfg.homeserver && process.env.MATRIX_HOMESERVER) {
+    cfg.homeserver = process.env.MATRIX_HOMESERVER;
+  }
+  if (!cfg.botUserId && process.env.MATRIX_BOT_USER_ID) {
+    cfg.botUserId = process.env.MATRIX_BOT_USER_ID;
+  }
+  return cfg;
 }
 
 export function loadSavedSyncToken(): string | null {
@@ -59,7 +70,8 @@ export function loadSavedSyncToken(): string | null {
   return null;
 }
 
-export function saveSyncToken(token: string): void {
+export function saveSyncToken(token: string | null): void {
+  if (!token) return;
   try {
     const tokenFile = getSyncTokenPath();
     fs.writeFileSync(tokenFile, token.trim(), "utf-8");

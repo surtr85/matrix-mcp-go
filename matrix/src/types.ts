@@ -14,6 +14,7 @@ export interface PendingTurn {
   id: string;
   roomId: string;
   triggerEventId: string;
+  threadId?: string;
   sender: string;
   timestamp: number;
 }

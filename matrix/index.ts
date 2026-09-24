@@ -28,6 +28,8 @@ import type {
   SessionStartEvent,
   SessionShutdownEvent,
   ModelSelectEvent,
+  BeforeAgentStartEvent,
+  ContextEvent,
 } from "@earendil-works/pi-coding-agent";
 
 import {
@@ -288,10 +290,15 @@ export default function (pi: ExtensionAPI) {
             }
 
             // 5. Enqueue Turn into Concurrency-Safe Queue
+            const threadId = targetEv.content?.["m.relates_to"]?.rel_type === "m.thread"
+              ? targetEv.content?.["m.relates_to"]?.event_id
+              : undefined;
+
             const turn: PendingTurn = {
               id: api.makeTxnId(),
               roomId,
               triggerEventId: targetEv.event_id,
+              threadId,
               sender: targetEv.sender,
               timestamp: Date.now(),
             };
@@ -337,7 +344,7 @@ export default function (pi: ExtensionAPI) {
                   : "";
 
                 if (targetMsgType === "m.image") {
-                  const textPrompt = `${promptHeader}[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+                  const textPrompt = `<!-- matrix-turn:${turn.id} -->\n${promptHeader}[Attached image: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(
                     [
@@ -352,12 +359,12 @@ export default function (pi: ExtensionAPI) {
                   );
                   continue;
                 } else if (targetMsgType === "m.video") {
-                  const textPrompt = `${promptHeader}[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+                  const textPrompt = `<!-- matrix-turn:${turn.id} -->\n${promptHeader}[Attached video: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
                 } else if (targetMsgType === "m.audio") {
-                  const textPrompt = `${promptHeader}[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
+                  const textPrompt = `<!-- matrix-turn:${turn.id} -->\n${promptHeader}[Attached audio: ${downloaded.filename} (${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
@@ -374,7 +381,7 @@ export default function (pi: ExtensionAPI) {
                     }
                   }
 
-                  const textPrompt = `${promptHeader}[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`;
+                  const textPrompt = `<!-- matrix-turn:${turn.id} -->\n${promptHeader}[Attached file: ${downloaded.filename} (${downloaded.mimeType}, ${formatFileSize(downloaded.sizeBytes)}) saved at ${downloaded.localPath}]${snippet}`;
 
                   pi.sendUserMessage(textPrompt, { deliverAs: "followUp" });
                   continue;
@@ -387,12 +394,11 @@ export default function (pi: ExtensionAPI) {
               typeof coalescedCaption === "string" &&
               coalescedCaption.trim().length > 0
             ) {
-              if (config.useSubagent) {
-                const subagentPrompt = `[Matrix @${ev.sender}]:\n${coalescedCaption}\n\n[Instruction: Delegate to ${config.subagentRole} subagent and return final answer.]`;
-                pi.sendUserMessage(subagentPrompt, { deliverAs: "followUp" });
-              } else {
-                pi.sendUserMessage(coalescedCaption, { deliverAs: "followUp" });
-              }
+              const baseText = config.useSubagent
+                ? `[Matrix @${ev.sender}]:\n${coalescedCaption}\n\n[Instruction: Delegate to ${config.subagentRole} subagent and return final answer.]`
+                : coalescedCaption;
+              const fullPrompt = `<!-- matrix-turn:${turn.id} -->\n${baseText}`;
+              pi.sendUserMessage(fullPrompt, { deliverAs: "followUp" });
             }
           }
         }
@@ -436,11 +442,38 @@ export default function (pi: ExtensionAPI) {
     latestContext = ctx;
   });
 
+  pi.on("before_agent_start", async (event: BeforeAgentStartEvent, ctx: ExtensionContext) => {
+    latestContext = ctx;
+    const match = event.prompt.match(/<!--\s*matrix-turn:([^\s>]+)\s*-->/);
+    if (match) {
+      const turnId = match[1];
+      const turn = queue.getById(turnId);
+      if (turn) {
+        queue.setActiveTurn(turn);
+        progressReporter.start(turn.roomId, turn.triggerEventId);
+        progressReporter.report("🧠 Thinking...");
+      }
+    }
+  });
+
+  pi.on("context", async (event: ContextEvent) => {
+    for (const msg of event.messages) {
+      if (msg.role === "user" && typeof msg.content === "string") {
+        msg.content = msg.content.replace(/<!--\s*matrix-turn:[^\s>]+\s*-->\n?/, "");
+      } else if (msg.role === "user" && Array.isArray(msg.content)) {
+        for (const part of msg.content) {
+          if (part.type === "text") {
+            part.text = part.text.replace(/<!--\s*matrix-turn:[^\s>]+\s*-->\n?/, "");
+          }
+        }
+      }
+    }
+  });
+
   pi.on("turn_start", async (_event: TurnStartEvent, ctx: ExtensionContext) => {
     latestContext = ctx;
-    const active = queue.getActiveTurn() || queue.next();
+    const active = queue.getActiveTurn();
     if (active) {
-      progressReporter.start(active.roomId, active.triggerEventId);
       progressReporter.report("🧠 Thinking...");
     }
   });
@@ -512,14 +545,12 @@ export default function (pi: ExtensionAPI) {
   pi.on("agent_end", async (event: AgentEndEvent, ctx: ExtensionContext) => {
     latestContext = ctx;
     const activeTurn = queue.getActiveTurn();
-    queue.clearActiveTurn();
 
     if (!activeTurn) {
-      api.stopTypingLoop();
       return;
     }
 
-    const { roomId, triggerEventId } = activeTurn;
+    const { roomId, triggerEventId, id: turnId } = activeTurn;
 
     try {
       const assistantMessages = event.messages.filter(
@@ -543,18 +574,18 @@ export default function (pi: ExtensionAPI) {
             roomId,
             text,
             triggerEventId,
+            activeTurn.threadId,
           );
 
           if (sentEventId) {
             api.sendReaction(roomId, triggerEventId, "✅");
-            await progressReporter.cleanup();
 
             if (createdMediaFiles.length > 0) {
               const filesToSend = [...createdMediaFiles];
               createdMediaFiles.length = 0;
               for (const filePath of filesToSend) {
                 if (fs.existsSync(filePath)) {
-                  await api.sendMedia(roomId, filePath, sentEventId);
+                  await api.sendMedia(roomId, filePath, sentEventId, activeTurn.threadId);
                 }
               }
             }
@@ -571,14 +602,11 @@ export default function (pi: ExtensionAPI) {
         }
       }
     } finally {
+      await progressReporter.cleanup();
+      queue.removeTurn(turnId);
+      queue.clearActiveTurn();
       if (queue.isEmpty()) {
         api.stopTypingLoop();
-      } else {
-        const nextTurn = queue.next();
-        if (nextTurn) {
-          progressReporter.start(nextTurn.roomId, nextTurn.triggerEventId);
-          api.startTypingLoop(nextTurn.roomId);
-        }
       }
     }
   });

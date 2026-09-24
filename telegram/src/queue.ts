@@ -21,6 +21,25 @@ export class TelegramQueue {
     return this.activeTurn;
   }
 
+  setActiveTurn(turn: PendingTelegramTurn | null): void {
+    this.activeTurn = turn;
+  }
+
+  getById(id: string): PendingTelegramTurn | null {
+    if (this.activeTurn?.id === id) return this.activeTurn;
+    return this.queue.find((t) => t.id === id) || null;
+  }
+
+  removeTurn(id: string): void {
+    const idx = this.queue.findIndex((t) => t.id === id);
+    if (idx !== -1) {
+      this.queue.splice(idx, 1);
+    }
+    if (this.activeTurn?.id === id) {
+      this.activeTurn = null;
+    }
+  }
+
   clearActiveTurn(): void {
     this.activeTurn = null;
   }

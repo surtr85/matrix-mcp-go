@@ -6,6 +6,8 @@
   "types": "index.ts",
   "files": [
     "index.ts",
+    "matrix",
+    "telegram",
     "README.md",
     "LICENSE",
     "assets"
@@ -30,5 +32,9 @@
   ],
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": ">=0.80.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.0.0"
   }
 }

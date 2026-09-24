@@ -65,10 +65,10 @@ export async function handleMatrixCommand(
       return true;
     }
 
-    if (config.allowedUsers.length > 0 && !config.allowedUsers.includes(sender)) {
+    if (config.allowedUsers.length === 0 || !config.allowedUsers.includes(sender)) {
       await api.sendMessage(
         roomId,
-        "⛔ Permission denied: sender is not in allowedUsers list.",
+        "⛔ Permission denied: /sh requires sender to be explicitly listed in allowedUsers.",
         replyToId,
       );
       return true;
@@ -106,6 +106,15 @@ export async function handleMatrixCommand(
 
   // 3. /upload, /file
   if (cmdName === "upload" || cmdName === "file") {
+    if (config.allowedUsers.length === 0 || !config.allowedUsers.includes(sender)) {
+      await api.sendMessage(
+        roomId,
+        "⛔ Permission denied: /upload requires sender to be explicitly listed in allowedUsers.",
+        replyToId,
+      );
+      return true;
+    }
+
     if (!args) {
       await api.sendMessage(
         roomId,

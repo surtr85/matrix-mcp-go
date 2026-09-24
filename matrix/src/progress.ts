@@ -10,6 +10,7 @@ export class MatrixProgressReporter {
   private cooldownMs: number;
   private pendingStatus: string | null = null;
   private flushTimeout: NodeJS.Timeout | null = null;
+  private isEmitting = false;
 
   constructor(
     private api: MatrixApiClient,
@@ -65,40 +66,60 @@ export class MatrixProgressReporter {
 
   private async emitStatus(statusText: string): Promise<void> {
     if (!this.active || !this.roomId) return;
+    if (this.isEmitting) {
+      this.pendingStatus = statusText;
+      return;
+    }
+
+    this.isEmitting = true;
     this.lastReportTime = Date.now();
 
-    const formatted = `⏳ **${statusText}**`;
+    try {
+      const formatted = `⏳ **${statusText}**`;
 
-    if (this.config.progressMode === "edit") {
-      if (!this.progressMessageId) {
-        this.progressMessageId = await this.api.sendSingleMessage(
+      if (this.config.progressMode === "edit") {
+        if (!this.progressMessageId) {
+          this.progressMessageId = await this.api.sendSingleMessage(
+            this.roomId,
+            formatted,
+            this.replyToEventId || undefined,
+          );
+        } else {
+          await this.api.editMessage(
+            this.roomId,
+            this.progressMessageId,
+            formatted,
+          );
+        }
+      } else {
+        await this.api.sendSingleMessage(
           this.roomId,
           formatted,
           this.replyToEventId || undefined,
         );
-      } else {
-        await this.api.editMessage(
-          this.roomId,
-          this.progressMessageId,
-          formatted,
-        );
       }
-    } else {
-      await this.api.sendSingleMessage(
-        this.roomId,
-        formatted,
-        this.replyToEventId || undefined,
-      );
+    } finally {
+      this.isEmitting = false;
+      if (this.pendingStatus && this.active) {
+        const next = this.pendingStatus;
+        this.pendingStatus = null;
+        this.emitStatus(next);
+      }
     }
   }
 
   async cleanup(): Promise<void> {
-    if (!this.active) return;
     if (this.flushTimeout) {
       clearTimeout(this.flushTimeout);
       this.flushTimeout = null;
     }
     this.pendingStatus = null;
+
+    let waits = 0;
+    while (this.isEmitting && waits < 10) {
+      await new Promise((r) => setTimeout(r, 50));
+      waits++;
+    }
 
     if (this.progressMessageId && this.roomId) {
       await this.api.redactMessage(this.roomId, this.progressMessageId);
